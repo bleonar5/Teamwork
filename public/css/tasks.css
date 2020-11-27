@@ -1,0 +1,345 @@
+.container-large {
+  max-width: 95%!important;
+}
+
+#timer, .timer {
+  width: 45px;
+}
+
+div.inst h3,
+div.inst ol li{
+  margin-bottom: 24px;
+}
+
+.radio-large {
+  transform: scale(1.25);
+}
+
+div.word-list {
+  background-color: #eeeeee;
+  padding: 6px;
+  width: 100%;
+  position: relative;
+  min-height: 210px;
+  margin-bottom: 12px;
+}
+
+div.word-list span {
+  font-size: 22px;
+  width: 260px;
+  float: left;
+}
+
+.modal-title {
+  display: inline-block;
+  margin: 0 auto;
+}
+
+#guess-history {
+  margin-top: 20px;
+  table-layout: fixed;
+  font-size: 14px;
+}
+
+.spacer {
+  min-height: 42px;
+}
+
+#warning {
+  display: none;
+}
+
+form.optimization-practice {
+  margin-left: 80px;
+}
+
+form.optimization-practice input {
+  width: 110px!important;
+  margin-right: 18px;
+}
+
+table.optimization-practice {
+  margin-top: 12px!important;
+}
+
+/* Cryptography */
+
+.btn-equation {
+  color: #fff;
+  background-color: #ff4000;
+  border-color: #ff4000;
+}
+
+.text-equation {
+  color: #ff4000!important;
+}
+
+.text-hypothesis {
+  color: #4CAF55!important;
+}
+
+.text-guess {
+  color: #8000ff!important;
+}
+
+#hypothesis {
+  width: 100%;
+  position: relative;
+  clear: both;
+  margin-bottom: 18px;
+}
+
+#hypothesis select,
+#hypothesis span,
+#guess-full-mapping select {
+  width: 64px;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+#guess-full-mapping span {
+  width: 36px;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+#answers {
+  margin-top: 12px;
+}
+
+#answers .answer {
+  word-wrap:break-word;
+}
+
+#mapping-list span {
+  /*background-color: #f8f9fa;*/
+  float: left;
+  clear: both;
+  font-weight: bold;
+  font-size: 1.25rem
+}
+
+div.crypto-result {
+  border-left: 1px solid #DCDCDC;
+}
+
+/* Team Role Task */
+
+td.blank {
+  background-color: #fff;
+  border: 0;
+}
+
+td.desc {
+  background-color: #fff;
+}
+
+th.key {
+  rgba(0,0,0,.05);
+  border-right: 1px solid #cccccc;
+  font-size: 80%;
+}
+
+th.rotate {
+  height: 140px;
+  white-space: nowrap;
+}
+
+th.rotate > div {
+  transform:
+      translate(-2px, 200px)
+      rotate(270deg);
+  width: 30px;
+}
+
+th.rotate > div > span {
+  padding: 5px 10px;
+}
+
+
+
+td.input {
+  border: 1px solid #e9ecef;
+}
+
+td.input input {
+  margin-left: -0.25rem!important;
+}
+
+/* Big Five */
+
+form#big-five-form th.rotate {
+  height: 200px;
+  white-space: nowrap;
+}
+
+form#big-five-form th.rotate > div {
+  transform:
+        translate(20px, 160px)
+        rotate(270deg);
+  width: 30px;
+}
+
+table.big-five th {
+  width: 140px;
+}
+
+/* Team Role */
+table.team-role th {
+  width: 80px;
+}
+
+/* Memory */
+
+.choose-mem-review-type, .switch-mem-review-type {
+  color: #fff!important;
+  font-size: 150%;
+}
+
+.target-img {
+  width: 460px;
+  height: auto;
+}
+
+.target-img-group_4 {
+  width: 700px;
+}
+
+.target-img-group_3 {
+  width: 900px!important;
+}
+
+.memory-img {
+  width: 646px;
+  height: auto;
+}
+
+.mixed-mem-targets {
+  min-height: 380px;
+  margin: 24px auto;
+}
+
+.mixed-mem-targets .target-word {
+  margin-top: 36px;
+}
+
+.target-word {
+  height: 200px;
+}
+
+.word-choices, .story-choices {
+  margin-top: 64px;
+}
+
+.word-choices label {
+  font-size: 150%;
+}
+
+.word-choices input[type=checkbox]
+{
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(2); /* IE */
+  -moz-transform: scale(2); /* FF */
+  -webkit-transform: scale(2); /* Safari and Chrome */
+  -o-transform: scale(2); /* Opera */
+  padding: 10px;
+}
+
+.no-selection {
+  display: none;
+}
+
+.timer {
+  font-size: 150%;
+}
+
+/* Eyes */
+img.eyes {
+  width: 524px;
+  height: auto;
+}
+
+
+/* Shapes */
+.shapes-img {
+  width: 900px!important;
+  height: auto!important;
+}
+
+.shapes-subtest3 .shapes-img {
+  width: 940px!important;
+  height: auto!important;
+}
+
+.shapes-subtest4 .shapes-img {
+  width: 900px!important;
+  height: auto!important;
+}
+
+.shapes-subtest5 .shapes-img {
+  width: auto!important;
+  height: 500px!important;
+}
+
+.shapes-test-container {
+  position: relative;
+  width: 900px;
+  margin: 0 auto;
+  margin-bottom: 12px;
+}
+
+.shapes-test-container.shapes-subtest3 {
+  position: relative;
+  width: 1140px;
+  margin: 0 auto;
+  margin-bottom: 56px;
+}
+
+.shapes-test-container.shapes-subtest4 {
+  position: relative;
+  width: 900px;
+  margin: 0 auto;
+  margin-bottom: 36px;
+}
+
+.shapes-test-table {
+  margin: 0 auto;
+  width: 880px;
+  position: absolute;
+  top: 230px;
+  left: 10px;
+}
+
+.shapes-test-table.shapes-subtest3 {
+  margin: 0 auto;
+  width: 980px;
+  position: absolute;
+  top: 510px;
+  left: 82px;
+}
+
+.shapes-test-table.shapes-subtest4 {
+  top: 310px;
+  left: 100px;
+  width: 700px;
+}
+
+.shapes-test-table td {
+  border: 0;
+}
+
+.shapes-test-table.shapes-subtest5 {
+  position: initial;
+  width: 1000px;
+}
+
+
+.shapes-test-table input[type=checkbox]
+{
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(2); /* IE */
+  -moz-transform: scale(2); /* FF */
+  -webkit-transform: scale(2); /* Safari and Chrome */
+  -o-transform: scale(2); /* Opera */
+  padding: 10px;
+}

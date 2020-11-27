@@ -1,0 +1,13 @@
+JS library for R:
+
+http://www.statisticsblog.com/2015/10/random-samples-in-js-using-r-functions/
+
+R function:
+
+gen_output <- function(x) rnorm(1, mean = 100*(sin(x/30)+(x/300)^2), sd = 20)
+
+Also:
+https://www.npmjs.com/package/rnorm
+
+http://www.math.ucla.edu/~tom/distributions/normal.html
+
