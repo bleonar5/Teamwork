@@ -6,6 +6,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="vendor/materialize.min.js"></script>
   <script src="https://cdn.agora.io/sdk/release/AgoraRTCSDK-3.2.1.js"></script>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
   @yield('task_js')
 @stop
 
@@ -94,7 +96,7 @@ $( document ).ready(function() {
 <div class="container">
   <div class="row vertical-center">
     <div class='col-sm-9 text-center' id='content'>
-      @yield('task_frame')
+      
     </div>
     <div class="col-sm-3 text-center">
       <h4> Your Team: </h4>

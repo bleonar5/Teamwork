@@ -3,73 +3,72 @@
   <script src="{{ URL::asset('js/instructionPaginator.js') }}"></script>
   <script src="{{ URL::asset('js/cryptography.js') }}"></script>
 
+
   <link rel="stylesheet" href="{{ URL::asset('css/tasks.css') }}">
 
 <script>
   var mapping = ['J', 'A', 'H', 'C', 'G', 'B', 'E', 'I', 'F', 'D'];
   var trialStage = 1;
   var hypothesisCount = 0;
-  var isReporter = {{ $isReporter }}
+  var user_id = {{ $user->id }};
+  var page_count = 1;
 
 $( document ).ready(function() {
 
   $(".alert").hide();
   $(".next-prompt").hide();
 
-  var crypto = new Cryptography(mapping);
 
-  if(!isReporter){
-    setTimeout(function() {
-      $("#waiting-for-reporter").modal();
-    }, 5000);
-    setTimeout(function(){
-      $("#cryptography-end-form").submit();
-    }, 20000);
-  }
+   Pusher.logToConsole = true;
 
-  $("#finish").on('click', function() {
-    $("#cryptography-end-form").submit();
-  });
+    var pusher = new Pusher('7475be7ce897a0019304', {
+      cluster: 'us2'
+    });
 
-  $("#next").on('click', function(event) {
-    if($(".practice-equation").is(":visible") && $("#result").html() == '') {
-      $("#alert").html('Enter a practice equation in the box below!');
-      $("#alert").show();
-      event.stopImmediatePropagation();
-    }
-    else if($("#hypothesis-result").is(":visible") && $("#hypothesis-result").html() == '') {
-      $("#alert-hypothesis").html('Make a practice hypothesis using the drop-downs below!');
-      $("#alert-hypothesis").show();
-      event.stopImmediatePropagation();
-    }
-  });
+    var channel = pusher.subscribe('task-channel');
+    channel.bind('all-ready', function(data) {
+      $("#inst_" + page_count).hide();
+      page_count += 1;
+      //alert(JSON.stringify(data));
+          if(page_count > $(".inst").length){
+            console.log('longer');
 
-  $(".submit-equation").on("click", function(event) {
-    $(".alert").hide();
-    var equation = $("#equation").val().toUpperCase().replace(/=/g, '');
-    if(equation == '' || !equation) {
-      $("#alert").html('Enter your equation in the box below!');
-      $("#alert").show();
-      event.preventDefault();
-      return;
-    };
+            $("#pagination-display").hide();
+            $('.instr_nav').hide();
+            $("#waiting").show();
 
-    try {
-      var answer = crypto.parseEquation(equation);
-      console.log(answer);
-      $("#result").append('<br>' + equation + ' = ' + answer);
-      $("#equation").val('');
-      $(".next-prompt").show();
-      trialStage++;
-    }
+            if($(this).attr('type') == 'submit') {
+              $('form').submit();
+            }
+            else if(typeof(callback) === 'function') {
+              callback();
+            }
+          }
 
-    catch(e) {
-      $("#alert").html(e);
-      $("#alert").show();
-    }
+          // Show the new instruction
+          $("#inst_"+page_count).show();
 
-    event.preventDefault();
-  });
+          // Hide back button if we're at the start
+          if(page_count <= 1){
+            $("#instr_nav #back").hide();
+          }
+
+          else {
+            $("#instr_nav #back").show();
+          }
+
+          // If there is a page # display, update it
+          if($("#pagination-display").length) {
+
+            $("#curr-page").html(page_count);
+          }
+
+          $('#next').val('Next');
+
+          event.preventDefault();
+    });
+
+  
 
   instructionPaginator(function(){window.location = '/cryptography';});
 
@@ -79,267 +78,94 @@ $( document ).ready(function() {
 
       @if($introType == 'group_1' || $introType == 'group_2')
       <div id="inst_1" class="inst">
-        <h2 class="text-primary">Cryptography Task</h2>
+        <h3 class="text-primary">Welcome to your new group</h3>
         <h4>
-          Welcome to the Cryptography task, in which every letter from A to J has a numerical
-          value. Your goal is to find out the value of each letter.
+          You will be working together for 10-12 minutes, trying to solve the GROUP CRYPTOGRAPHY puzzle.
         </h4>
         <h4>
-          <strong>At this point everyone should gather around The Reporter’s laptop.</strong>
-          If you are not The Reporter, you can click "finish".
-        </h4>
-        <h4>
-          Once all three members of the group can see the screen of The Reporter’s
-          laptop, hit next. We will then review how the cryptography task works.
+          Please take a moment to introduce yourselves.
         </h4>
       </div> <!-- End inst_1 -->
       <div id="inst_2" class="inst">
-        <h2 class="text-primary">Cryptography Task</h2>
-        <h3>Instructions</h3>
+        <h3 class="text-primary">Overview</h3>
         <h4>
-          The goal of the task is to find the value of each letter using as few "trials" as possible. A trial has three steps.
-        </h4>
-        <h4>
-          The first step is to enter an
-          <span class="text-equation">equation</span>: this is a combination of
-          letters with + and - (you can't multiply or divide). To make things clear,
-          imagine the letters had the following values:<br><br>
-          <span class="bg-light p-md-2 mt-md-4 mb-lg-4">
-            A = 1;  B = 5;  C = 3;  D = 9;  E = 6;  F = 8;  G = 4;  H = 2;  I = 7;  J = 0
-          </span>
-        </h4>
-        <h4 class="mt-lg-4">
-          If we entered the equation D - E, the computer would tell us D - E = C
-          (as 9 - 6 = 3). As another example, you might enter DD + E. The computer
-          would say DD + E = AJB (99 + 6 = 105).
+          This task is very similar to the cryptography task you did as an invidividual.
         </h4>
         <h4>
-          Practice <span class="text-equation">entering an equation</span>,
-          then click "Submit Practice Equation". Once you're done
-          practicing, click "Next".
+          Now, you will be working on the task <strong>as a group</strong>.
         </h4>
-        <div class="alert alert-danger" id="alert" role="alert"></div>
-        <form class="form-inline justify-content-center practice-equation">
-          <input type="text" class="form-control form-control-lg mr-lg-5 ml-lg-5" name="equation" id="equation">
-          <button class="btn btn-lg btn-equation submit-equation" id="submit-equation" type="submit">Submit Practice Equation</button>
-        </form>
-        <h4 class="text-success" id="result"></h4>
-        <h4 class="text-equation next-prompt">Now, try entering another equation. Once you're done
-        practicing, click "Next".</h4>
+        <h4>
+          You each have a specific role.
+        </h4>
       </div> <!-- End inst_2 -->
       <div id="inst_3" class="inst">
+        <h3 class="text-primary">Review of cryptography</h3>
         <h4>
-          Second you can <span class="text-hypothesis">make a HYPOTHESIS</span>.
-          This is the part of each "trial" where you can get feedback from the computer
-          about one letter. For example, you might hypothesize that C = 3. Recall
-          again our example values:<br><br>
-          <span class="bg-light p-md-2 mt-md-4 mb-lg-4">
-            A = 1;  B = 5;  C = 3;  D = 9;  E = 6;  F = 8;  G = 4;  H = 2;  I = 7;  J = 0
-          </span>
+          Recall that in the Cryptography Task, every letter from A to J has a numerical value. The goal is to find out the value of each letter.
         </h4>
         <h4>
-          So, if your <span class="text-hypothesis">hypothesis</span> were C = 3,
-          the computer would tell you "TRUE".<br>If you had <span class="text-hypothesis">
-          hypothesized</span> that C = 7 then, in this case, the computer would
-          say "FALSE".
+          You do this through 'trials'. A trial has three steps:<br />
+          1. <span style='color:purple'>Enter an equation</span> (e.g. CC + B - A = ?)<br />
+          2. <span style='color:red'>Make a hypothesis</span> (e.g. C = 1)<br/>
+          3. <span style='color:green'>Guess the letter values</span>
+        </h4>
+        <h4>
+          Your goal is to solve the puzzle using <strong>the SMALLEST number of trials.</strong> This is how you get a good score.
         </h4>
       </div> <!-- End inst_3 -->
-
       <div id="inst_4" class="inst">
-        <h4>
-          Third, and last, at the end of each trial, your group can
-          <span class="text-guess">guess the letter values</span>. Your group can guess
-          as many letters as you like. If you enter a guess for every letter AND
-          all your guesses are correct, the computer will let you know that you
-          have completed the task! If you choose not to enter a guess for some
-          letters (or if any of your guesses were incorrect) you won't get any
-          feedback: we'll just move straight on to the next trial.
-        </h4>
-      </div> <!-- End inst_4 -->
-
-      <div id="inst_5" class="inst">
-        <h2 class="text-primary">
-          To review:
-        </h2>
-        <h4>
-          Each trial has three elements:
-        </h4>
-        <div class="row">
-          <div class="col-md-12 mb-lg-4 text-left">
-            <h4>
-              1. <span class="text-equation">Enter an equation (e.g. AA + H)</span>
-                   The computer will then tell you the answer.<br>
-              2. <span class="text-hypothesis">Make a hypothesis (e.g. A = 1)</span>
-                  Here, you get feedback about one letter.<br>
-              3. <span class="text-guess">Guess the letter values</span>. This
-              is where you keep track of the letter values, and submit your
-              guesses. If you guess all the letters correctly, then you have
-              solved the puzzle!
-            </h4>
-          </div>
-        </div>
-        <h4>
-          Remember, your goal is to solve the whole puzzle <strong> in the
-            minimum number of trials</strong>.<br>
-          Your group has a total of 10 minutes, and {{ $maxResponses }} trials.
-          If you don’t solve the task, you will get some points for
-          each letter-number combination you correctly identify.
-        </h4>
-        <h4>
-          No calculators are allowed.<br>
-          <strong>Take a few moments to discuss how you’ll approach the task.</strong><br>
-          The puzzle will begin when you hit "Next".
-        </h4>
-      </div> <!-- End inst_5 -->
-      <!-- end group1/group2 intro -->
-
-      @elseif($introType == 'group_5')
-      <div id="inst_1" class="inst">
-        <h2 class="text-primary">Cryptography Task</h2>
-        <h4>
-          Welcome to the Cryptography task, in which every letter from A to J has a numerical
-          value. Your goal is to find out the value of each letter.
-        </h4>
-        <h4>
-          You will only need one laptop for this task.
-        </h4>
-        <h4>
-          <strong>At this point everyone should gather around The Reporter’s laptop.</strong>
-          If you are not The Reporter, you can click "finish".
-        </h4>
-        <h4>
-          Once all three members of the group can see the screen of The Reporter’s
-          laptop, hit next.
-        </h4>
-      </div> <!-- End inst_1 -->
-      <div id="inst_2" class="inst">
-        <h2 class="text-primary">Cryptography Task</h2>
-        <h3>Instructions</h3>
-        <h4>
-          The goal of the task is to find the value of each letter using as few "trials" as possible. A trial has three steps.
-        </h4>
-        <h4>
-          The first step is to enter an
-          <span class="text-equation">equation</span>: this is a combination of
-          letters with + and - (you can't multiply or divide). To make things clear,
-          imagine the letters had the following values:<br><br>
-          <span class="bg-light p-md-2 mt-md-4 mb-lg-4">
-            A = 1;  B = 5;  C = 3;  D = 9;  E = 6;  F = 8;  G = 4;  H = 2;  I = 7;  J = 0
-          </span>
-        </h4>
-        <h4 class="mt-lg-4">
-          If we entered the equation D - E, the computer would tell us D - E = C
-          (as 9 - 6 = 3). As another example, you might enter DD + E. The computer
-          would say DD + E = AJB (99 + 6 = 105).
-        </h4>
-        <h4>
-          Practice <span class="text-equation">entering an equation</span>,
-          then click "Submit Practice Equation". Once you're done
-          practicing, click "Next".
-        </h4>
-        <div class="alert alert-danger" id="alert" role="alert"></div>
-        <form class="form-inline justify-content-center practice-equation">
-          <input type="text" class="form-control form-control-lg mr-lg-5 ml-lg-5" name="equation" id="equation">
-          <button class="btn btn-lg btn-equation submit-equation" id="submit-equation" type="submit">Submit Practice Equation</button>
-        </form>
-        <h4 class="text-success" id="result"></h4>
-        <h4 class="text-equation next-prompt">Now, try entering another equation. Once you're done
-        practicing, click "Next".</h4>
-      </div> <!-- End inst_2 -->
-      <div id="inst_3" class="inst">
-        <h4>
-          Second you can <span class="text-hypothesis">make a HYPOTHESIS</span>.
-          This is the part of each "trial" where you can get feedback from the computer
-          about one letter. For example, you might hypothesize that C = 3. Recall
-          again our example values:<br><br>
-          <span class="bg-light p-md-2 mt-md-4 mb-lg-4">
-            A = 1;  B = 5;  C = 3;  D = 9;  E = 6;  F = 8;  G = 4;  H = 2;  I = 7;  J = 0
-          </span>
-        </h4>
-        <h4>
-          So, if your <span class="text-hypothesis">hypothesis</span> were C = 3,
-          the computer would tell you "TRUE".<br>If you had <span class="text-hypothesis">
-          hypothesized</span> that C = 7 then, in this case, the computer would
-          say "FALSE".
-        </h4>
-      </div> <!-- End inst_3 -->
-
-      <div id="inst_4" class="inst">
-        <h4>
-          Third, and last, at the end of each trial, your group can
-          <span class="text-guess">guess the letter values</span>. Your group can guess
-          as many letters as you like. If you enter a guess for every letter AND
-          all your guesses are correct, the computer will let you know that you
-          have completed the task! If you choose not to enter a guess for some
-          letters (or if any of your guesses were incorrect) you won't get any
-          feedback: we'll just move straight on to the next trial.
-        </h4>
-      </div> <!-- End inst_4 -->
-
-      <div id="inst_5" class="inst">
-        <h2 class="text-primary">
-          To review:
-        </h2>
-        <h4>
-          Each trial has three elements:
-        </h4>
-        <div class="row">
-          <div class="col-md-12 mb-lg-4 text-left">
-            <h4>
-              1. <span class="text-equation">Enter an equation (e.g. AA + H)</span>
-                   The computer will then tell you the answer.<br>
-              2. <span class="text-hypothesis">Make a hypothesis (e.g. A = 1)</span>
-                  Here, you get feedback about one letter.<br>
-              3. <span class="text-guess">Guess the letter values</span>. This
-              is where you keep track of the letter values, and submit your
-              guesses. If you guess all the letters correctly, then you have
-              solved the puzzle!
-            </h4>
-          </div>
-        </div>
-        <h4>
-          Remember, your goal is to solve the whole puzzle <strong> in the
-            minimum number of trials</strong>.<br>
-          Your group has a total of 10 minutes, and {{ $maxResponses }} trials.
-          If you don’t solve the task, you will get some points for
-          each letter-number combination you correctly identify.
-        </h4>
-        <h4>
-          No calculators are allowed.<br>
-          <strong>Take a few moments to discuss how you’ll approach the task.</strong><br>
-          The puzzle will begin when you hit "Next".
-        </h4>
-      </div> <!-- End inst_5 -->
-      <!-- end group5 intro -->
-
-      @elseif($introType == 'group_5_alt')
-        <div id="inst_1" class="inst">
-          <h2 class="text-primary">Cryptography Task</h2>
+        <h3 class="text-primary">Instructions</h3>
+        @if ($user->group_role == "leader")
           <h4>
-            You will now attempt the Cryptography Task again.
+            You are the group's <strong>leader</strong>
           </h4>
           <h4>
-            This task is exactly the same as the puzzle you just completed. The only
-            difference is that the values of the letters have changed.
-          <h4>
-            If you would like to discuss strategy with your group, take a few moments
-            now, then hit "Next".
+            You are responsible for <span style='color:purple'>guessing the final letter values</span> for each letter (e.g. A=4, B=2)
           </h4>
-        </div> <!-- End inst_1 -->
-      @endif
-
-      @if($isReporter)
-        <div id="instr_nav" class="text-center">
-          <input class="btn btn-primary instr_nav btn-lg" type="button" name="back" id="back" value="&#8678; Back">
-          <input class="btn btn-primary instr_nav btn-lg" type="button" name="next" id="next" value="Next &#8680;"><br />
-        </div>
-      @else
-      <form action="/cryptography-end" id="cryptography-end-form" method="post">
-        {{ csrf_field() }}
-        <input type="hidden" name="task_result" id="task-result" value="0">
-        <div id="instr_nav" class="text-center">
-          <input class="btn btn-primary instr_nav btn-lg" type="button" name="finish" id="finish" value="Finish"><br />
-        </div>
-      </form>
+          <h4>
+            This is the <strong>last step</strong> in each 'trial'.
+          </h4>
+          <h4>
+            You are also responsible for making sure that the group follows the <strong>"equation rules"</strong>.
+          </h4>
+          <h4>
+            Each time your group breaks a rule, you pay a penalty of $2.
+          </h4>
+        @endif
+        @if ($user->group_role == "follower1")
+         <h4>
+            You have been assigned the role of <span style='color:red'>entering equations.</span>
+          </h4>
+          <h4>
+            An 'equation' is a combination of letters with + and - (<strong>you can't multiply or divide</strong>). For example, you might enter A + B.
+          </h4>
+          <h4>
+            Entering an equation is the <strong>first step</strong> in each 'trial'.
+          </h4>
+          <h4>
+            Feel free to discuss your equation with your group before entering it.
+          </h4>
+        @endif
+        @if($user->group_role == 'follower2')
+          <h4>
+            You have been assigned the role of <span style='color:green'>making hypotheses</span>
+          </h4>
+          <h4>
+            This is the part of each 'trial' where you can get feedback from the computer about one letter. For example, you might hypothesize that C = 3, and the computer would tell you whether your guess is correct.
+          </h4>
+          <h4>
+            This is the <strong>second step</strong> in each 'trial'.
+          </h4>
+          <h4>
+            Feel free to discuss your hypothesis with your group before entering it.
+          </h4>
+        @endif
+      </div> <!-- End inst_4 -->
+      
+      
+      <div id="instr_nav" class="text-center" style='display:flex'>
+        <input style='text-align:center;margin:auto' class="btn btn-primary instr_nav btn-lg" type="button" name="next" id="next" value="Next"><br />
+        
+      </div>
       @endif
 

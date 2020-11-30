@@ -5,9 +5,11 @@ namespace Teamwork\Http\Controllers;
 use Illuminate\Http\Request;
 use Teamwork\GroupTask;
 use Teamwork\Response;
+use Teamwork\Events\AllReadyInGroup;
 use \Teamwork\Tasks as Task;
 use \Teamwork\Time;
 use \Teamwork\Progress;
+use Teamwork\User;
 
 class GroupTaskController extends Controller
 {
@@ -427,11 +429,52 @@ class GroupTaskController extends Controller
       return view('layouts.participants.cryptography-room');
     }
 
+    public function nextCryptoPage(Request $request){
+      $this_user = User::find($request->id);
+      $user_group = $this_user->group_id;
+
+      $this_user->waiting = 1;
+      $this_user->save();
+
+      $team_users = User::where('group_id',$user_group)->get();
+      foreach($team_users as $key => $team_user){
+        if($team_user->waiting == 0){
+          return 'WAIT';
+        }
+      }
+      event(new AllReadyInGroup($this_user));
+
+      foreach($team_users as $key => $team_user){
+        $team_user->waiting = 0;
+        $team_user->save();
+      }
+      return 'GO';
+    }
+
+    public function getWaitingRoom(Request $request){
+        $user_id = \Auth::user()->id;
+
+        $this_user = User::where('id',$user_id)->first();
+
+        $this_user->in_room = true;
+        $this_user->group_role = rand(0,1) ? "leader" : "follower";
+
+        $this_user->save();
+
+        $room_users = User::where('in_room',true)->get();
+
+        event(new PlayerJoinedWaitingRoom($this_user));
+
+        return view('layouts.participants.waiting-room')->with('users',$room_users);
+    }
+
 
     public function cryptographyIntro(Request $request) {
       //
-      
-      GroupTask::find($request->session()->get('currentGroupTask'));
+      $user = User::find(\Auth::user()->id);
+      $user->waiting = 0;
+      $user->save();
+      //GroupTask::find($request->session()->get('currentGroupTask'));
       $currentTask = GroupTask::where('group_id',2)->where('name','Cryptography')->first();
       $request->session()->put('currentGroupTask', $currentTask->id);
       $parameters = unserialize($currentTask->parameters);
