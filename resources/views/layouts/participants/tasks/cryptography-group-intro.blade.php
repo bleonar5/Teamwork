@@ -21,7 +21,7 @@ $( document ).ready(function() {
 
    Pusher.logToConsole = true;
 
-    var pusher = new Pusher('7475be7ce897a0019304', {
+    var pusher = new Pusher('{{ env("PUSHER_APP_KEY") }}', {
       cluster: 'us2'
     });
 
@@ -66,7 +66,7 @@ $( document ).ready(function() {
           $('#next').val('Next');
 
           event.preventDefault();
-          
+
     });
 
   
