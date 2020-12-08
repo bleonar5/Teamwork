@@ -111,6 +111,13 @@ class GroupTask extends Model
       return Self::initializeTasks($group_id, $taskArray, $randomize);
     }
 
+    public static function initializeCryptoTasks($group_id, $randomize) {
+      $taskArray = '[
+        {"taskName":"Cryptography","taskParams":{"hasIndividuals":"false","intro":"group_1","hasGroup":"true","mapping":"random","maxResponses":"15"}},
+        {"taskName":"Conclusion","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"group_1","hasCode":"false","displayScoreGroup":"false", "digitalReceipt":"true", "sonaId": "547", "payment": "30", "feedback":"false", "feedbackLinkType":"group1Pilot"}}
+        ]';
+      return Self::initializeTasks($group_id, $taskArray, $randomize);
+    }
 
     public static function initializeLabIndividualTasks($group_id, $randomize) {
       $taskArray = '[
@@ -253,6 +260,8 @@ class GroupTask extends Model
         $g->name = $task->taskName;
         $g->order = $key + 1;
         $g->parameters = serialize($task->taskParams);
+        $g->mapping = serialize((new \Teamwork\Tasks\Cryptography)->getMapping('random'));
+
         $g->save();
 
         if($task->taskParams->hasIndividuals == 'true') {

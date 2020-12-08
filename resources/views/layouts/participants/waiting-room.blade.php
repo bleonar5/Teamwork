@@ -7,7 +7,19 @@
 
 @section('content')
 <script>
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+    return a;
+}
 $( document ).ready(function() {
+  console.log($('#roomTotal').text());
+  roomTotal = parseInt($('#roomTotal').text());
 
   var userId = {{ \Auth::user()->id }};
   var groupId = {{ \Auth::user()->group_id }};
@@ -30,13 +42,22 @@ $( document ).ready(function() {
     var channel = pusher.subscribe('my-channel');
     channel.bind('player-joined-room', function(data) {
       //alert(JSON.stringify(data));
-      if(!$('#'+data['user']['id']).length)
-        $('#waitingList').append("<li style='text-align:left' id='"+data['user']['id'].toString()+"'>"+data['user']['id']+" : "+data['user']['group_role']+"</li>");
+        roomTotal += 1;
+        $('#roomTotal').text(roomTotal.toString());
+        if(roomTotal == 3){
+          window.location.href = '/task-room';
+        } 
+        
+
+
+        //$('#waitingList').append("<li style='text-align:left' id='"+data['user']['id'].toString()+"'>"+data['user']['id']+" : "+data['user']['group_role']+"</li>");
     });
     channel.bind('player-left-room', function(data) {
+      roomTotal -= 1;
+      $('#roomTotal').text(roomTotal.toString());
       //alert(JSON.stringify(data));
-      if($('#'+data['user']['id']).length)
-        $('#'+data['user']['id']).remove();
+      //if($('#'+data['user']['id']).length)
+        //$('#'+data['user']['id']).remove();
     });
 });
 
@@ -44,12 +65,9 @@ $( document ).ready(function() {
 <div class="container" >
   <div class="row vertical-center">
     <div class="col-md-12 text-center">
+      <h4> You have entered the Skills Lab waiting room</h4>
       <div class=".col-sm-4 text-center">
-        <ul id='waitingList'>
-          @foreach ($users as $key => $user)
-            <li style="text-align:left" id="{{ $user->id }}">{{ $user->id}} : {{ $user->group_role }}</li>
-          @endforeach
-        </ul>
+        <h3>There are <span id='roomTotal'>{{ count($users) }}</span> participants in the room</h3>
       </div>
     </div>
   </div>

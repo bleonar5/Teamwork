@@ -11,7 +11,11 @@ use \Teamwork\Progress;
 
 class TaskRoomController extends Controller
 {
+
     public function taskRoom(Request $request){
+
+    	
+
       return view('layouts.participants.task-room')
       	->with('user', \Auth::user());
     }

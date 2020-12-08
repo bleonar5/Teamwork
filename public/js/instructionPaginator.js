@@ -23,7 +23,8 @@ function instructionPaginator(callback) {
       .done(function(data) {
         console.log(data);
         if(data == 'WAIT'){
-          $('#next').val('Waiting for teammates...');
+          $('#next').val('Waiting...');
+          $('#next').attr('disabled','true');
         }
         else{
           if(data == 'GO')
@@ -44,14 +45,11 @@ function instructionPaginator(callback) {
 
             $("#pagination-display").hide();
             $('.instr_nav').hide();
-            $("#waiting").show();
+            //$("#waiting").show();
 
-            if($(this).attr('type') == 'submit') {
-              $('form').submit();
-            }
-            else if(typeof(callback) === 'function') {
-              callback();
-            }
+            $.get('/cryptography', function(data) {
+              $('#content').html(data);
+            });
           }
 
           // Show the new instruction

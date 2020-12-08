@@ -26,14 +26,36 @@ class WaitingRoomController extends Controller
 
         $this_user = User::where('id',$user_id)->first();
 
-        $this_user->in_room = true;
+        $this_user->in_room = 1;
         $this_user->group_role = rand(0,1) ? "leader" : "follower";
 
         $this_user->save();
 
-        $room_users = User::where('in_room',true)->get();
+        $room_users = User::where('in_room',1)->get();
+        $indices = [0,1,2];
+        shuffle($indices);
+        $assignments = ['leader','follower1','follower2'];
+        if(count($room_users) == 3){
+            $room_users[$indices[0]]->group_role = 'leader';
+
+            $room_users[$indices[1]]->group_role = 'follower1';
+            //$room_users[$indices[1]]->group_id = $room_users[$indices[0]]->group_id;
+            $room_users[$indices[2]]->group_role = 'follower2';
+            //$room_users[$indices[2]]->group_id = $room_users[$indices[0]]->group_id;
+            foreach($room_users as $key=>$room_user){
+                $room_user->group_id = $room_users[$indices[0]]->group_id;
+                $room_user->in_room = 0;
+                $room_user->save();
+            }
+            event(new PlayerJoinedWaitingRoom($this_user));
+            return redirect('/task-room');
+        }
+        $all_users = User::get();
 
         event(new PlayerJoinedWaitingRoom($this_user));
+
+        Log::debug($room_users);
+        Log::debug($all_users);
 
         return view('layouts.participants.waiting-room')->with('users',$room_users);
     }

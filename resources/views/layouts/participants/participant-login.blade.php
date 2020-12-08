@@ -27,14 +27,9 @@ $( document ).ready(function() {
         {{ csrf_field() }}
         <fieldset class="bg-light p-4 rounded">
           <div class="form-group">
-            <label for="participant_id">Email Address</label>
+            <label for="participant_id">Username</label>
             <input type="text" class="form-control" name="participant_id"
                    value="{{ old('participant_id') }}">
-          </div>
-          <div class="form-group">
-            <label for="group_id">Group ID</label>
-            <input type="text" class="form-control" name="group_id"
-                   value="{{ old('group_id') }}">
           </div>
           @if(isset($package))
             <input type="hidden" name="task_package" value="{{ $package }}">

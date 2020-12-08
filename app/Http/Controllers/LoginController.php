@@ -19,16 +19,7 @@ class LoginController extends Controller
     }
 
     public function postParticipantLogin(Request $request) {
-      $group = Group::where('group_number', $request->group_id)->first();
-      $newGroup = false;
-      // If the group doesn't exist yet, create it
-      if(!$group){
-        $newGroup = true;
-        $group = new Group;
-        $group->group_number = $request->group_id;
-        $group->save();
-
-      }
+      
 
       // Create or find the user
       $user = User::firstOrCreate(['participant_id' => $request->participant_id],
@@ -36,9 +27,21 @@ class LoginController extends Controller
                                    'participant_id' => $request->participant_id,
                                    'password' => bcrypt('participant'),
                                    'role_id' => 3,
-                                   'group_id' => $group->id]);
+                                   'group_id'=>1]);
       $user->save();
       \Auth::login($user);
+
+      //$group_id = User::find($user()->id)->group_id;//Group::where('group_number', $request->group_id)->first();
+      $group = Group::where('group_number',$user->id)->first();
+      $newGroup = false;
+      // If the group doesn't exist yet, create it
+      if(!$group){
+        $newGroup = true;
+        $group = new Group;
+        $group->group_number = $user->id;
+        $group->save();
+
+      }
 
       // If the user exists, update the user's group ID, if needed
       if($group->id != $user->group_id) {
@@ -91,9 +94,14 @@ class LoginController extends Controller
        if($request->task_package == 'lab-round-5'){
          \Teamwork\GroupTask::initializeLabRoundFiveTasks(\Auth::user()->group_id, $randomize = false);
        }
-      }
+       else{
+         \Teamwork\GroupTask::initializeCryptoTasks($group->id, $randomize = false);
 
-      return redirect('/get-individual-task');
+       }
+      }
+      \Teamwork\GroupTask::initializeCryptoTasks($group->id, $randomize = false);
+
+      return redirect('/waiting-room');
     }
 
     public function individualLogin() {

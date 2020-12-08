@@ -27,6 +27,7 @@ $( document ).ready(function() {
 
     var channel = pusher.subscribe('task-channel');
     channel.bind('all-ready', function(data) {
+      $('#next').attr('disabled',false);
       $("#inst_" + page_count).hide();
       page_count += 1;
       //alert(JSON.stringify(data));
@@ -35,14 +36,13 @@ $( document ).ready(function() {
 
             $("#pagination-display").hide();
             $('.instr_nav').hide();
-            $("#waiting").show();
+            //$("#waiting").show();
 
-            if($(this).attr('type') == 'submit') {
-              $('form').submit();
-            }
-            else if(typeof(callback) === 'function') {
-              callback();
-            }
+            channel.unbind('all-ready');
+
+            $.get('/cryptography', function(data) {
+              $('#content').html(data);
+            });
           }
 
           // Show the new instruction
@@ -66,6 +66,7 @@ $( document ).ready(function() {
           $('#next').val('Next');
 
           event.preventDefault();
+          
     });
 
   
@@ -75,6 +76,7 @@ $( document ).ready(function() {
 });
 
 </script>
+<p>{{ $user->participant_id }}</p>
 
       @if($introType == 'group_1' || $introType == 'group_2')
       <div id="inst_1" class="inst">

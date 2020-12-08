@@ -18,6 +18,7 @@ class CreateGroupTasksTable extends Migration
             $table->integer('group_id')->unsigned();
             $table->foreign('group_id')->references('id')->on('groups');
             $table->integer('order');
+            $table->string('mapping')->default('[]');
             $table->string('name');
             $table->boolean('completed')->default(false);
             $table->integer('points')->default(0);

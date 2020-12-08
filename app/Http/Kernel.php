@@ -35,6 +35,8 @@ class Kernel extends HttpKernel
             \Teamwork\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
 
+            
+
         ],
 
         'api' => [
