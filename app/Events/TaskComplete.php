@@ -15,6 +15,7 @@ class TaskComplete implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $user;
 
     /**
      * Create a new event instance.
@@ -23,6 +24,7 @@ class TaskComplete implements ShouldBroadcast
      */
     public function __construct(User $user)
     {
+        $this->user = $user;
     }
 
     /**

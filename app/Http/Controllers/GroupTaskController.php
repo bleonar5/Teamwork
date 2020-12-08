@@ -478,8 +478,9 @@ class GroupTaskController extends Controller
     }
 
     public function taskComplete(Request $request) {
-      //$user = User::find(\Auth::user()->id);
-      event(new TaskComplete());
+      $user = User::find(\Auth::user()->id);
+      event(new TaskComplete($user));
+      return '200';
     }
 
     public function cryptographyIntro(Request $request) {

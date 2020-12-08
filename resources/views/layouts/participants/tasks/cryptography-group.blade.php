@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.bare')
 
 @section('js')
   <script src="{{ URL::asset('js/cryptography.js') }}"></script>
@@ -66,7 +66,7 @@ $( document ).ready(function() {
       $("#crypto-header").hide();
       $("#crypto-ui").hide();
       $("#task-end").show();
-    })
+    });
 
   $("#ok-time-up").on('click', function(event) {
     $("#task-result").val(0);
@@ -173,7 +173,7 @@ $( document ).ready(function() {
         $.post('/task-complete', {_token: "{{ csrf_token() }}"});
       }
 
-      else {
+      else if (trials == maxResponses) {
         $.post('/task-complete', {_token: "{{ csrf_token() }}"});
       }
       event.preventDefault();
@@ -306,7 +306,10 @@ $( document ).ready(function() {
 
         @else
     @endif
-    <div class="row vertical-center" id="task-end">
+    
+</div></div>
+
+<div class="row vertical-center" id="task-end">
       <div class="col-md-8 offset-md-2">
         @if($isReporter)
           <form action="/cryptography-end" id="cryptography-end-form" method="post">
@@ -325,7 +328,6 @@ $( document ).ready(function() {
         </form>
       </div>
   </div>
-</div></div>
 
   <div class="modal fade" id="last-trial">
     <div class="modal-dialog">

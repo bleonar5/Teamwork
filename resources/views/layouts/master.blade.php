@@ -23,6 +23,7 @@
                 integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
                 crossorigin="anonymous">
         </script>
+        <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
         <script>
           // Disable auto-complete for all forms
           $(document).ready(function(){

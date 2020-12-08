@@ -7,15 +7,12 @@
   <script src="vendor/materialize.min.js"></script>
   <script src="https://cdn.agora.io/sdk/release/AgoraRTCSDK-3.2.1.js"></script>
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
-  @yield('task_js')
 @stop
 
 @section('css')
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <link rel="stylesheet" href="{{ URL::asset('css/tasks.css') }}">
   <link rel="stylesheet" href="{{ URL::asset('css/room.css') }}">
-  @yield('task_css')
 @stop
 
 @section('content')
@@ -55,7 +52,7 @@
 
 $( document ).ready(function() {
 
-  jQuery.get( "https://teamwork-token-gen.herokuapp.com/access_token?channel=group&uid={{ $user->id }}", function( data ) {
+  jQuery.get( "https://teamwork-token-gen.herokuapp.com/access_token?channel=group{{ $user->group_id }}&uid={{ $user->id }}", function( data ) {
       token = data.token;
       console.log('token now: '+token);
       
@@ -65,7 +62,7 @@ $( document ).ready(function() {
           mode:"rtc",
           codec:"h264",
           appID:"0aa76e778b3d46548fa61c6a7adaf5c7",
-          channel: "group",
+          channel: "group{{ $user->group_id }}",
           uid:"{{ $user->id }}",
           token:token,
         };
