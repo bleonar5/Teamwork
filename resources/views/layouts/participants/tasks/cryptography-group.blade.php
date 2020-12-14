@@ -24,7 +24,7 @@ var trialStage = 1;
 var trials = 1;
 var isReady = true;
 var equations = [];
-var hypotheses = [];
+var hypotheses = ['-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-'];
 
 $( document ).ready(function() {
 
