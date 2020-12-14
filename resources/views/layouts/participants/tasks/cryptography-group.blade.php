@@ -24,7 +24,7 @@ var trialStage = 1;
 var trials = 1;
 var isReady = true;
 var equations = [];
-var hypotheses = ['-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-'];
+var hypotheses = [];
 
 $( document ).ready(function() {
 
@@ -41,6 +41,9 @@ $( document ).ready(function() {
     $('#payment').text(localStorage.getItem('payment'));
   }
   else{
+    $(".full-mapping").each(function(i, el){
+        local_guess.push($(el).val());
+      });
     localStorage.setItem('group_id',group_id);
     localStorage.setItem('trials',trials); 
     localStorage.setItem('equations',$('#answers').html());
