@@ -45,7 +45,7 @@ $( document ).ready(function() {
     localStorage.setItem('trials',trials); 
     localStorage.setItem('equations',$('#answers').html());
     localStorage.setItem('hypotheses',$('#hypothesis-result').html());
-    localStorage.setItem('mapping',[]);
+    localStorage.setItem('mapping','[]');
     localStorage.setItem('payment',$('#payment').text());
 
   }
