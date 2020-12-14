@@ -20,7 +20,10 @@ class CreateGroupTasksTable extends Migration
             $table->integer('order');
             $table->string('mapping')->default('[]');
             $table->string('name');
+            $table->integer('task_id')->default(1);
             $table->boolean('completed')->default(false);
+            $table->boolean('started')->default(false);
+            $table->integer('whose_turn')->default(0);
             $table->integer('points')->default(0);
             $table->timestamps();
         });

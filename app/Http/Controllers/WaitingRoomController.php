@@ -31,6 +31,10 @@ class WaitingRoomController extends Controller
 
         $this_user->save();
 
+        $this_group = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name','Cryptography')->first();
+        if($this_group->started == 1)
+            return redirect('/task-room');
+
         $room_users = User::where('in_room',1)->get();
         $indices = [0,1,2];
         shuffle($indices);
@@ -45,7 +49,17 @@ class WaitingRoomController extends Controller
             foreach($room_users as $key=>$room_user){
                 $room_user->group_id = $room_users[$indices[0]]->group_id;
                 $room_user->in_room = 0;
+                if($room_user->task_id == 0)
+                    $room_user->task_id = rand(1,16);
+                else
+                    $room_user->task_id = (($room_user->task_id + 1) % 16) + 1;
                 $room_user->save();
+                if($room_user->group_role == 'leader'){
+                    $group_task = \Teamwork\GroupTask::where('group_id',$room_user->group_id)->where('name','Cryptography')->first();
+                    $group_task->task_id = $room_user->task_id;
+                    $group_task->save();
+                }
+                
             }
             event(new PlayerJoinedWaitingRoom($this_user));
             return redirect('/task-room');

@@ -1,5 +1,6 @@
 function Toastify (options) {
-      M.toast({html: options.text, classes: options.classes});
+      return false;
+      //M.toast({html: options.text, classes: options.classes});
     }
 
     var Toast = {

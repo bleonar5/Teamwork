@@ -14,7 +14,7 @@ class ConnectUsersAndGroups extends Migration
     public function up()
     {
         Schema::table('users', function(Blueprint $table){
-          $table->integer('group_id')->unsigned()->after('participant_id');
+          $table->integer('group_id')->unsigned()->after('participant_id')->default(NULL);
           $table->foreign('group_id')->references('id')->on('groups');
         });
     }

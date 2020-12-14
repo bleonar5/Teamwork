@@ -10,7 +10,6 @@
 @stop
 
 @section('css')
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <link rel="stylesheet" href="{{ URL::asset('css/tasks.css') }}">
   <link rel="stylesheet" href="{{ URL::asset('css/room.css') }}">
 @stop
@@ -56,8 +55,6 @@ $( document ).ready(function() {
       token = data.token;
       console.log('token now: '+token);
       
-      alert( "Load was performed." );
-      
       params = {
           mode:"rtc",
           codec:"h264",
@@ -80,11 +77,19 @@ $( document ).ready(function() {
         });
       join(rtc,params);
     });
+  if (localStorage.getItem('group_id') === "{{ $user->group_id }}"){
+    jQuery.get('/cryptography', function(data){
+      console.log(data);
+      $('#content').html(data);
+    });
+  }
+  else{
 
-  jQuery.get('/cryptography-intro', function(data) {
-    console.log(data);
-    $('#content').html(data);
-  });
+    jQuery.get('/cryptography-intro', function(data) {
+      console.log(data);
+      $('#content').html(data);
+    });
+  }
 
 });
 

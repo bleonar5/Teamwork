@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->boolean('waiting')->default(0);
             $table->string('email');
+            $table->Integer('task_id')->default(0);
             $table->string('password');
             $table->string('group_role')->default('');
             $table->string('participant_id')->unique()->nullable();
