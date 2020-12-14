@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aa920df69f3fb66914c0957f0a53e22a",
+    "content-hash": "0c1793d04d95b5373bcb82454592d12d",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1633,6 +1633,10 @@
                 "rest",
                 "trigger"
             ],
+            "support": {
+                "issues": "https://github.com/pusher/pusher-http-php/issues",
+                "source": "https://github.com/pusher/pusher-http-php/tree/v4.1.4"
+            },
             "time": "2020-04-14T15:20:04+00:00"
         },
         {
@@ -4278,5 +4282,6 @@
     "platform": {
         "php": ">=5.6.4"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
 }
