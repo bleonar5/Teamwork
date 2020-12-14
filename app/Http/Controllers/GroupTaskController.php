@@ -8,6 +8,8 @@ use Teamwork\Response;
 use Teamwork\Events\AllReadyInGroup;
 use \Teamwork\Tasks as Task;
 use Teamwork\Events\TaskComplete;
+use Teamwork\Events\ActionSubmitted;
+use Teamwork\Events\RuleBroken;
 use \Teamwork\Time;
 use \Teamwork\Progress;
 use Teamwork\User;
@@ -480,8 +482,19 @@ class GroupTaskController extends Controller
     public function taskComplete(Request $request) {
       $user = User::find(\Auth::user()->id);
       event(new TaskComplete($user));
+      $this_task = GroupTask::where('group_id',$user->group_id)->where('name','Cryptography')->first();
+      $this_task->started  = 0;
+      $this_task->save();
       return '200';
     }
+
+    public function ruleBroken(Request $request) {
+      $user = User::find(\Auth::user()->id);
+      $rule_broken = $request->rule_broken;
+      event(new RuleBroken($user,$rule_broken));
+      return '200';
+    }
+
 
     public function cryptographyIntro(Request $request) {
       //
@@ -518,9 +531,13 @@ class GroupTaskController extends Controller
     }
 
     public function cryptography(Request $request) {
+      $user = User::find(\Auth::user()->id);
       $isReporter = $this->isReporter(\Auth::user()->id, \Auth::user()->group_id);
       $this->recordEndTime($request, 'intro');
       $currentTask = GroupTask::find($request->session()->get('currentGroupTask'));
+      $whose_turn = $currentTask->whose_turn;
+      $currentTask->started = 1;
+      $currentTask->save();
       $parameters = unserialize($currentTask->parameters);
       $mapping = (new \Teamwork\Tasks\Cryptography)->getMapping($parameters->mapping);
       $maxResponses = $parameters->maxResponses;
@@ -531,9 +548,11 @@ class GroupTaskController extends Controller
       $this->recordStartTime($request, 'task');
 
       return view('layouts.participants.tasks.cryptography-group')
-             ->with('user',\Auth::user())
+             ->with('user',$user)
+             ->with('task_id',$currentTask->task_id)
              ->with('mapping',json_encode($mapping))
              ->with('sorted', $sorted)
+             ->with('whose_turn',$whose_turn)
              ->with('maxResponses', $maxResponses)
              ->with('isReporter', $isReporter)
              ->with('hasGroup', $parameters->hasGroup);
@@ -625,6 +644,11 @@ class GroupTaskController extends Controller
       }
       $r->save();
 
+      $groupTask = GroupTask::find($groupTaskId);
+      $groupTask->whose_turn = ($groupTask->whose_turn + 1) % 3;
+      $groupTask->save();
+      event(new ActionSubmitted($groupTask));
+      return 200;
 
       $team_users = User::where('group_id',$this_user->group_id)->where('waiting',1)->get();
       if(count($team_users) == 3){

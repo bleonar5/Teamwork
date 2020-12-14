@@ -44,7 +44,7 @@ class LoginController extends Controller
       }
 
       // If the user exists, update the user's group ID, if needed
-      if($group->id != $user->group_id) {
+      if($group->id != $user->group_id && $user->group_id == 1) {
        $user->group_id = $group->id;
        $user->save();
       }

@@ -76,91 +76,90 @@ $( document ).ready(function() {
 });
 
 </script>
-<p>{{ $user->participant_id }}</p>
 
       @if($introType == 'group_1' || $introType == 'group_2')
       <div id="inst_1" class="inst">
-        <h3 class="text-primary">Welcome to your new group</h3>
-        <h4>
+        <h4 class="text-primary">Welcome to your new group</h4>
+        <h5>
           You will be working together for 10-12 minutes, trying to solve the GROUP CRYPTOGRAPHY puzzle.
-        </h4>
-        <h4>
+        </h5>
+        <h5>
           Please take a moment to introduce yourselves.
-        </h4>
+        </h5>
       </div> <!-- End inst_1 -->
       <div id="inst_2" class="inst">
-        <h3 class="text-primary">Overview</h3>
-        <h4>
+        <h4 class="text-primary">Overview</h4>
+        <h5>
           This task is very similar to the cryptography task you did as an invidividual.
-        </h4>
-        <h4>
+        </h5>
+        <h5>
           Now, you will be working on the task <strong>as a group</strong>.
-        </h4>
-        <h4>
+        </h5>
+        <h5>
           You each have a specific role.
-        </h4>
+        </h5>
       </div> <!-- End inst_2 -->
       <div id="inst_3" class="inst">
-        <h3 class="text-primary">Review of cryptography</h3>
-        <h4>
+        <h4 class="text-primary">Review of cryptography</h4>
+        <h5>
           Recall that in the Cryptography Task, every letter from A to J has a numerical value. The goal is to find out the value of each letter.
-        </h4>
-        <h4>
+        </h5>
+        <h5>
           You do this through 'trials'. A trial has three steps:<br />
           1. <span style='color:purple'>Enter an equation</span> (e.g. CC + B - A = ?)<br />
           2. <span style='color:red'>Make a hypothesis</span> (e.g. C = 1)<br/>
           3. <span style='color:green'>Guess the letter values</span>
-        </h4>
-        <h4>
+        </h5>
+        <h5>
           Your goal is to solve the puzzle using <strong>the SMALLEST number of trials.</strong> This is how you get a good score.
-        </h4>
+        </h5>
       </div> <!-- End inst_3 -->
       <div id="inst_4" class="inst">
-        <h3 class="text-primary">Instructions</h3>
+        <h4 class="text-primary">Instructions</h4>
         @if ($user->group_role == "leader")
-          <h4>
+          <h5>
             You are the group's <strong>leader</strong>
-          </h4>
-          <h4>
+          </h5>
+          <h5>
             You are responsible for <span style='color:purple'>guessing the final letter values</span> for each letter (e.g. A=4, B=2)
-          </h4>
-          <h4>
+          </h5>
+          <h5>
             This is the <strong>last step</strong> in each 'trial'.
-          </h4>
-          <h4>
+          </h5>
+          <h5>
             You are also responsible for making sure that the group follows the <strong>"equation rules"</strong>.
-          </h4>
-          <h4>
+          </h5>
+          <h5>
             Each time your group breaks a rule, you pay a penalty of $2.
-          </h4>
+          </h5>
         @endif
         @if ($user->group_role == "follower1")
-         <h4>
+         <h5>
             You have been assigned the role of <span style='color:red'>entering equations.</span>
-          </h4>
-          <h4>
+          </h5>
+          <h5>
             An 'equation' is a combination of letters with + and - (<strong>you can't multiply or divide</strong>). For example, you might enter A + B.
-          </h4>
-          <h4>
+          </h5>
+          <h5>
             Entering an equation is the <strong>first step</strong> in each 'trial'.
-          </h4>
-          <h4>
+          </h5>
+          <h5>
             Feel free to discuss your equation with your group before entering it.
-          </h4>
+          </h5>
         @endif
         @if($user->group_role == 'follower2')
-          <h4>
+          <h5>
             You have been assigned the role of <span style='color:green'>making hypotheses</span>
-          </h4>
-          <h4>
+          </h5>
+          <h5>
             This is the part of each 'trial' where you can get feedback from the computer about one letter. For example, you might hypothesize that C = 3, and the computer would tell you whether your guess is correct.
-          </h4>
-          <h4>
+          </h5>
+          <h5>
             This is the <strong>second step</strong> in each 'trial'.
-          </h4>
-          <h4>
+          </h5>
+          <h5>
             Feel free to discuss your hypothesis with your group before entering it.
-          </h4>
+          </h5>
         @endif
       </div> <!-- End inst_4 -->
       
