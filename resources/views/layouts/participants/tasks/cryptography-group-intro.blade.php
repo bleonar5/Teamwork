@@ -26,6 +26,12 @@ $( document ).ready(function() {
     });
 
     var channel = pusher.subscribe('task-channel');
+
+    channel.bind('clear-storage', function(data){
+      console.log('freedom!');
+      localStorage.clear();
+      window.location.href='/waiting-room';
+    });
     channel.bind('all-ready', function(data) {
       $('#next').attr('disabled',false);
       $("#inst_" + page_count).hide();

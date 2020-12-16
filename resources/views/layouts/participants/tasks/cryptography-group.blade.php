@@ -222,6 +222,7 @@ $( document ).ready(function() {
       localStorage.setItem('payment',$('#payment').text());
     });
     channel.bind('clear-storage', function(data){
+      console.log('freedom!');
       localStorage.clear();
       window.location.href='/waiting-room';
     });
