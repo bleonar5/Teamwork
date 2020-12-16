@@ -65,8 +65,8 @@ class WaitingRoomController extends Controller
                 }
                 
             }
-            event(new SendToTask($this_group));
-            return redirect('/task-room');
+            event(new PlayerJoinedWaitingRoom($this_user));
+            return 'redirect';
         }
         $all_users = User::get();
 
