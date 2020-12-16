@@ -484,7 +484,7 @@ class GroupTaskController extends Controller
       $user = User::find(\Auth::user()->id);
       $group_task = GroupTask::where('group_id',$user->group_id)->where('name','Cryptography')->first();
       $group_task->whose_turn = 0;
-      $group_task->started = 0;
+      $group_task->started = 1;
       $group_task->save();
       event( new ClearStorage($group_task));
       return view('layouts.participants.clear-storage');
