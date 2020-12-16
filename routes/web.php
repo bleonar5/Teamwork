@@ -75,6 +75,12 @@ Route::get('/clear-storage', [
 	'roles' => ['Participant','group'] // Only a logged in user can view this page
 ]);
 
+Route::get('/in-room', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@userInRoom',
+	'roles' => ['Participant','group'] // Only a logged in user can view this page
+]);
+
 Route::post('/set-task-end', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'GroupTaskController@setTaskEnd',

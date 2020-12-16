@@ -18,6 +18,9 @@ function shuffle(a) {
     return a;
 }
 $( document ).ready(function() {
+  $.get('/in-room', {},function(data){
+    console.log('in room');
+  });
   console.log($('#roomTotal').text());
   roomTotal = parseInt($('#roomTotal').text());
 

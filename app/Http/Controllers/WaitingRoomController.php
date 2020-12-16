@@ -21,19 +21,20 @@ class WaitingRoomController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getWaitingRoom(Request $request){
+    public function userInRoom(Request  $request){
         $user_id = \Auth::user()->id;
 
         $this_user = User::where('id',$user_id)->first();
 
+        if($this_group->started == 1)
+            return redirect('/task-room');
+
         $this_user->in_room = 1;
-        $this_user->group_role = rand(0,1) ? "leader" : "follower";
 
         $this_user->save();
 
         $this_group = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name','Cryptography')->first();
-        if($this_group->started == 1)
-            return redirect('/task-room');
+        
 
         $room_users = User::where('in_room',1)->get();
         $indices = [0,1,2];
@@ -70,6 +71,18 @@ class WaitingRoomController extends Controller
 
         Log::debug($room_users);
         Log::debug($all_users);
+
+        return '200';
+    }
+
+    public function getWaitingRoom(Request $request){
+        $user_id = \Auth::user()->id;
+
+        $this_user = User::where('id',$user_id)->first();
+
+        $room_users = User::where('in_room',1)->get();
+
+        
 
         return view('layouts.participants.waiting-room')->with('users',$room_users);
     }
