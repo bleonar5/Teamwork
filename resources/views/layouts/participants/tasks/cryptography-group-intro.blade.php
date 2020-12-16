@@ -14,6 +14,17 @@
   var page_count = 1;
 
 $( document ).ready(function() {
+  page_count = 1;
+  if (localStorage.getItem('pageCount')){
+    page_count = localStorage.getItem('pageCount');
+    $("#inst_1").hide();
+    $("#inst_"+page_count).show();
+  }
+  else{
+    localStorage.setItem('pageCount',page_count);
+  }
+  
+  
 
   $(".alert").hide();
   $(".next-prompt").hide();
@@ -36,6 +47,7 @@ $( document ).ready(function() {
       $('#next').attr('disabled',false);
       $("#inst_" + page_count).hide();
       page_count += 1;
+      localStorage.setItem('pageCount',page_count);
       //alert(JSON.stringify(data));
           if(page_count > $(".inst").length){
             console.log('longer');
@@ -45,6 +57,7 @@ $( document ).ready(function() {
             //$("#waiting").show();
 
             channel.unbind('all-ready');
+            localStorage.setItem('pageCount',1);
 
             $.get('/cryptography', function(data) {
               $('#content').html(data);
