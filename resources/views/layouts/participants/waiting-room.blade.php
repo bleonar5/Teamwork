@@ -61,8 +61,10 @@ $( document ).ready(function() {
         //$('#'+data['user']['id']).remove();
     });
     $.get('/in-room', {},function(data){
-    console.log('in room');
-  });
+      console.log('in room');
+      roomTotal += 1;
+          $('#roomTotal').text(roomTotal.toString());
+    });
 });
 
 </script>
