@@ -88,7 +88,7 @@ $( document ).ready(function() {
   if (localStorage.getItem('pageCount')){
     console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
     
-    page_count = localStorage.getItem('pageCount');
+    page_count = parseInt(localStorage.getItem('pageCount'),10);
     console.log(page_count);
     $("#inst_1").hide();
     $("#inst_"+page_count).show();
