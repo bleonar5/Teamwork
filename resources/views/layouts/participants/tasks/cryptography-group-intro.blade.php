@@ -15,17 +15,7 @@
 
 $( document ).ready(function() {
   page_count = 1;
-  if (localStorage.getItem('pageCount')){
-    console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
-    
-    page_count = localStorage.getItem('pageCount');
-    console.log(page_count);
-    $("#inst_1").hide();
-    $("#inst_"+page_count).show();
-  }
-  else{
-    localStorage.setItem('pageCount',page_count);
-  }
+
   
   
 
@@ -94,6 +84,18 @@ $( document ).ready(function() {
   
 
   instructionPaginator(function(){window.location = '/cryptography';});
+
+  if (localStorage.getItem('pageCount')){
+    console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
+    
+    page_count = localStorage.getItem('pageCount');
+    console.log(page_count);
+    $("#inst_1").hide();
+    $("#inst_"+page_count).show();
+  }
+  else{
+    localStorage.setItem('pageCount',page_count);
+  }
 
 });
 
