@@ -482,6 +482,7 @@ class GroupTaskController extends Controller
 
     public function clearStorage(Request $request){
       $user = User::find(\Auth::user()->id);
+      Log::debug($user);
       $group_task = GroupTask::where('group_id',$user->group_id)->where('name','Cryptography')->first();
       $group_task->whose_turn = 0;
       $group_task->started = 1;
