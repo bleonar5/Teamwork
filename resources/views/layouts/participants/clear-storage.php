@@ -9,7 +9,7 @@
 <script>
 $( document ).ready(function() {
   localStorage.clear();
-  window.location.href = '/waiting-room';
+  window.location.href = '/participant-login';
 });
 
 </script>

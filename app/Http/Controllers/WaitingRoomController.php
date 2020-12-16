@@ -29,8 +29,7 @@ class WaitingRoomController extends Controller
 
         $this_group = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name','Cryptography')->first();
 
-        if($this_group->started == 1)
-            return redirect('/task-room');
+        
 
         $this_user->in_room = 1;
 
@@ -84,6 +83,11 @@ class WaitingRoomController extends Controller
         $this_user = User::where('id',$user_id)->first();
 
         $room_users = User::where('in_room',1)->get();
+
+        $this_group = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name','Cryptography')->first();
+
+        if($this_group->started == 1)
+            return redirect('/task-room');
 
         
 

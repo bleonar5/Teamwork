@@ -224,7 +224,7 @@ $( document ).ready(function() {
     channel.bind('clear-storage', function(data){
       console.log('freedom!');
       localStorage.clear();
-      window.location.href='/task-room';
+      window.location.href='/participant-login';
     });
 
   $("#ok-time-up").on('click', function(event) {

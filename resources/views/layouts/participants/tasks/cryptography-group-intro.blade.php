@@ -30,7 +30,7 @@ $( document ).ready(function() {
     channel.bind('clear-storage', function(data){
       console.log('freedom!');
       localStorage.clear();
-      window.location.href='/task-room';
+      window.location.href='/participant-login';
     });
     channel.bind('all-ready', function(data) {
       $('#next').attr('disabled',false);
