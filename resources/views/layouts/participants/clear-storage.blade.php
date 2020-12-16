@@ -9,13 +9,12 @@
 <script>
 $( document ).ready(function() {
   localStorage.clear();
-  window.location.href = '/task-room';
+  window.location.href = '/participant-login';
 });
 
 </script>
 <div class="container" >
 </div>
 
-@include('layouts.includes.waiting-for-group')
 
 @stop
