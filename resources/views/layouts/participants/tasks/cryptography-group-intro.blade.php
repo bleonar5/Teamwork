@@ -17,8 +17,9 @@ $( document ).ready(function() {
   page_count = 1;
   if (localStorage.getItem('pageCount')){
     console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
-    console.log(page_count);
+    
     page_count = localStorage.getItem('pageCount');
+    console.log(page_count);
     $("#inst_1").hide();
     $("#inst_"+page_count).show();
   }
