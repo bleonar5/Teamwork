@@ -221,6 +221,10 @@ $( document ).ready(function() {
       $('#payment').text((((parseInt($('#payment').text()) - 2.00) > 0.00) ? (parseInt($('#payment').text()) - 2.00) : 0.00).toFixed(2));
       localStorage.setItem('payment',$('#payment').text());
     });
+    channel.bind('clear-storage', function(data){
+      localStorage.clear();
+      window.location.href='/waiting-room';
+    })
 
   $("#ok-time-up").on('click', function(event) {
     localStorage.clear();

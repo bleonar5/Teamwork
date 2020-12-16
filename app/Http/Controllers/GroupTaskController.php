@@ -9,6 +9,7 @@ use Teamwork\Events\AllReadyInGroup;
 use \Teamwork\Tasks as Task;
 use Teamwork\Events\TaskComplete;
 use Teamwork\Events\ActionSubmitted;
+use Teamwork\Events\ClearStorage;
 use Teamwork\Events\RuleBroken;
 use \Teamwork\Time;
 use \Teamwork\Progress;
@@ -479,6 +480,16 @@ class GroupTaskController extends Controller
         return view('layouts.participants.waiting-room')->with('users',$room_users);
     }
 
+    public function clearStorage(Request $request){
+      $user = User::find(\Auth::user()->id);
+      $group_task = GroupTask::where('group_id',$user->group_id)->where('name','Cryptography')->first();
+      $group_task->whose_turn = 0;
+      $group_task->started = 0;
+      $group_task->save();
+      event( new ClearStorage($group_task));
+      return view('layouts.participants.clear-storage');
+    }
+
     public function taskComplete(Request $request) {
       $user = User::find(\Auth::user()->id);
       event(new TaskComplete($user));
@@ -809,7 +820,7 @@ class GroupTaskController extends Controller
                                 'type' => $type]);
       $time->recordStartTime();
     }
-
+    //gotta change this
     private function recordEndTime(Request $request, $type) {
       $time = Time::where('user_id', '=', \Auth::user()->id)
                   ->where('group_tasks_id', '=', $request->session()->get('currentGroupTask'))
