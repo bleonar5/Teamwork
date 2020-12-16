@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Teamwork\User;
 use Teamwork\Events\PlayerJoinedWaitingRoom;
 use Teamwork\Events\PlayerLeftWaitingRoom;
+use Teamwork\Events\SendToTask;
 use Illuminate\Support\Facades\Log;
 
 use Illuminate\Queue\SerializesModels;
@@ -64,7 +65,7 @@ class WaitingRoomController extends Controller
                 }
                 
             }
-            event(new PlayerJoinedWaitingRoom($this_user));
+            event(new SendToTask($this_group));
             return redirect('/task-room');
         }
         $all_users = User::get();

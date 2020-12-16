@@ -45,9 +45,9 @@ $( document ).ready(function() {
       //alert(JSON.stringify(data));
         roomTotal += 1;
         $('#roomTotal').text(roomTotal.toString());
-        if(roomTotal == 3){
-          window.location.href = '/task-room';
-        } 
+        //if(roomTotal == 3){
+          //window.location.href = '/task-room';
+        //} 
         
 
 
@@ -63,7 +63,10 @@ $( document ).ready(function() {
     $.get('/in-room', {},function(data){
       console.log('in room');
       roomTotal += 1;
-          $('#roomTotal').text(roomTotal.toString());
+      $('#roomTotal').text(roomTotal.toString());
+    });
+    channel.bind('send-to-task', function(data) {
+        window.location.href= '/task-room';
     });
 });
 
