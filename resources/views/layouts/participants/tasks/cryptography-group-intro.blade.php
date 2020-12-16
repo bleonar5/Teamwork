@@ -11,7 +11,7 @@
   var trialStage = 1;
   var hypothesisCount = 0;
   var user_id = {{ $user->id }};
-  var page_count = 1;
+  var page_count;
 
 $( document ).ready(function() {
   page_count = 1;
