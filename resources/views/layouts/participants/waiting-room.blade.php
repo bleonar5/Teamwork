@@ -45,9 +45,9 @@ $( document ).ready(function() {
       //alert(JSON.stringify(data));
         roomTotal += 1;
         $('#roomTotal').text(roomTotal.toString());
-        //if(roomTotal == 3){
-          //window.location.href = '/task-room';
-        //} 
+        if(roomTotal == 3){
+          window.location.href = '/task-room';
+        } 
         
 
 
