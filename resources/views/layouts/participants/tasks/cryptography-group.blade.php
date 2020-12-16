@@ -224,7 +224,7 @@ $( document ).ready(function() {
     channel.bind('clear-storage', function(data){
       localStorage.clear();
       window.location.href='/waiting-room';
-    })
+    });
 
   $("#ok-time-up").on('click', function(event) {
     localStorage.clear();
