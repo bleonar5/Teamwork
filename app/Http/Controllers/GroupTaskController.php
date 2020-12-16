@@ -488,6 +488,7 @@ class GroupTaskController extends Controller
       $group_task->started = 0;
       $group_task->save();
       event( new ClearStorage($group_task));
+      Log::debug('clearing storage');
       return view('layouts.participants.clear-storage');
     }
 

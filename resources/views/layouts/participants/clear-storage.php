@@ -16,6 +16,5 @@ $( document ).ready(function() {
 <div class="container" >
 </div>
 
-@include('layouts.includes.waiting-for-group')
 
 @stop
