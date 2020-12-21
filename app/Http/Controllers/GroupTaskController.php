@@ -475,7 +475,7 @@ class GroupTaskController extends Controller
 
         $room_users = User::where('in_room',true)->get();
 
-        event(new PlayerJoinedWaitingRoom($this_user));
+        //event(new PlayerJoinedWaitingRoom($this_user));
 
         return view('layouts.participants.waiting-room')->with('users',$room_users);
     }

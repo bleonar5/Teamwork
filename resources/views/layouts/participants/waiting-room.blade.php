@@ -61,15 +61,13 @@ $( document ).ready(function() {
         //$('#'+data['user']['id']).remove();
     });
     $.get('/in-room', {},function(data){
-      console.log('in room');
-      roomTotal += 1;
-      $('#roomTotal').text(roomTotal.toString());
-      if (data === 'redirect')
-        window.location.href= '/task-room';
+      //if (data === 'redirect')
+        //window.location.href= '/task-room';
     });
     channel.bind('send-to-task', function(data) {
         window.location.href= '/task-room';
     });
+    
 });
 
 </script>
