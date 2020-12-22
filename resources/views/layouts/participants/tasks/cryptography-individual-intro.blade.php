@@ -3,7 +3,7 @@
 @section('js')
   <script src="{{ URL::asset('js/timer.js') }}"></script>
   <script src="{{ URL::asset('js/instructionPaginator.js') }}"></script>
-  <script src="{{ URL::asset('js/cryptography.js') }}"></script>
+  <script src="{{ URL::asset('js/cryptography-individual.js') }}"></script>
 @stop
 
 @section('css')
@@ -38,7 +38,7 @@ $( document ).ready(function() {
     }
   });
 
-  instructionPaginator(function(){window.location = '/cryptography';});
+  instructionPaginator(function(){window.location = '/cryptography-individual';});
 
   $(".submit-equation").on("click", function(event) {
     $(".alert").hide();

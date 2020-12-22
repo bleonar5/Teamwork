@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use \Teamwork\Tasks as Task;
 use Teamwork\Response;
 use \Teamwork\Time;
+use \Teamwork\User;
 
 class IndividualTaskController extends Controller
 {
@@ -158,8 +159,39 @@ class IndividualTaskController extends Controller
     }
 
     public function studyConsent(Request $request) {
+      if(env('APP_DEBUG') == true){
+        $this->getProgress();
+        $this_user = User::where('id',\Auth::user()->id)->first();
+
+        $currentTask = \Teamwork\GroupTask::where('name','Consent')->where('group_id',$this_user->group_id)->first();
+
+        $prior_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','<',$currentTask->order)->get();
+        $later_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','>=',$currentTask->order)->get();
+        foreach($prior_tasks as $key => $prior_task){
+          $prior_task->completed = 1;
+          $prior_task->save();
+        }
+        foreach($later_tasks as $key => $later_task){
+          $later_task->completed = 0;
+          $later_task->save();
+        }
+
+        request()->session()->put('currentGroupTask', $currentTask->id);
+        request()->session()->put('currentIndividualTask', \Teamwork\IndividualTask::where('group_task_id',$currentTask->id)->first()->id);
+        request()->session()->put('currentIndividualTaskName', 'Consent');
+
+
+
+      }
+      else
+        $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+      
+
       $this->recordStartTime($request, 'intro');
-      $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+      //$currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+      //$currentTask = \Teamwork\GroupTask::where('name','Consent')->where('group_id',$this_user->group_id)->first();
+      
+      
       $parameters = unserialize($currentTask->parameters);
       return view('layouts.participants.participant-study-consent')
              ->with('subjectPool', $parameters->subjectPool);
@@ -257,8 +289,35 @@ class IndividualTaskController extends Controller
     }
 
     public function studyIntro(Request $request) {
+      if(env('APP_DEBUG') == true){
+        $this->getProgress();
+        $this_user = User::where('id',\Auth::user()->id)->first();
+
+        $currentTask = \Teamwork\GroupTask::where('name','Intro')->where('group_id',$this_user->group_id)->first();
+
+        $prior_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','<',$currentTask->order)->get();
+        $later_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','>=',$currentTask->order)->get();
+        foreach($prior_tasks as $key => $prior_task){
+          $prior_task->completed = 1;
+          $prior_task->save();
+        }
+        foreach($later_tasks as $key => $later_task){
+          $later_task->completed = 0;
+          $later_task->save();
+        }
+
+        request()->session()->put('currentGroupTask', $currentTask->id);
+        request()->session()->put('currentIndividualTask', \Teamwork\IndividualTask::where('group_task_id',$currentTask->id)->first()->id);
+        request()->session()->put('currentIndividualTaskName', 'Intro');
+
+
+
+      }
+      else
+        $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+
+
       $this->recordStartTime($request, 'intro');
-      $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
       $parameters = unserialize($currentTask->parameters);
       $introContent = (new \Teamwork\Tasks\Intro)->getIntro($parameters->type);
 
@@ -332,7 +391,35 @@ class IndividualTaskController extends Controller
     }
 
     public function studyConclusion(Request $request) {
-      $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+      if(env('APP_DEBUG') == true){
+        $this->getProgress();
+        $this_user = User::where('id',\Auth::user()->id)->first();
+
+        $currentTask = \Teamwork\GroupTask::where('name','Conclusion')->where('group_id',$this_user->group_id)->first();
+
+        $prior_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','<',$currentTask->order)->get();
+        $later_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','>=',$currentTask->order)->get();
+        foreach($prior_tasks as $key => $prior_task){
+          $prior_task->completed = 1;
+          $prior_task->save();
+        }
+        foreach($later_tasks as $key => $later_task){
+          $later_task->completed = 0;
+          $later_task->save();
+        }
+
+        request()->session()->put('currentGroupTask', $currentTask->id);
+        request()->session()->put('currentIndividualTask', \Teamwork\IndividualTask::where('group_task_id',$currentTask->id)->first()->id);
+        request()->session()->put('currentIndividualTaskName', 'Consent');
+
+
+
+      }
+      else
+        $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+
+
+      //$currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
       $parameters = unserialize($currentTask->parameters);
       $conclusion = new \Teamwork\Tasks\Conclusion;
       $conclusionContent = $conclusion->getConclusion($parameters->type);
@@ -456,16 +543,69 @@ class IndividualTaskController extends Controller
     }
 
     public function bigFiveIntro(Request $request) {
+      if(env('APP_DEBUG') == true){
+        $this->getProgress();
+        $this_user = User::where('id',\Auth::user()->id)->first();
+
+        $currentTask = \Teamwork\GroupTask::where('name','BigFive')->where('group_id',$this_user->group_id)->first();
+
+        $prior_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','<',$currentTask->order)->get();
+        $later_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','>=',$currentTask->order)->get();
+        foreach($prior_tasks as $key => $prior_task){
+          $prior_task->completed = 1;
+          $prior_task->save();
+        }
+        foreach($later_tasks as $key => $later_task){
+          $later_task->completed = 0;
+          $later_task->save();
+        }
+
+        request()->session()->put('currentGroupTask', $currentTask->id);
+        request()->session()->put('currentIndividualTask', \Teamwork\IndividualTask::where('group_task_id',$currentTask->id)->first()->id);
+        request()->session()->put('currentIndividualTaskName', 'Consent');
+
+
+
+      }
+      else
+        $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+
       $this->recordStartTime($request, 'intro');
       return view('layouts.participants.tasks.big-five-intro');
     }
 
     public function bigFive(Request $request) {
+      if(env('APP_DEBUG') == true){
+        $this->getProgress();
+        $this_user = User::where('id',\Auth::user()->id)->first();
+
+        $currentTask = \Teamwork\GroupTask::where('name','BigFive')->where('group_id',$this_user->group_id)->first();
+
+        $prior_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','<',$currentTask->order)->get();
+        $later_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','>=',$currentTask->order)->get();
+        foreach($prior_tasks as $key => $prior_task){
+          $prior_task->completed = 1;
+          $prior_task->save();
+        }
+        foreach($later_tasks as $key => $later_task){
+          $later_task->completed = 0;
+          $later_task->save();
+        }
+
+        request()->session()->put('currentGroupTask', $currentTask->id);
+        request()->session()->put('currentIndividualTask', \Teamwork\IndividualTask::where('group_task_id',$currentTask->id)->first()->id);
+        request()->session()->put('currentIndividualTaskName', 'Consent');
+
+
+
+      }
+      else
+        $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
 
       // Record end time for task's intro
       $this->recordEndTime($request, 'intro');
 
-      $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+      //$currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
       $parameters = unserialize($currentTask->parameters);
       $statements = (new \Teamwork\Tasks\BigFive)->getStatements($parameters->statementOrder);
 
@@ -503,9 +643,38 @@ class IndividualTaskController extends Controller
     }
 
     public function cryptographyIntro(Request $request) {
+      if(env('APP_DEBUG') == true){
+        $this->getProgress();
+        $this_user = User::where('id',\Auth::user()->id)->first();
+
+        $currentTask = \Teamwork\GroupTask::where('name','Cryptography')->where('group_id',$this_user->group_id)->first();
+
+        $prior_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','<',$currentTask->order)->get();
+        $later_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','>=',$currentTask->order)->get();
+        foreach($prior_tasks as $key => $prior_task){
+          $prior_task->completed = 1;
+          $prior_task->save();
+        }
+        foreach($later_tasks as $key => $later_task){
+          $later_task->completed = 0;
+          $later_task->save();
+        }
+
+        request()->session()->put('currentGroupTask', $currentTask->id);
+        request()->session()->put('currentIndividualTask', \Teamwork\IndividualTask::where('group_task_id',$currentTask->id)->first()->id);
+        request()->session()->put('currentIndividualTaskName', 'Consent');
+
+
+
+      }
+      else
+        $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+
+
+
       $this->recordStartTime($request, 'intro');
 
-      $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+      //$currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
       $parameters = unserialize($currentTask->parameters);
       $maxResponses = $parameters->maxResponses;
       $mapping = (new \Teamwork\Tasks\Cryptography)->getMapping('random');
@@ -524,6 +693,34 @@ class IndividualTaskController extends Controller
              ->with('mapping', json_encode($mapping))
              ->with('aSorted', $aSorted)
              ->with('sorted', $aSorted);
+    }
+
+    public function cryptography(Request $request) {
+      $user = User::find(\Auth::user()->id);
+      $isReporter = $this->isReporter(\Auth::user()->id, \Auth::user()->group_id);
+      $this->recordEndTime($request, 'intro');
+      $currentTask = GroupTask::find($request->session()->get('currentGroupTask'));
+      //$whose_turn = $currentTask->whose_turn;
+      //$currentTask->started = 1;
+      //$currentTask->save();
+      $parameters = unserialize($currentTask->parameters);
+      $mapping = (new \Teamwork\Tasks\Cryptography)->getMapping($parameters->mapping);
+      $maxResponses = $parameters->maxResponses;
+      $sorted = $mapping;
+      sort($sorted);
+
+      // Record the start time for this task
+      $this->recordStartTime($request, 'task');
+
+      return view('layouts.participants.tasks.cryptography-individual')
+             ->with('user',$user)
+             ->with('task_id',$currentTask->task_id)
+             ->with('mapping',json_encode($mapping))
+             ->with('sorted', $sorted)
+             ->with('whose_turn',$whose_turn)
+             ->with('maxResponses', $maxResponses)
+             ->with('isReporter', $isReporter)
+             ->with('hasGroup', $parameters->hasGroup);
     }
 
     public function endCryptographyTask(Request $request) {
@@ -653,12 +850,47 @@ class IndividualTaskController extends Controller
     }
 
     public function memoryIntro(Request $request) {
+      if(env('APP_DEBUG') == true){
+        $this->getProgress();
+        $this_user = User::where('id',\Auth::user()->id)->first();
+
+        $currentTask = \Teamwork\GroupTask::where('name','Memory')->where('group_id',$this_user->group_id)->first();
+
+        $prior_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','<',$currentTask->order)->get();
+        $later_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','>=',$currentTask->order)->get();
+        foreach($prior_tasks as $key => $prior_task){
+          $prior_task->completed = 1;
+          $prior_task->save();
+        }
+        foreach($later_tasks as $key => $later_task){
+          $later_task->completed = 0;
+          $later_task->save();
+        }
+
+        request()->session()->put('currentGroupTask', $currentTask->id);
+        request()->session()->put('currentIndividualTask', \Teamwork\IndividualTask::where('group_task_id',$currentTask->id)->first()->id);
+        request()->session()->put('currentIndividualTaskName', 'Consent');
+
+
+
+      }
+      else
+        $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+
       $this->recordStartTime($request, 'intro');
       return view('layouts.participants.tasks.memory-individual-intro');
     }
 
     public function memory(Request $request) {
+
+      //$this_user = User::where('id',\Auth::user()->id)->first();
+      //request()->session()->put('currentIndividualTaskName', 'Memory');
       $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+      //$currentTask = \Teamwork\GroupTask::where('name','Memory')->where('group_id',$this_user->group_id)->first();
+      //request()->session()->put('currentIndividualTask', $currentTask->id);
+      //request()->session()->put('currentGroupTask', $currentTask->id);
+
+      //$currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
 
       $parameters = unserialize($currentTask->parameters);
       $memory = new \Teamwork\Tasks\Memory;
@@ -898,6 +1130,33 @@ class IndividualTaskController extends Controller
     }
 
     public function eyesIntro(Request $request) {
+      if(env('APP_DEBUG') == true){
+        $this->getProgress();
+        $this_user = User::where('id',\Auth::user()->id)->first();
+
+        $currentTask = \Teamwork\GroupTask::where('name','Eyes')->where('group_id',$this_user->group_id)->first();
+
+        $prior_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','<',$currentTask->order)->get();
+        $later_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','>=',$currentTask->order)->get();
+        foreach($prior_tasks as $key => $prior_task){
+          $prior_task->completed = 1;
+          $prior_task->save();
+        }
+        foreach($later_tasks as $key => $later_task){
+          $later_task->completed = 0;
+          $later_task->save();
+        }
+
+        request()->session()->put('currentGroupTask', $currentTask->id);
+        request()->session()->put('currentIndividualTask', \Teamwork\IndividualTask::where('group_task_id',$currentTask->id)->first()->id);
+        request()->session()->put('currentIndividualTaskName', 'Consent');
+
+
+
+      }
+      else
+        $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+
       $this->recordStartTime($request, 'intro');
       return view('layouts.participants.tasks.eyes-individual-intro');
     }
@@ -1004,8 +1263,37 @@ class IndividualTaskController extends Controller
     }
 
     public function shapesIntro(Request $request) {
+      if(env('APP_DEBUG') == true){
+        $this->getProgress();
+        $this_user = User::where('id',\Auth::user()->id)->first();
+
+        $currentTask = \Teamwork\GroupTask::where('name','Shapes')->where('group_id',$this_user->group_id)->first();
+
+        $prior_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','<',$currentTask->order)->get();
+        $later_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','>=',$currentTask->order)->get();
+        foreach($prior_tasks as $key => $prior_task){
+          $prior_task->completed = 1;
+          $prior_task->save();
+        }
+        foreach($later_tasks as $key => $later_task){
+          $later_task->completed = 0;
+          $later_task->save();
+        }
+
+        request()->session()->put('currentGroupTask', $currentTask->id);
+        request()->session()->put('currentIndividualTask', \Teamwork\IndividualTask::where('group_task_id',$currentTask->id)->first()->id);
+        request()->session()->put('currentIndividualTaskName', 'Consent');
+
+
+
+      }
+      else
+        $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+
+
+
       $this->recordStartTime($request, 'intro');
-      $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+      //$currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
       $parameters = unserialize($currentTask->parameters);
       return view('layouts.participants.tasks.shapes-individual-intro')
              ->with('subtest', $parameters->subtest);

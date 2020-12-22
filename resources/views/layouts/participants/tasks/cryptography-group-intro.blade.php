@@ -1,6 +1,6 @@
 
   <script src="{{ URL::asset('js/timer.js') }}"></script>
-  <script src="{{ URL::asset('js/instructionPaginator.js') }}"></script>
+  <script src="{{ URL::asset('js/cryptoPaginator.js') }}"></script>
   <script src="{{ URL::asset('js/cryptography.js') }}"></script>
 
 

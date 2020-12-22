@@ -35,6 +35,7 @@ $( document ).ready(function() {
   });
 
   Pusher.logToConsole = true;
+  console.log('{{ env("PUSHER_APP_KEY") }}');
 
     var pusher = new Pusher('{{ env("PUSHER_APP_KEY") }}', {
       cluster: 'us2'
@@ -45,9 +46,6 @@ $( document ).ready(function() {
       //alert(JSON.stringify(data));
         roomTotal += 1;
         $('#roomTotal').text(roomTotal.toString());
-        if(roomTotal == 3){
-          window.location.href = '/task-room';
-        } 
         
 
 
@@ -60,12 +58,14 @@ $( document ).ready(function() {
       //if($('#'+data['user']['id']).length)
         //$('#'+data['user']['id']).remove();
     });
-    $.get('/in-room', {},function(data){
-      //if (data === 'redirect')
-        //window.location.href= '/task-room';
-    });
     channel.bind('send-to-task', function(data) {
-        window.location.href= '/task-room';
+      console.log(data);
+        if(userId === data['user']['id']){
+          $.post("/leave-room", {
+            _token: "{{ csrf_token() }}"
+          } );
+          window.location.href='task-room';
+        }
     });
     
 });

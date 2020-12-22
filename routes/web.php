@@ -507,6 +507,12 @@ Route::get('/cryptography', [
 	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
 ]);
 
+Route::get('/cryptography-individual', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'IndividualTaskController@cryptographyIndividual',
+	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
+]);
+
 Route::post('/cryptography', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'GroupTaskController@saveCryptographyResponse',

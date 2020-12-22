@@ -16,16 +16,16 @@ class SendToTask implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $group_task;
+    public $user;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(GroupTask $group_task)
+    public function __construct(User $user)
     {
-        $this->group_task = $group_task;
+        $this->user = $user;
     }
 
     /**
@@ -35,7 +35,7 @@ class SendToTask implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return ['task-channel'];//return new PrivateChannel('user.'.$this->user->id);
+        return ['my-channel'];//return new PrivateChannel('user.'.$this->user->id);
     }
 
     public function broadcastAs()
