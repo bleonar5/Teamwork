@@ -25,7 +25,7 @@ $( document ).ready(function() {
 
    Pusher.logToConsole = true;
 
-    var pusher = new Pusher('{{ env("PUSHER_APP_KEY") }}', {
+    var pusher = new Pusher('{{ config("app.PUSHER_APP_KEY") }}', {
       cluster: 'us2'
     });
 

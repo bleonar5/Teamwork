@@ -47,16 +47,37 @@ class WaitingRoomController extends Controller
         Log::debug($room_users);
         Log::debug($all_users);
 
+
         return '200';
     }
 
     public function getWaitingRoom(Request $request){
+
         $user_id = \Auth::user()->id;
 
         $this_user = User::where('id',$user_id)->first();
 
         $this_user->in_room = 1;
         $this_user->save();
+
+
+        $group_task = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
+
+        if($group_task->started){
+            return redirect('/task-room/cryptography');
+        }
+
+        $room_users = User::where('in_room',1)->get();
+
+
+
+        foreach($room_users as $key => $room_user) {
+            $diff = $room_user->updated_at->diffInSeconds(\Carbon\Carbon::now());
+            if($diff > 30){
+                $room_user->in_room = 0;
+                $room_user->save();
+            }
+        }
 
         $room_users = User::where('in_room',1)->get();
 
@@ -84,6 +105,7 @@ class WaitingRoomController extends Controller
                     $group_task = \Teamwork\GroupTask::where('group_id',$room_user->group_id)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
                     $group_task->task_id = $room_user->task_id;
                     $group_task->save();
+                    event(new SendToTask($room_user));
                 }
                 else{
                     event(new SendToTask($room_user));
@@ -91,17 +113,19 @@ class WaitingRoomController extends Controller
                 $room_user->save();
                 
             }
-            return redirect('/task-room');
+            
+            return redirect('/task-room/cryptography');
         }
 
         $this_group = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
 
         if($this_group->started == 1)
-            return redirect('/task-room');
+            return redirect('/task-room/cryptography');
 
-        
         event(new PlayerJoinedWaitingRoom($this_user));
-        return view('layouts.participants.waiting-room')->with('users',$room_users);
+        return view('layouts.participants.waiting-room')
+            ->with('users',$room_users)
+            ->with('PUSHER_APP_KEY',config('app.PUSHER_APP_KEY'));
     }
 
     public function leaveWaitingRoom(Request $request){
@@ -114,6 +138,16 @@ class WaitingRoomController extends Controller
         $this_user->save();
 
         event(new PlayerLeftWaitingRoom($this_user));
+
+        return '200';
+    }
+
+    public function stillHere(Request $request){
+        $user_id = \Auth::user()->id;
+
+        $this_user = User::where('id',$user_id)->first();
+
+        $this_user->touch();
 
         return '200';
     }

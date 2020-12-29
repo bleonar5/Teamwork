@@ -231,4 +231,6 @@ return [
 
     ],
 
+    'PUSHER_APP_KEY' => env('PUSHER_APP_KEY')
+
 ];

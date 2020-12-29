@@ -3,8 +3,6 @@
 @section('js')
   <script src="{{ URL::asset('js/timer.js') }}"></script>
   <script src="{{ URL::asset('js/room.js') }}"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <script src="vendor/materialize.min.js"></script>
   <script src="https://cdn.agora.io/sdk/release/AgoraRTCSDK-3.2.1.js"></script>
   <meta name="csrf-token" content="{{ csrf_token() }}">
 @stop
@@ -77,18 +75,19 @@ $( document ).ready(function() {
         });
       join(rtc,params);
     });
-  if (localStorage.getItem('group_id') === "{{ $user->group_id }}"){
-    jQuery.get('/cryptography', function(data){
+  if("{{ $task->name }}" === "Cryptography"){
+    if ("{{ $task->intro_completed }}" === "1"){
+      jQuery.get('/cryptography', function(data){
+        console.log(data);
+        $('#content').html(data);
+      });
+    }
+    else{
+      jQuery.get('/cryptography-intro', function(data) {
       console.log(data);
       $('#content').html(data);
     });
-  }
-  else{
-
-    jQuery.get('/cryptography-intro', function(data) {
-      console.log(data);
-      $('#content').html(data);
-    });
+    }
   }
 
 });

@@ -1,7 +1,6 @@
 var Cryptography = class Cryptography {
   
 
-  ruleset;
 
   constructor(mapping,ruleset) {
     this.mapping = mapping;

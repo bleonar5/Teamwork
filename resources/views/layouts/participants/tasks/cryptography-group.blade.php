@@ -18,6 +18,8 @@ var whose_turn = {{ $whose_turn }};
 var task_id = {{ $task_id }};
 var group_id = {{ $user->group_id }};
 var local_guess = [];
+var responses = '';
+var time_remaining;
 
 
 var trialStage = 1;
@@ -25,25 +27,56 @@ var trials = 1;
 var isReady = true;
 var equations = [];
 var hypotheses = [];
+var mapping_guess = '';
+var payment = 8.00;
+var guesses = [];
+
 
 $( document ).ready(function() {
-
-  if (localStorage.getItem('group_id') == group_id){
-    trials = localStorage.getItem('trials');
-    $('')
-    $('#answers').html(localStorage.getItem('equations'));
-    $('#hypothesis-result').html(localStorage.getItem('hypotheses'));
+  time_remaining = parseInt('{{ $time_remaining }}');
+  responses = $('<div>').html('{{ $responses }}')[0].textContent;
+  console.log(responses);
+  responses = JSON.parse(responses);
+  console.log(responses);
+  if (responses.length  > 0){
+    for(var i = 0; i < responses.length; i++){
+      if(responses[i]['prompt'].includes('Guess Full Mapping')){
+        console.log(responses[i]['response'].split(', Correct: ')[0]);
+        if(responses[i]['response'].split(', Correct: ')[0].includes(','))
+          guesses = responses[i]['response'].split(', Correct: ')[0].split(',');
+        else
+          guesses = [responses[i]['response'].split(', Correct: ')[0]];
+        console.log(guesses);
+        $(".full-mapping").each(function(i, el){
+          
+          $(el).val(guesses[i].split('=')[1]);
+        });
+        //mapping_guess = '['+responses[i]['response'].split(', Correct: ')[0]+']';
+        //mapping_guess = JSON.parse(mapping_guess);
+        console.log(mapping_guess);
+        trials++;
+        payment -= 0.50;
+      }
+      if(responses[i]['prompt'].includes('Propose Hypothesis')){
+        $("#hypothesis-result").append('<h5>' + responses[i]['response'].replace(':','is').replace('=',' = ') + '</h5>');
+      }
+      if(responses[i]['prompt'].includes('Propose Equation')){
+        $("#answers").append('<h5 class="answer">' + responses[i]['response'].replace('=',' = ') + '</h5>');
+        //equations.push(response[i]['response']);
+      }
+      if(responses[i]['prompt'].includes('Rule Broken')){
+         payment -= 2.00;
+      }
+    }
+    $('#payment').text(payment.toFixed(2));
+    
     //$('#mapping-list').html(localStorage.getItem('mapping'));
-    local_guess = JSON.parse(localStorage.getItem('mapping'));
-    $(".full-mapping").each(function(i, el){
-        $(el).val(local_guess[i]);
-      });
-    $('#payment').text(localStorage.getItem('payment'));
+    //local_guess = JSON.parse(localStorage.getItem('mapping'));
+    //$(".full-mapping").each(function(i, el){
+        //$(el).val(local_guess[i]);
+      //});
   }
   else{
-    $(".full-mapping").each(function(i, el){
-        local_guess.push($(el).val());
-      });
     localStorage.setItem('group_id',group_id);
     localStorage.setItem('trials',trials); 
     localStorage.setItem('equations',$('#answers').html());
@@ -59,23 +92,23 @@ $( document ).ready(function() {
   switch(whose_turn){
     case 0:
       $('#submit-mapping').attr('disabled',true);
-      $('#submit-mapping').text('Waiting...');
+      $('#submit-mapping').text('Waiting for Team');
       $('#submit-hypothesis').attr('disabled',true);
-      $('#submit-hypothesis').text('Waiting...');
+      $('#submit-hypothesis').text('Waiting for Team');
       $('#order-instructions').modal('toggle');
       break;
     case 1:
       $('#submit-mapping').attr('disabled',true);
-      $('#submit-mapping').text('Waiting...');
+      $('#submit-mapping').text('Waiting\nFor Teammates...');
       $('#submit-equation').attr('disabled',true);
-      $('#submit-equation').text('Waiting...');
+      $('#submit-equation').text('Waiting\nFor Teammates...');
       $('#order-instructions').modal('toggle');
       break;
     case 2:
       $('#submit-hypothesis').attr('disabled',true);
-      $('#submit-hypothesis').text('Waiting...');
+      $('#submit-hypothesis').text('Waiting\nFor Teammates...');
       $('#submit-equation').attr('disabled',true);
-      $('#submit-equation').text('Waiting...');
+      $('#submit-equation').text('Waiting\nFor Teammates...');
       $('#order-instructions').modal('toggle');
       break;
     default:
@@ -84,7 +117,7 @@ $( document ).ready(function() {
   }
   Pusher.logToConsole = true;
 
-    var pusher = new Pusher('{{ env("PUSHER_APP_KEY") }}', {
+    var pusher = new Pusher('{{ config("app.PUSHER_APP_KEY") }}', {
       cluster: 'us2'
     });
 
@@ -139,7 +172,7 @@ $( document ).ready(function() {
   $('#rule_2').text(rule_desc[rules[task_id][1] - 1])
 
 
-  initializeTimer(600, function() {
+  initializeTimer(time_remaining, function() {
     $("#crypto-header").hide();
     $("#crypto-ui").hide();
     $("#task-end").show();
@@ -156,9 +189,9 @@ $( document ).ready(function() {
       switch(data.group_task.whose_turn){
         case 0:
           $('#submit-mapping').attr('disabled',true);
-          $('#submit-mapping').text('Waiting...');
+          $('#submit-mapping').text('Waiting for Team');
           $('#submit-hypothesis').attr('disabled',true);
-          $('#submit-hypothesis').text('Waiting...');
+          $('#submit-hypothesis').text('Waiting for Team');
           $('#submit-equation').attr('disabled',false);
           $('#submit-equation').text('Submit');
           //$('#order-instructions').modal('toggle');
@@ -172,18 +205,18 @@ $( document ).ready(function() {
           break;
         case 1:
           $('#submit-mapping').attr('disabled',true);
-          $('#submit-mapping').text('Waiting...');
+          $('#submit-mapping').text('Waiting for Team');
           $('#submit-equation').attr('disabled',true);
-          $('#submit-equation').text('Waiting...');
+          $('#submit-equation').text('Waiting for Team');
           $('#submit-hypothesis').attr('disabled',false);
           $('#submit-hypothesis').text('Submit');
           //$('#order-instructions').modal('toggle');
           break;
         case 2:
           $('#submit-hypothesis').attr('disabled',true);
-          $('#submit-hypothesis').text('Waiting...');
+          $('#submit-hypothesis').text('Waiting for Team');
           $('#submit-equation').attr('disabled',true);
-          $('#submit-equation').text('Waiting...');
+          $('#submit-equation').text('Waiting for Team');
           $('#submit-mapping').attr('disabled',false);
           $('#submit-mapping').text('Submit');
           //$('#order-instructions').modal('toggle');
@@ -245,6 +278,7 @@ $( document ).ready(function() {
 
       if(equation == '') {
         event.preventDefault();
+        $('#invalid_equation').modal('toggle');
         return;
       };
 
@@ -273,12 +307,12 @@ $( document ).ready(function() {
           }, function(data) {
             console.log(data);
               
-            //if(data == 'WAIT'){
+            if(data == 'WAIT'){
 
-              //$('#submit-equation').text('Waiting...');
-              //$('#submit-equation').attr('disabled',true);
+              $('#submit-equation').text('Waiting for Team');
+              $('#submit-equation').attr('disabled',true);
               //Ready = false;
-            //}
+            }
            //sReady = false;
             
           } );
@@ -286,6 +320,8 @@ $( document ).ready(function() {
       catch(e) {
         var res = crypto.parseEquation(equation,trials);
         console.log(res);
+        $('#alert-text').text(res);
+        $('#invalid_equation').modal('toggle');
         $("#alert").html(e);
         $("#alert").show();
       }
@@ -310,12 +346,12 @@ $( document ).ready(function() {
           guess: $("#hypothesis-left").val() + '=' + $("#hypothesis-right").val() + ' : ' + output
         }, function(data) {
           console.log(data);
-          //if(data == 'WAIT'){
-            //$('#submit-hypothesis').text('Waiting...');
-            //$('#submit-hypothesis').attr('disabled',true);
+          if(data == 'WAIT'){
+            $('#submit-hypothesis').text('Waiting for Team');
+            $('#submit-hypothesis').attr('disabled',true);
             //isReady = false;
-          //}
-          //isReady = false;
+          }
+          isReady = false;
           
         });
       event.preventDefault();
@@ -345,11 +381,11 @@ $( document ).ready(function() {
           guess: guessStr
         }, function(data) {
           console.log(data);
-          //if(data=='WAIT'){
-          //  $('#submit-mapping').text('Waiting...');
-          //  $('#submit-mapping').attr('disabled',true);
-            //isReady = false;
-          //}
+          if(data=='WAIT'){
+            $('#submit-mapping').text('Waiting for Team');
+            $('#submit-mapping').attr('disabled',true);
+            isReady = false;
+          }
           //isReady = false;
           
         } );
@@ -375,14 +411,14 @@ $( document ).ready(function() {
         @if ($user->group_role == "leader")
           <form name="cryptography" id="crypto-form">
             <div class='row'>
-              <div class="col-sm-2 " style="border-right:1px solid #DCDCDC">
+              <div class="col-sm-3 " style="border-right:1px solid #DCDCDC">
                 <h4 class="text-guess">Current Guesses</h4>
-                <div id="mapping-list" >
+                <div class='col-sm-11' style='float:center;margin:auto' id="mapping-list" >
                   @foreach($sorted as $key => $el)
                     <div style='display:flex'>
                       <span>{{ $el }} = </span>
-                      <select style='width:50%;margin-left:auto;' class="form-control full-mapping" name="{{ $el }}">
-                          <option>---</option>
+                      <select data-stop-refresh="true" style='width:55%;margin-left:auto;' class="form-control full-mapping" name="{{ $el }}">
+                          <option value='---'>---</option>
                           @for($i = 0; $i < count($sorted); $i++)
                             <option value="{{ $i }}">{{ $i }}</option>
                           @endfor
@@ -391,7 +427,7 @@ $( document ).ready(function() {
                   @endforeach
                 </div>
               </div>
-              <div id='leader-dashboard' class='col-sm-10'>
+              <div id='leader-dashboard' class='col-sm-9'>
                 <div class='row'>
                   <div class='col-sm-12'>
                     <h4 style='color:#595959; background:#f2f2f2;margin-right:auto;text-align:left'>LEADER Dashboard</h4>
@@ -414,11 +450,11 @@ $( document ).ready(function() {
                 <span style='color:red;text-align:left'><i>Each 'trial' costs $0.50</i></span>
                 </p><br/>
                 <div class='row'>
-                  <div class='col-sm-4'>
+                  <div class='col-sm-5'>
                     <button style='float:left;' type='button' class="sub-btn btn btn-lg btn-primary" id="submit-mapping" >Submit</button><br />
                     <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#review-instructions" style='float:left;margin-top:20px'>Review Instructions</button>
                   </div>
-                  <div class='col-sm-8'>
+                  <div class='col-sm-7'>
                     <p style='text-align:left;justify-content: left'><i>Click 'submit' <b>after each trial.</b> You do NOT need to guess all the letters to click submit. If you have all the letters correct, the task is complete! You will be able to submit once both of your teammates have finished their turns.</i></p>
                   </div>
                 </div>
@@ -466,7 +502,7 @@ $( document ).ready(function() {
                     <h5>
                       Hypothesize the value of a single letter (e.g. F = 7)
                     </h5>
-                    <select class="form-control propose" id="hypothesis-left">
+                    <select class="form-control " id="hypothesis-left">
                         <option>---</option>
                         @foreach($sorted as $key => $el)
                           <option>{{ $el }}</option>
@@ -475,19 +511,20 @@ $( document ).ready(function() {
                     <span>
                       =
                     </span>
-                    <select class="form-control propose" id="hypothesis-right">
+                    <select class="form-control " id="hypothesis-right">
                         <option>---</option>
                         @for($i = 0; $i < count($sorted); $i++)
                           <option>{{ $i }}</option>
                         @endfor
                     </select>
+                    <div class="text-center">
+                      <button type='button' class="sub-btn btn btn-lg btn-primary" id="submit-hypothesis" >Submit</button>
+                    </div>
+                    <div class="text-center">
+                      <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#review-instructions">Review Instructions</button>
+                    </div>
                 </div>
-                <div class="text-center">
-                  <button type='button' class="sub-btn btn btn-lg btn-primary" id="submit-hypothesis" >Submit</button>
-                </div>
-                <div class="text-center">
-                  <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#review-instructions">Review Instructions</button>
-                </div>
+                
               </div>
               <div class="col-md-5">
                 <h4 class="text-hypothesis">Hypotheses</h4>
@@ -570,7 +607,7 @@ $( document ).ready(function() {
       <div class="modal-content">
         <div class="modal-body text-center">
           <h5>
-            In each round of this task, you and your teammates will complete your assigned steps in this order: submitting an equation, submitting an hypothesis, and submitting a guess at the final answer. <b>If at any point you see that your submit button is disabled and says 'Waiting...', this means that someone else on your team is taking their turn. Check in with your teammates if you are ever unsure of whose turn it is.
+            In each round of this task, you and your teammates will complete your assigned steps in this order: submitting an equation, submitting an hypothesis, and submitting a guess at the final answer. <b>If at any point you see that your submit button is disabled and says 'Waiting for Team', this means that someone else on your team is taking their turn. Check in with your teammates if you are ever unsure of whose turn it is.
           </h5>
         </div>
         <div class="modal-body text-center">
@@ -611,12 +648,41 @@ $( document ).ready(function() {
     </div><!-- modal-dialog -->
   </div><!-- modal -->
 
+  <div class="modal fade" id="invalid_equation">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title text-center">
+          The equation you submitted is not valid. Please only use the letters A-J plus '+' and '-'.
+          </h4>
+        </div>
+        <div class="modal-body text-center">
+          <button class="btn btn-lg btn-primary pull-right" id="ok-time-up" data-dismiss="modal" type="button">Ok</button>
+        </div>
+      </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+  </div><!-- modal -->
+
+    <div class="modal fade" id="invalid_hypothesis">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 id='alert-text' class="modal-title text-center">
+          </h4>
+        </div>
+        <div class="modal-body text-center">
+          <button class="btn btn-lg btn-primary pull-right" id="ok-time-up" data-dismiss="modal" type="button">Ok</button>
+        </div>
+      </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+  </div><!-- modal -->
+
   <div class="modal fade" id="rule_broken">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h4 class="modal-title text-center">
-          Your team has submitted an equation which violates one of your equation rules. Check with the "leader" of your team to see what these rules are.
+          Your team has submitted an equation which violates one of your equation rules. Your payment has decreased by $2. Check with the "leader" of your team to see what these rules are. 
           </h4>
         </div>
         <div class="modal-body text-center">

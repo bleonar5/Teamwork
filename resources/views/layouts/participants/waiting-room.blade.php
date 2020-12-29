@@ -35,9 +35,10 @@ $( document ).ready(function() {
   });
 
   Pusher.logToConsole = true;
-  console.log('{{ env("PUSHER_APP_KEY") }}');
+  console.log('{{ $PUSHER_APP_KEY }}');
+  console.log('tourd');
 
-    var pusher = new Pusher('{{ env("PUSHER_APP_KEY") }}', {
+    var pusher = new Pusher('{{ $PUSHER_APP_KEY }}', {
       cluster: 'us2'
     });
 
@@ -64,9 +65,17 @@ $( document ).ready(function() {
           $.post("/leave-room", {
             _token: "{{ csrf_token() }}"
           } );
-          window.location.href='task-room';
+          window.location.href='task-room/cryptography';
         }
     });
+
+    var itv = setInterval(function() {
+      console.log('GOING OFF');
+      $.post('/still-here', {
+        _token: "{{ csrf_token() }}"
+      });
+    },10000);
+
     
 });
 
@@ -76,7 +85,7 @@ $( document ).ready(function() {
     <div class="col-md-12 text-center">
       <h4> You have entered the Skills Lab waiting room</h4>
       <div class=".col-sm-4 text-center">
-        <h3>There are <span id='roomTotal'>{{ count($users) }}</span> participants in the room</h3>
+        <h3>There are <span id='roomTotal'>{{ count($users) }}</span> participants in the room.</h3>
       </div>
     </div>
   </div>

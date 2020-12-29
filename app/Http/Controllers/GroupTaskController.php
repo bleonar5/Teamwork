@@ -72,7 +72,7 @@ class GroupTaskController extends Controller
           return redirect('/memory-group');
 
         case "Cryptography":
-          return redirect('/task-room');
+          return redirect('/task-room/cryptography');
 
         case "Optimization":
           return redirect('/optimization-group-intro');
@@ -459,6 +459,10 @@ class GroupTaskController extends Controller
         $team_user->waiting = 0;
         $team_user->save();
       }
+
+      $group_task = \Teamwork\GroupTask::where('group_id',$user_group)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
+      $group_task->instructions += 1;
+      $group_task->save();
       return 'GO';
     }
 
@@ -496,7 +500,7 @@ class GroupTaskController extends Controller
       $user = User::find(\Auth::user()->id);
       event(new TaskComplete($user));
       $this_task = GroupTask::where('group_id',$user->group_id)->where('name','Cryptography')->first();
-      $this_task->started  = 0;
+      $this_task->complete = 1;
       $this_task->save();
       return '200';
     }
@@ -505,6 +509,17 @@ class GroupTaskController extends Controller
       $user = User::find(\Auth::user()->id);
       $rule_broken = $request->rule_broken;
       event(new RuleBroken($user,$rule_broken));
+
+      $group_task = GroupTask::find($request->session()->get('currentGroupTask'));
+
+
+      $r = new Response;
+      $r->group_tasks_id = $group_task->id;
+      $r->user_id = $user->id;
+      $r->prompt = 'Rule Broken';
+
+      $r->response = 'n/a';
+      $r->save();
       return '200';
     }
 
@@ -515,7 +530,9 @@ class GroupTaskController extends Controller
       $user->waiting = 0;
       $user->save();
       //GroupTask::find($request->session()->get('currentGroupTask'));
-      $currentTask = GroupTask::where('group_id',$user->group_id)->where('name','Cryptography')->first();
+      $currentTask = \Teamwork\GroupTask::where('group_id',$user->group_id)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
+      $currentTask->started = 1;
+      $currentTask->save();
       $request->session()->put('currentGroupTask', $currentTask->id);
       $parameters = unserialize($currentTask->parameters);
       $maxResponses = $parameters->maxResponses;
@@ -540,6 +557,7 @@ class GroupTaskController extends Controller
              ->with('mapping', json_encode($mapping))
              ->with('aSorted', $aSorted)
              ->with('sorted', $aSorted)
+             ->with('instructions',$currentTask->instructions)
              ->with('introType', 'group_1');//$introType);
     }
 
@@ -547,9 +565,11 @@ class GroupTaskController extends Controller
       $user = User::find(\Auth::user()->id);
       $isReporter = $this->isReporter(\Auth::user()->id, \Auth::user()->group_id);
       $this->recordEndTime($request, 'intro');
-      $currentTask = GroupTask::find($request->session()->get('currentGroupTask'));
+      $currentTask = GroupTask::with('Response')->find($request->session()->get('currentGroupTask'));
+      #$#time_elapsed = $currentTask->updated_at
       $whose_turn = $currentTask->whose_turn;
       $currentTask->started = 1;
+      $currentTask->intro_completed = 1;
       $currentTask->save();
       $parameters = unserialize($currentTask->parameters);
       $mapping = (new \Teamwork\Tasks\Cryptography)->getMapping($parameters->mapping);
@@ -558,24 +578,40 @@ class GroupTaskController extends Controller
       sort($sorted);
 
       // Record the start time for this task
-      $this->recordStartTime($request, 'task');
+      $time = Time::where('user_id',\Auth::user()->id)
+                    ->where('group_tasks_id',$request->session()->get('currentGroupTask'))
+                    ->where('type','task')
+                    ->first();
+      if ($time){
+        $time_remaining = 600 - \Carbon\Carbon::parse($time->start_time)->diffInSeconds(\Carbon\Carbon::now());
+        
+      }
+
+      else{
+        $this->recordStartTime($request, 'task');
+        $time_remaining = 600;
+      }
+        
 
       return view('layouts.participants.tasks.cryptography-group')
              ->with('user',$user)
              ->with('task_id',$currentTask->task_id)
              ->with('mapping',json_encode($mapping))
              ->with('sorted', $sorted)
+             ->with('responses',$currentTask->response)
              ->with('whose_turn',$whose_turn)
              ->with('maxResponses', $maxResponses)
              ->with('isReporter', $isReporter)
-             ->with('hasGroup', $parameters->hasGroup);
+             ->with('hasGroup', $parameters->hasGroup)
+             ->with('time_remaining',$time_remaining);
+      
     }
 
     public function groupCryptography(Request $request) {
       $this_user = \Auth::user();
       $isReporter = $this->isReporter(\Auth::user()->id, \Auth::user()->group_id);
       $this->recordEndTime($request, 'intro');
-      $currentTask = GroupTask::find($request->session()->get('currentGroupTask'));
+      $currentTask = GroupTask::find($request->session()->get('currentGroupTask'))->with('Responses');
       $parameters = unserialize($currentTask->parameters);
       //$mapping = (new \Teamwork\Tasks\Cryptography)->getMapping($parameters->mapping);
       $mapping = unserialize($currentTask->mapping);
@@ -590,6 +626,7 @@ class GroupTaskController extends Controller
              ->with('mapping',json_encode($mapping))
              ->with('sorted', $sorted)
              ->with('user',$this_user)
+             ->with('responses',$currentTask->responses)
              ->with('maxResponses', $maxResponses)
              ->with('isReporter', $isReporter)
              ->with('hasGroup', $parameters->hasGroup);
@@ -643,7 +680,10 @@ class GroupTaskController extends Controller
       $r->group_tasks_id = $groupTaskId;
       $r->user_id = \Auth::user()->id;
       if($request->prompt == "Guess Full Mapping") {
+        $request->mapping = str_replace('"',"'",$request->mapping);
         $r->prompt = "Guess Full Mapping: ".json_encode($request->mapping);
+        $r->prompt = str_replace('"[','[',str_replace(']"',']',$r->prompt));
+
       }
       else {
         $r->prompt = $request->prompt;
@@ -661,7 +701,7 @@ class GroupTaskController extends Controller
       $groupTask->whose_turn = ($groupTask->whose_turn + 1) % 3;
       $groupTask->save();
       event(new ActionSubmitted($groupTask));
-      return 200;
+      //return 200;
 
       $team_users = User::where('group_id',$this_user->group_id)->where('waiting',1)->get();
       if(count($team_users) == 3){
@@ -683,7 +723,7 @@ class GroupTaskController extends Controller
       // If this participant isn't the reporter, we'll save an empty response
       // so that the group can continue when the reporter has finished
 
-      if(!$isReporter){
+      /*if(!$isReporter){
         $r = new Response;
         $r->group_tasks_id = $task->id;
         $r->user_id = \Auth::user()->id;
@@ -691,7 +731,7 @@ class GroupTaskController extends Controller
         $r->response = 'n/a';
         $r->save();
         return redirect('/end-group-task');
-      }
+      }*/
 
       $this->recordEndTime($request, 'task');
       $task->points = $request->task_result;
@@ -699,10 +739,10 @@ class GroupTaskController extends Controller
       $task->save();
 
       // Record the end time for this task
-      $time = Time::where('user_id', '=', \Auth::user()->id)
-                  ->where('group_tasks_id', '=', $task->id)
-                  ->first();
-      $time->recordEndTime();
+      //$time = Time::where('user_id', '=', \Auth::user()->id)
+        //          ->where('group_tasks_id', '=', $task->id)
+          //        ->first();
+      //$time->recordEndTime();
       $request->session()->put('waitingMsg', 'Please wait for the experiment to continue...');
       if(!$parameters->hasGroup) return redirect('/end-individual-task');
       else return redirect('/end-group-task');

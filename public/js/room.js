@@ -241,11 +241,11 @@ function Toastify (options) {
           var audioOnly = "${e://Field/audioOnly}";
           var videoOnly = "${e://Field/videoOnly}";
 
-      if (params.microphoneId != null && videoOnly != "true")
+      if (params.microphoneId != null)
         audio = true;
       else
         audio = false;
-      if (params.cameraId != null && audioOnly != "true")
+      if (params.cameraId != null)
         video = true;
       else
         video = false;

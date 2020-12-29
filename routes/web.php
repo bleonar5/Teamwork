@@ -555,7 +555,13 @@ Route::post('/leave-room', [
 	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
 ]);
 
-Route::get('/task-room', [
+Route::post('/still-here', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@stillHere',
+	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
+]);
+
+Route::get('/task-room/{task}', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'TaskRoomController@taskRoom',
 	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
