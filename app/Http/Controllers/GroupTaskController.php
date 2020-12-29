@@ -499,8 +499,8 @@ class GroupTaskController extends Controller
     public function taskComplete(Request $request) {
       $user = User::find(\Auth::user()->id);
       event(new TaskComplete($user));
-      $this_task = GroupTask::where('group_id',$user->group_id)->where('name','Cryptography')->first();
-      $this_task->complete = 1;
+      $this_task = GroupTask::with('Response')->find($request->session()->get('currentGroupTask'));
+      $this_task->completed = 1;
       $this_task->save();
       return '200';
     }
@@ -566,13 +566,15 @@ class GroupTaskController extends Controller
       $isReporter = $this->isReporter(\Auth::user()->id, \Auth::user()->group_id);
       $this->recordEndTime($request, 'intro');
       $currentTask = GroupTask::with('Response')->find($request->session()->get('currentGroupTask'));
+      Log::debug($request->session()->get('currentGroupTask'));
       #$#time_elapsed = $currentTask->updated_at
       $whose_turn = $currentTask->whose_turn;
       $currentTask->started = 1;
       $currentTask->intro_completed = 1;
       $currentTask->save();
       $parameters = unserialize($currentTask->parameters);
-      $mapping = (new \Teamwork\Tasks\Cryptography)->getMapping($parameters->mapping);
+
+      $mapping = unserialize($currentTask->mapping);
       $maxResponses = $parameters->maxResponses;
       $sorted = $mapping;
       sort($sorted);

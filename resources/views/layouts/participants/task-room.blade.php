@@ -71,7 +71,7 @@ $( document ).ready(function() {
           resolutions.forEach(function (resolution) {
             params.cameraResolution = "default";
           });
-          M.AutoInit();
+          //M.AutoInit();
         });
       join(rtc,params);
     });

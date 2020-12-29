@@ -4,6 +4,7 @@ namespace Teamwork\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Teamwork\User;
+use Teamwork\Group;
 use Teamwork\Events\SendToTask;
 use Teamwork\Events\PlayerJoinedWaitingRoom;
 use Teamwork\Events\PlayerLeftWaitingRoom;
@@ -63,7 +64,7 @@ class WaitingRoomController extends Controller
 
         $group_task = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
 
-        if($group_task->started){
+        if($group_task->started && $group_task->completed == 0){
             return redirect('/task-room/cryptography');
         }
 
@@ -85,6 +86,8 @@ class WaitingRoomController extends Controller
         shuffle($indices);
         $assignments = ['leader','follower1','follower2'];
         if(count($room_users) == 3){
+            $group = new Group;
+            $group->save();
             $room_users[$indices[0]]->group_role = 'leader';
 
             $room_users[$indices[1]]->group_role = 'follower1';
@@ -92,7 +95,7 @@ class WaitingRoomController extends Controller
             $room_users[$indices[2]]->group_role = 'follower2';
             //$room_users[$indices[2]]->group_id = $room_users[$indices[0]]->group_id;
             foreach($room_users as $key=>$room_user){
-                $room_user->group_id = $room_users[$indices[0]]->group_id;
+                $room_user->group_id = $group->id;
                 if($room_user->task_id == 0)
                     $room_user->task_id = rand(1,16);
                 else
@@ -101,8 +104,8 @@ class WaitingRoomController extends Controller
                 if($room_user->group_role == 'leader'){
                     $room_user->in_room = 0;
                     //$group_task = \Teamwork\GroupTask::firstOrCreate('group_id',$room_user->group_id)->where('name','Cryptography')->first();
-                    \Teamwork\GroupTask::initializeCryptoTasks($room_user->group_id,$randomize=false);
-                    $group_task = \Teamwork\GroupTask::where('group_id',$room_user->group_id)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
+                    \Teamwork\GroupTask::initializeCryptoTasks($group->id,$randomize=false);
+                    $group_task = \Teamwork\GroupTask::where('group_id',$group->id)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
                     $group_task->task_id = $room_user->task_id;
                     $group_task->save();
                     event(new SendToTask($room_user));
@@ -119,7 +122,7 @@ class WaitingRoomController extends Controller
 
         $this_group = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
 
-        if($this_group->started == 1)
+        if($this_group->started && $group_task->completed == 0)
             return redirect('/task-room/cryptography');
 
         event(new PlayerJoinedWaitingRoom($this_user));

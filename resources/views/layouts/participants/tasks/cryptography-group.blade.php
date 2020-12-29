@@ -30,6 +30,7 @@ var hypotheses = [];
 var mapping_guess = '';
 var payment = 8.00;
 var guesses = [];
+var page = 1;
 
 
 $( document ).ready(function() {
@@ -173,6 +174,7 @@ $( document ).ready(function() {
 
 
   initializeTimer(time_remaining, function() {
+    $.post('/task-complete', {_token: "{{ csrf_token() }}"});
     $("#crypto-header").hide();
     $("#crypto-ui").hide();
     $("#task-end").show();
@@ -200,7 +202,7 @@ $( document ).ready(function() {
           localStorage.setItem('trials',trials);
           if(trials == maxResponses)
             $('#last-trial').modal();
-          $('#payment').text((((parseInt($('#payment').text()) - 0.50) > 0.00) ? (parseInt($('#payment').text()) - 0.50) : 0.00).toFixed(2));
+          $('#payment').text((((parseFloat($('#payment').text()) - 0.50) > 0.00) ? (parseFloat($('#payment').text()) - 0.50) : 0.00).toFixed(2));
           localStorage.setItem('payment',$('#payment').text());
           break;
         case 1:
@@ -251,7 +253,7 @@ $( document ).ready(function() {
     });
     channel.bind('rule-broken', function(data){
       $("#rule_broken").modal('toggle');
-      $('#payment').text((((parseInt($('#payment').text()) - 2.00) > 0.00) ? (parseInt($('#payment').text()) - 2.00) : 0.00).toFixed(2));
+      $('#payment').text((((parseFloat($('#payment').text()) - 2.00) > 0.00) ? (parseFloat($('#payment').text()) - 2.00) : 0.00).toFixed(2));
       localStorage.setItem('payment',$('#payment').text());
     });
     channel.bind('clear-storage', function(data){
@@ -318,12 +320,12 @@ $( document ).ready(function() {
           } );
       }
       catch(e) {
-        var res = crypto.parseEquation(equation,trials);
-        console.log(res);
-        $('#alert-text').text(res);
+        //var res = crypto.parseEquation(equation,trials);
+        console.log(e);
+        $('#alert-text-equation').text(e);
         $('#invalid_equation').modal('toggle');
-        $("#alert").html(e);
-        $("#alert").show();
+        //$("#alert").html(e);
+        //$("#alert").show();
       }
     event.preventDefault();
       
@@ -332,8 +334,10 @@ $( document ).ready(function() {
 
   $("#submit-hypothesis").on("click", function(event){
       event.preventDefault();
-      if ($("#hypothesis-left").val() === '---' || $("#hypothesis-right").val() === '---')
+      if ($("#hypothesis-left").val() === '---' || $("#hypothesis-right").val() === '---'){
+        $('#invalid-hypothesis').modal('toggle');
         return false;
+      }
 
       var result = crypto.testHypothesis($("#hypothesis-left").val(), $("#hypothesis-right").val());
       var output = (result) ? "true" : "false";
@@ -400,6 +404,35 @@ $( document ).ready(function() {
       event.preventDefault();
   });
 
+  $('#next-button').on('click',function(event){
+    if (page == 1 ){
+      $('#back-button').css('display','block');
+    }
+    $('#page'+page.toString()).css('display','none');
+
+    page += 1;
+
+    if (page == 4){
+      $('#next-button').css('display','none');
+    }
+    $('#page'+page.toString()).css('display','block');
+    
+  });
+  $('#back-button').on('click',function(event){
+    if (page == 4 ){
+      $('#next-button').css('display','block');
+    }
+    $('#page'+page.toString()).css('display','none');
+
+    page -= 1;
+
+    if (page == 1){
+      $('#back-button').css('display','none');
+    }
+    $('#page'+page.toString()).css('display','block');
+    
+  });
+
 
 });
 
@@ -453,6 +486,7 @@ $( document ).ready(function() {
                   <div class='col-sm-5'>
                     <button style='float:left;' type='button' class="sub-btn btn btn-lg btn-primary" id="submit-mapping" >Submit</button><br />
                     <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#review-instructions" style='float:left;margin-top:20px'>Review Instructions</button>
+                    <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#device-instructions" style='float:left;margin-top:20px'>Mic/Camera Guide</button>
                   </div>
                   <div class='col-sm-7'>
                     <p style='text-align:left;justify-content: left'><i>Click 'submit' <b>after each trial.</b> You do NOT need to guess all the letters to click submit. If you have all the letters correct, the task is complete! You will be able to submit once both of your teammates have finished their turns.</i></p>
@@ -482,7 +516,11 @@ $( document ).ready(function() {
                   <button type='button' class="sub-btn btn btn-lg btn-primary" id="submit-equation" >Submit</button>
                 </div>
                 <div class="text-center">
-                  <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#review-instructions">Review Instructions</button>
+                  <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#review-instructions" style='margin-top:10px'>Review Instructions</button>
+
+                </div>
+                <div class="text-center">
+                  <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#device-instructions" style='margin-top:10px'>Mic/Camera Guide</button>
                 </div>
               </div>
               <div class="col-md-5">
@@ -521,7 +559,10 @@ $( document ).ready(function() {
                       <button type='button' class="sub-btn btn btn-lg btn-primary" id="submit-hypothesis" >Submit</button>
                     </div>
                     <div class="text-center">
-                      <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#review-instructions">Review Instructions</button>
+                      <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#review-instructions" style='margin-top:10px'>Review Instructions</button>
+                    </div>
+                    <div class="text-center">
+                      <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#device-instructions" style='margin-top:10px'>Mic/Camera Guide</button>
                     </div>
                 </div>
                 
@@ -652,7 +693,7 @@ $( document ).ready(function() {
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title text-center">
+          <h4 id='alert-text-equation' class="modal-title text-center">
           The equation you submitted is not valid. Please only use the letters A-J plus '+' and '-'.
           </h4>
         </div>
@@ -663,11 +704,36 @@ $( document ).ready(function() {
     </div><!-- modal-dialog -->
   </div><!-- modal -->
 
-    <div class="modal fade" id="invalid_hypothesis">
+  <div class="modal fade" id="device-instructions">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header" style="display:block">
+          <h4 id='page1'>
+          If your teammates can't hear or see you, your browser may be blocking the site from accessing your microphone/camera. </h4>
+          <h4 id='page2' style='display:none;'>Check the URL bar at the top of your web browser for a small camera/microphone icon at the far right. Click it and select 'allow' or 'always allow'. If you don't see the icon, that's okay. </h4>
+          <h4 id='page3' style='display:none;'>
+          Refresh your page. Wait and see if the web browser asks you to allow access to the microphone. Select "allow" and proceed with the task.</h4><br/>
+          <h4 id='page4' style='display:none;'>
+          If your issue persists, you may need to go into your system prefences / control panel and confirm that you have a working microphone and camera available.
+          </h4>
+          <div style='display:flex;'>
+            <button id='back-button' class='btn btn-lg btn-primary' style='display:none;margin:auto'>Back</button>
+            <button id='next-button' class='btn btn-lg btn-primary' style='margin:auto'>Next</button>
+          </div>
+        </div>
+        <div class="modal-body text-center">
+          <button class="btn btn-lg btn-primary pull-right" id="ok-time-up" data-dismiss="modal" type="button">Ok</button>
+        </div>
+      </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+  </div><!-- modal -->
+
+    <div class="modal fade" id="invalid-hypothesis">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h4 id='alert-text' class="modal-title text-center">
+            The hypothesis you submitted is not valid. Please make sure you have selected a letter and a value from the dropdowns.
           </h4>
         </div>
         <div class="modal-body text-center">

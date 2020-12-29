@@ -130,6 +130,32 @@ function Toastify (options) {
       rtc.client.on("stream-published", function (evt) {
         Toast.notice("stream published success");
         console.log("stream-published");
+        console.log(evt);
+        if(evt.stream.audio){
+          $('#audio-connected').text('Success');
+          $('#audio-connected').css('color','green');
+        }
+        else{
+          $('#audio-connected').text('Failed');
+          $('#audio-connected').css('color','red');
+        }
+        if(evt.stream.video){
+          $('#video-connected').text('Success');
+          $('#video-connected').css('color','green');
+        }
+        else{
+          $('#audio-connected').text('Failed');
+          $('#video-connected').css('color','red');
+        }
+        if(evt.stream.video && evt.stream.audio){
+          $('#continue-button').text('Proceed with experiment');
+          $('#continue-button').attr('disabled',false);
+        }
+        else{
+          $('#continue-button').text('Connection Failed');
+          $('#continue-button').attr('disabled',false);
+        }
+
       });
       // Occurs when the remote stream is added.
       rtc.client.on("stream-added", function (evt) {  
@@ -150,7 +176,7 @@ function Toastify (options) {
         var id = remoteStream.getId();
         console.log(id);
         rtc.remoteStreams.push(remoteStream);
-        addView(id);
+        //addView(id);
         remoteStream.play("remote_video_" + id);
         console.log(remoteStream.audio);
         console.log(remoteStream.video);
@@ -240,6 +266,8 @@ function Toastify (options) {
           rtc.params.uid = uid;
           var audioOnly = "${e://Field/audioOnly}";
           var videoOnly = "${e://Field/videoOnly}";
+          console.log(params.microphoneId);
+          console.log(params.cameraId);
 
       if (params.microphoneId != null)
         audio = true;
@@ -275,6 +303,12 @@ function Toastify (options) {
           }, function (err)  {
             Toast.error("stream init failed, please open console see more detail");
             console.error("init local stream failed ", err);
+            $('#continue-button').text('Connection Failed');
+            $('#continue-button').attr('disabled',false);
+            $('#audio-connected').text('Failed');
+            $('#audio-connected').css('color','red');
+            $('#video-connected').text('Failed');
+            $('#video-connected').css('color','red');
           });
         }, function(err) {
           Toast.error("client join failed, please open console see more detail");

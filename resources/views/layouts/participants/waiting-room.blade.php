@@ -46,7 +46,7 @@ $( document ).ready(function() {
     channel.bind('player-joined-room', function(data) {
       //alert(JSON.stringify(data));
         roomTotal += 1;
-        $('#roomTotal').text(roomTotal.toString());
+        $('#roomTotal').text((roomTotal < 0 ? 0 : roomTotal).toString());
         
 
 
@@ -54,7 +54,7 @@ $( document ).ready(function() {
     });
     channel.bind('player-left-room', function(data) {
       roomTotal -= 1;
-      $('#roomTotal').text(roomTotal.toString());
+      $('#roomTotal').text((roomTotal < 0 ? 0 : roomTotal).toString());
       //alert(JSON.stringify(data));
       //if($('#'+data['user']['id']).length)
         //$('#'+data['user']['id']).remove();

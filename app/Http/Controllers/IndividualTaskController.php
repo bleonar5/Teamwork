@@ -695,6 +695,11 @@ class IndividualTaskController extends Controller
              ->with('sorted', $aSorted);
     }
 
+    public function deviceCheck(Request $request){
+      return view('layouts.participants.device-check')
+              ->with('user',$user = User::find(\Auth::user()->id));
+    }
+
     public function cryptography(Request $request) {
       $user = User::find(\Auth::user()->id);
       $isReporter = $this->isReporter(\Auth::user()->id, \Auth::user()->group_id);

@@ -18,7 +18,11 @@ class TaskRoomController extends Controller
     	$user = \Teamwork\User::find(\Auth::user()->id);
     	//$currentTask = GroupTask::where('id',($request->session()->get('currentGroupTask')))->first();
    		$currentTask = \Teamwork\GroupTask::where('group_id',$user->group_id)->where('name',$task)->orderBy('created_at','DESC')->first();
+
    		$request->session()->put('currentGroupTask',$currentTask->id);
+
+   		if($currentTask->completed)
+   			return redirect('/waiting-room');
 
       return view('layouts.participants.task-room')
       	->with('user', $user)
