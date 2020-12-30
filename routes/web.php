@@ -261,6 +261,54 @@ Route::get('/big-five-end', [
 	'roles' => ['Participant'] // Only a logged in user can view this page
 ]);
 
+Route::get('/psi-iri-intro', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'IndividualTaskController@psiIriIntro',
+	'roles' => ['Participant'] // Only a logged in user can view this page
+]);
+
+Route::get('/psi-iri', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'IndividualTaskController@psiIri',
+	'roles' => ['Participant'] // Only a logged in user can view this page
+]);
+
+Route::post('/psi-iri', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'IndividualTaskController@savePsiIri',
+	'roles' => ['Participant'] // Only a logged in user can view this page
+]);
+
+Route::get('/psi-iri-end', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'IndividualTaskController@psiIriEnd',
+	'roles' => ['Participant'] // Only a logged in user can view this page
+]);
+
+Route::get('/leadership-intro', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'IndividualTaskController@leadershipIntro',
+	'roles' => ['Participant'] // Only a logged in user can view this page
+]);
+
+Route::get('/leadership', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'IndividualTaskController@leadership',
+	'roles' => ['Participant'] // Only a logged in user can view this page
+]);
+
+Route::post('/leadership', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'IndividualTaskController@saveLeadership',
+	'roles' => ['Participant'] // Only a logged in user can view this page
+]);
+
+Route::get('/leadership-end', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'IndividualTaskController@leadershipEnd',
+	'roles' => ['Participant'] // Only a logged in user can view this page
+]);
+
 Route::get('/memory-individual-intro', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'IndividualTaskController@memoryIntro',

@@ -141,7 +141,9 @@ class GroupTask extends Model
           {"taskName":"Memory","taskParams":{"hasIndividuals":"true","hasGroup":"false","test":"story_instructions"}},
           {"taskName":"Memory","taskParams":{"hasIndividuals":"true","hasGroup":"false","test":"story_1"}},
           {"taskName":"Memory","taskParams":{"hasIndividuals":"true","hasGroup":"false","test":"results"}},
+          {"taskName":"PsiIri","taskParams":{"hasIndividuals":"true","hasGroup":"false","statementOrder":"random"}},
           {"taskName":"Shapes","taskParams":{"hasIndividuals":"true","hasGroup":"false","subtest":"subtest5"}},
+          {"taskName":"Leadership","taskParams":{"hasIndividuals":"true","hasGroup":"false","statementOrder":"random"}},
           {"taskName":"Cryptography","taskParams":{"hasIndividuals":"true","hasGroup":"false","mapping":"random","maxResponses":"10"}},
           {"taskName":"Conclusion","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"hdsl_individual","hasCode":"false","displayScoreGroup":"true","digitalReceipt":"false","feedback":"false", "feedbackLinkType":"pilot"}}
         ]';
