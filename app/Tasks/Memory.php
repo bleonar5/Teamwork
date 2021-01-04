@@ -1421,17 +1421,17 @@ class Memory {
          'role' => True,
          'leader' => ['Now we will ask you some questions about the stimuli.',
                        'You are the <strong>leader</strong> and are responsible for answering on behalf of the group.',
-                       'The practice questions will begin when you all click next'
+                       'The questions will begin when you all click next'
                      ],
             'follower1' => ['Now we will ask you some questions about the stimuli.',
                       'You will see the questions on your computer.',
                        "<strong>Your group leader will answer on the group's behalf</strong>",
-                       'The practice questions will begin when you all click next'
+                       'The questions will begin when you all click next'
                      ],
             'follower2' => ['Now we will ask you some questions about the stimuli.',
                       'You will see the questions on your computer.',
                        "<strong>Your group leader will answer on the group's behalf</strong>",
-                       'The practice questions will begin when you all click next'
+                       'The questions will begin when you all click next'
                      ]],
           ['type' => 'review_choice',
           'text' => ['You will have <strong>40</strong> seconds to memorize everything as a group. There

@@ -304,7 +304,7 @@
               @if($block['type'] == 'practice_test_stories')
                 <div class="memory test practice-test" id="memory_{{ $key }}_{{ $b_key }}">
                   <h4>{{ $block['prompt'] }}</h4>
-                  @if($user->group_role != 'leader')
+                  @if($user->group_role == 'leader')
                     <h4>As the leader, you can <strong>type the number '1', '2', or '3' on your keyboard</strong> to enter the group's answer</h4>
                   @endif
                   <div class="row">
@@ -325,7 +325,7 @@
               @if($block['type'] == 'test_stories')
               <div class="memory test practice-test" id="memory_{{ $key }}_{{ $b_key }}">
                 <h4>{{ $block['prompt'] }}</h4>
-                @if($user->group_role != 'leader')
+                @if($user->group_role == 'leader')
                     <h4>As the leader, you can <strong>type the number '1', '2', or '3' on your keyboard</strong> to enter the group's answer</h4>
                   @endif
                 <div class="row">
@@ -346,7 +346,7 @@
               @if($block['type'] == 'practice_test_words' || $block['type'] == 'test_words')
                 <div class="memory test" id="memory_{{ $key }}_{{ $b_key }}">
                   <h4>{{ $block['prompt'] }}</h4>
-                  @if($user->group_role != 'leader')
+                  @if($user->group_role == 'leader')
                     <h4>As the leader, <strong>select all that apply,</strong> then click "Next"</h4>
                   @endif
                   <div class="row justify-content-md-center word-choices">
@@ -382,7 +382,7 @@
               @if($block['type'] == 'practice_test_images')
                 <div class="memory test practice-test" id="memory_{{ $key }}_{{ $b_key }}">
                   <h4>{{ $block['prompt'] }}</h4>
-                  @if($user->group_role != 'leader')
+                  @if($user->group_role == 'leader')
                     <h4>As the leader, you can <strong>type the number '1', '2', or '3' on your keyboard</strong> to enter the group's answer</h4>
                   @endif
                   <img class="memory-img mt-lg-4 target-img-{{ $testName }}" src="{{ $test['directory'].$block['img'] }}">
@@ -402,7 +402,7 @@
               @if($block['type'] == 'test_images')
                 <div class="memory test" id="memory_{{ $key }}_{{ $b_key }}">
                   <h4>{{ $block['prompt'] }}</h4>
-                  @if($user->group_role != 'leader')
+                  @if($user->group_role == 'leader')
                     <h4>As the leader, you can <strong>type the number '1', '2', or '3' on your keyboard</strong> to enter the group's answer</h4>
                   @endif
                   <img class="memory-img mt-lg-4 target-img-{{ $testName }}" src="{{ $test['directory'].$block['img'] }}">
