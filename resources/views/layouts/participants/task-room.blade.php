@@ -89,6 +89,20 @@ $( document ).ready(function() {
     });
     }
   }
+  if("{{ $task->name }}" === "Memory"){
+    if ("{{ $task->intro_completed }}" === "1"){
+      jQuery.get('/memory-group', function(data){
+        console.log(data);
+        $('#content').html(data);
+      });
+    }
+    else{
+      jQuery.get('/memory-group', function(data) {
+      console.log(data);
+      $('#content').html(data);
+    });
+    }
+  }
 
 });
 

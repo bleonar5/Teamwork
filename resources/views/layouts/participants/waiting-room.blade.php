@@ -17,7 +17,11 @@ function shuffle(a) {
     }
     return a;
 }
+
+var room_type;
+
 $( document ).ready(function() {
+  room_type='{{ $task }}'; 
   
   console.log($('#roomTotal').text());
   roomTotal = parseInt($('#roomTotal').text());
@@ -45,16 +49,21 @@ $( document ).ready(function() {
     var channel = pusher.subscribe('my-channel');
     channel.bind('player-joined-room', function(data) {
       //alert(JSON.stringify(data));
-        roomTotal += 1;
-        $('#roomTotal').text((roomTotal < 0 ? 0 : roomTotal).toString());
+        if(room_type === data['user']['in_room'].toString()){
+          roomTotal += 1;
+          $('#roomTotal').text((roomTotal < 0 ? 0 : roomTotal).toString());
+        }
+        
         
 
 
         //$('#waitingList').append("<li style='text-align:left' id='"+data['user']['id'].toString()+"'>"+data['user']['id']+" : "+data['user']['group_role']+"</li>");
     });
     channel.bind('player-left-room', function(data) {
-      roomTotal -= 1;
-      $('#roomTotal').text((roomTotal < 0 ? 0 : roomTotal).toString());
+      if(room_type === data['user']['in_room'].toString()){
+        roomTotal -= 1;
+        $('#roomTotal').text((roomTotal < 0 ? 0 : roomTotal).toString());
+      }
       //alert(JSON.stringify(data));
       //if($('#'+data['user']['id']).length)
         //$('#'+data['user']['id']).remove();
@@ -65,7 +74,7 @@ $( document ).ready(function() {
           $.post("/leave-room", {
             _token: "{{ csrf_token() }}"
           } );
-          window.location.href='task-room/cryptography';
+          window.location.href='get-group-task';
         }
     });
 

@@ -5,6 +5,7 @@ namespace Teamwork\Http\Controllers;
 use Illuminate\Http\Request;
 use Teamwork\User;
 use Teamwork\Group;
+use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
@@ -32,19 +33,18 @@ class LoginController extends Controller
       \Auth::login($user);
 
       //$group_id = User::find($user()->id)->group_id;//Group::where('group_number', $request->group_id)->first();
-      $group = Group::where('group_number',$user->id)->first();
+      //$group = Group::where('group_number',$user->id)->first();
       $newGroup = false;
       // If the group doesn't exist yet, create it
-      if(!$group){
+      if(true){
         $newGroup = true;
         $group = new Group;
-        $group->group_number = $user->id;
         $group->save();
 
       }
 
       // If the user exists, update the user's group ID, if needed
-      if($group->id != $user->group_id && $user->group_id == 1) {
+      if($group->id != $user->group_id) {
        $user->group_id = $group->id;
        $user->save();
       }
@@ -65,43 +65,45 @@ class LoginController extends Controller
       // If this is a newly created group, create some tasks if requested
       if($newGroup && isset($request->task_package)) {
        if($request->task_package == 'group-memory'){
-         \Teamwork\GroupTask::initializeGroupMemoryTasks(\Auth::user()->group_id, $randomize = false);
+         \Teamwork\GroupTask::initializeMemoryWaitingRoomTasks(\Auth::user()->group_id, $randomize = false);
+         return redirect('/get-group-task');
        }
-       if($request->task_package == 'group-1'){
+       elseif($request->task_package == 'group-1'){
          \Teamwork\GroupTask::initializeGroupOneTasks(\Auth::user()->group_id, $randomize = false);
        }
-       if($request->task_package == 'group-2'){
+       elseif($request->task_package == 'group-2'){
          \Teamwork\GroupTask::initializeGroupTwoTasks(\Auth::user()->group_id, $randomize = false);
        }
-       if($request->task_package == 'group-3'){
+       elseif($request->task_package == 'group-3'){
          \Teamwork\GroupTask::initializeGroupThreeTasks(\Auth::user()->group_id, $randomize = false);
        }
-       if($request->task_package == 'group-test'){
+       elseif($request->task_package == 'group-test'){
          \Teamwork\GroupTask::initializeGroupTestTasks(\Auth::user()->group_id, $randomize = false);
        }
-       if($request->task_package == 'lab-round-1'){
+       elseif($request->task_package == 'lab-round-1'){
          \Teamwork\GroupTask::initializeLabRoundOneTasks(\Auth::user()->group_id, $randomize = false);
        }
-       if($request->task_package == 'lab-round-2'){
+       elseif($request->task_package == 'lab-round-2'){
          \Teamwork\GroupTask::initializeLabRoundTwoTasks(\Auth::user()->group_id, $randomize = false);
        }
-       if($request->task_package == 'lab-round-3'){
+       elseif($request->task_package == 'lab-round-3'){
          \Teamwork\GroupTask::initializeLabRoundThreeTasks(\Auth::user()->group_id, $randomize = false);
        }
-       if($request->task_package == 'lab-round-4'){
+       elseif($request->task_package == 'lab-round-4'){
          \Teamwork\GroupTask::initializeLabRoundFourTasks(\Auth::user()->group_id, $randomize = false);
        }
-       if($request->task_package == 'lab-round-5'){
+       elseif($request->task_package == 'lab-round-5'){
          \Teamwork\GroupTask::initializeLabRoundFiveTasks(\Auth::user()->group_id, $randomize = false);
        }
        else{
          \Teamwork\GroupTask::initializeCryptoTasks($group->id, $randomize = false);
-
+         Log::debug('Lets go');
        }
       }
-      \Teamwork\GroupTask::initializeCryptoTasks($group->id, $randomize = false);
+      else
+        \Teamwork\GroupTask::initializeCryptoWaitingRoomTasks($group->id, $randomize = false);
 
-      return redirect('/waiting-room');
+      return redirect('/get-group-task');
     }
 
     public function individualLogin() {

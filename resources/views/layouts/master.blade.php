@@ -4,11 +4,6 @@
         @include('layouts.includes.head')
     </head>
     <body>
-      <span class="group-id-display text-secondary ml-2">
-        @if(Auth::user() && Auth::user()->group_id)
-          {{ \Teamwork\Group::where('id', Auth::user()->group_id)->pluck('group_number')->first() }}
-        @endif
-      </span>
         @yield('content')
         <!-- Include all compiled plugins (below), or include individual files as needed -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"

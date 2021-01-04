@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Teamwork\GroupTask;
 use Teamwork\Response;
 use Teamwork\Events\AllReadyInGroup;
+use Teamwork\Events\LeaderAnswered;
 use \Teamwork\Tasks as Task;
 use Teamwork\Events\TaskComplete;
 use Teamwork\Events\ActionSubmitted;
@@ -65,11 +66,14 @@ class GroupTaskController extends Controller
     public function routeTask($task) {
 
       $this->getProgress();
+      Log::debug($task->name);
 
       switch($task->name) {
+        case "WaitingRoom":
+          return redirect('/waiting-room');
 
         case "Memory":
-          return redirect('/memory-group');
+          return redirect('/task-room/memory');
 
         case "Cryptography":
           return redirect('/task-room/cryptography');
@@ -117,12 +121,12 @@ class GroupTaskController extends Controller
                                     ->where('role_id', 3)
                                     ->count();
 
-      if($numUsersCompleted == $usersInGroup) {
+      if(true) {
         $task->completed = true;
         $task->save();
         // Remove any waiting messages that were set
         $request->session()->forget('waitingMsg');
-        return redirect('/get-individual-task');
+        return redirect('/get-group-task');
       }
       else {
         return redirect('/waiting');
@@ -147,17 +151,24 @@ class GroupTaskController extends Controller
     public function memoryGroupIntro(Request $request) {
       $this->recordStartTime($request, 'intro');
       $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+      $currentTask->started = 1;
+      $currentTask->save();
       $parameters = unserialize($currentTask->parameters);
       $memory = new \Teamwork\Tasks\Memory;
       $intro = $memory->getTest($parameters->test);
+      $user_id = \Auth::user()->id;
+
+        $this_user = User::where('id',$user_id)->first();
 
       return view('layouts.participants.tasks.memory-group-intro')
-             ->with('introType', $intro['test_name']);
+             ->with('introType', $intro['test_name'])
+             ->with('user',$this_user);
     }
 
     public function memory(Request $request) {
       $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
-
+      $currentTask->intro_completed = 1;
+      $currentTask->save();
       $parameters = unserialize($currentTask->parameters);
       $memory = new \Teamwork\Tasks\Memory;
       $test = $memory->getTest($parameters->test);
@@ -174,16 +185,29 @@ class GroupTaskController extends Controller
 
       // Determine is this user is the reporter for the group
       $isReporter = $this->isReporter(\Auth::user()->id, \Auth::user()->group_id);
+      $user_id = \Auth::user()->id;
+
+        $this_user = User::where('id',$user_id)->first();
       // Originally, there was an array of multiple tests. We've separated the
       // different memory tasks into individual tasks but to avoid rewriting a
       // lot of code, we'll construct a single-element array with the one test.
       return view('layouts.participants.tasks.memory-group')
              ->with('testName', $test['test_name'])
+             ->with('user',$this_user)
              ->with('tests', [$test])
              ->with('taskId', $currentTask->id)
              ->with('enc_tests', json_encode([$test]))
              ->with('imgsToPreload', $imgsToPreload)
              ->with('isReporter', ($isReporter) ? 1 : 0);
+    }
+
+    public function leaderAnswered(Request $request){
+      $user_id = \Auth::user()->id;
+
+        $this_user = User::where('id',$user_id)->first();
+
+        event(new LeaderAnswered($this_user));
+        return '200';
     }
 
     public function saveMemory(Request $request) {
@@ -203,12 +227,6 @@ class GroupTaskController extends Controller
         $r->prompt = 'Memory Intro';
         $r->response = 'n/a';
         $r->save();
-        if($isReporter) {
-          $request->session()->put('waitingMsg', 'Please wait for the experiment to continue...');
-        }
-        else {
-          $request->session()->put('waitingMsg', "For this part of the task you will be working on the Reporter's laptop");
-        }
         //return redirect('/end-group-task');
       }
 
@@ -294,16 +312,6 @@ class GroupTaskController extends Controller
         $r->points = $points;
         $r->save();
 
-      }
-
-      // If this participant isn't the reporter, we'll set a message to
-      // display on the waiting page
-      if(!$isReporter) {
-        $waitingMsg = 'You\'ll complete this task on the reporter\'s laptop.';
-        $request->session()->put('waitingMsg', $waitingMsg);
-      }
-      else {
-        $request->session()->put('waitingMsg', 'Please wait for the experiment to continue...');
       }
 
       return redirect('/end-group-task');
@@ -461,6 +469,33 @@ class GroupTaskController extends Controller
       }
 
       $group_task = \Teamwork\GroupTask::where('group_id',$user_group)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
+      $group_task->instructions += 1;
+      $group_task->save();
+      return 'GO';
+    }
+
+    public function nextMemoryPage(Request $request){
+      Log::debug($request);
+      $this_user = User::find($request->id);
+      $user_group = $this_user->group_id;
+
+      $this_user->waiting = 1;
+      $this_user->save();
+
+      $team_users = User::where('group_id',$user_group)->get();
+      foreach($team_users as $key => $team_user){
+        if($team_user->waiting == 0){
+          return 'WAIT';
+        }
+      }
+      event(new AllReadyInGroup($this_user));
+
+      foreach($team_users as $key => $team_user){
+        $team_user->waiting = 0;
+        $team_user->save();
+      }
+
+      $group_task = \Teamwork\GroupTask::where('group_id',$user_group)->where('name','Memory')->orderBy('created_at','DESC')->first();
       $group_task->instructions += 1;
       $group_task->save();
       return 'GO';
@@ -745,7 +780,7 @@ class GroupTaskController extends Controller
         //          ->where('group_tasks_id', '=', $task->id)
           //        ->first();
       //$time->recordEndTime();
-      $request->session()->put('waitingMsg', 'Please wait for the experiment to continue...');
+      //$request->session()->put('waitingMsg', 'Please wait for the experiment to continue...');
       if(!$parameters->hasGroup) return redirect('/end-individual-task');
       else return redirect('/end-group-task');
     }
@@ -844,7 +879,7 @@ class GroupTaskController extends Controller
       $results = 'You have completed the Shapes Task.';
       $request->session()->put('currentGroupTaskResult', $results);
       $request->session()->put('currentGroupTaskName', 'Shapes Task');
-      $request->session()->put('waitingMsg', 'Please wait for the experiment to continue...');
+      //$request->session()->put('waitingMsg', 'Please wait for the experiment to continue...');
       return redirect('/group-task-results');
     }
 

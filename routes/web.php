@@ -105,6 +105,18 @@ Route::get('/check-group-ready', [
 	'roles' => ['Participant'] // Only a logged in user can view this page
 ]);
 
+Route::get('/check-leader-ready', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'AjaxController@checkLeaderReady',
+	'roles' => ['Participant'] // Only a logged in user can view this page
+]);
+
+Route::post('/task-room/leader-answered', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'GroupTaskController@leaderAnswered',
+	'roles' => ['Participant','Group'] // Only a logged in user can view this page
+]);
+
 Route::get('/group-login-allowed', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'AjaxController@groupLoginAllowed',
@@ -528,6 +540,12 @@ Route::get('/device-check', [
 Route::post('/crypto-proceed', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'GroupTaskController@nextCryptoPage',
+	'roles' => ['Participant','Group'] // Only a logged in user can view this page
+]);
+
+Route::post('/memory-proceed', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'GroupTaskController@nextMemoryPage',
 	'roles' => ['Participant','Group'] // Only a logged in user can view this page
 ]);
 

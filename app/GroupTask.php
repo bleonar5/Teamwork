@@ -127,6 +127,30 @@ class GroupTask extends Model
       return Self::initializeTasks($group_id, $taskArray, $randomize);
     }
 
+    public static function initializeMemoryWaitingRoomTasks($group_id, $randomize) {
+      $taskArray = '[
+        {"taskName":"WaitingRoom","taskParams":{"hasIndividuals":"false","hasGroup":"true","task":"2"}}
+        ]';
+      return Self::initializeTasks($group_id, $taskArray, $randomize);
+    }
+
+    public static function initializeCryptoWaitingRoomTasks($group_id, $randomize) {
+      $taskArray = '[
+        {"taskName":"WaitingRoom","taskParams":{"hasIndividuals":"false","hasGroup":"true","task":"2"}},
+        ]';
+      return Self::initializeTasks($group_id, $taskArray, $randomize);
+    }
+
+    public static function initializeMemoryTasks($group_id, $randomize) {
+      $taskArray = '[
+        {"taskName":"Memory","taskParams":{"hasIndividuals":"false","hasGroup":"true","test":"intro"}},
+        {"taskName":"Memory","taskParams":{"hasIndividuals":"false","hasGroup":"true","test":"group_1_instructions"}},
+        {"taskName":"Memory","taskParams":{"hasIndividuals":"false","hasGroup":"true","test":"group_1"}},
+        {"taskName":"Conclusion","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"group_1","hasCode":"false","displayScoreGroup":"false", "digitalReceipt":"false", "sonaId": "547", "payment": "30", "feedback":"false", "feedbackLinkType":"group1Pilot"}}
+        ]';
+      return Self::initializeTasks($group_id, $taskArray, $randomize);
+    }
+
     public static function initializeLabIndividualTasks($group_id, $randomize) {
       $taskArray = '[
           {"taskName":"Consent","taskParams":{"hasIndividuals":"true","hasGroup":"false","subjectPool":"hdsl_individual"}},

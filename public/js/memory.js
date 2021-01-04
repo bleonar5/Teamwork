@@ -136,10 +136,10 @@ var Memory = class Memory {
     }
 
     if(this.hasEndIndividualSection() && !this.isReporter) {
-      setTimeout(function() {
-        $("#waiting-for-reporter").modal();
-      }, 5000);
-      setTimeout(this.callback.bind(this), 10000);
+      //setTimeout(function() {
+        //$("#waiting-for-reporter").modal();
+      //}, 5000);
+      //setTimeout(this.callback.bind(this), 10000);
     }
 
     if(this.tests[this.testIndex].blocks[this.blockIndex].type == 'review') {
@@ -195,6 +195,14 @@ var Memory = class Memory {
   hasWait() {
     if(this.tests[this.testIndex].blocks[this.blockIndex].wait_for_all &&
       this.tests[this.testIndex].blocks[this.blockIndex].wait_for_all == 'true') {
+      return true;
+    }
+    else return false;
+  }
+
+  hasLeaderWait() {
+    if(this.tests[this.testIndex].blocks[this.blockIndex].wait_for_leader &&
+      this.tests[this.testIndex].blocks[this.blockIndex].wait_for_leader == 'true') {
       return true;
     }
     else return false;
@@ -256,6 +264,28 @@ var Memory = class Memory {
     console.log(this.step);
     self = this;
     $.get( "/check-group-ready", { user_id: userId, group_id: groupId, group_tasks_id: groupTasksId, step: this.step,} )
+      .done(function( response ) {
+        if(response == '1') {
+          // Increment the step counter
+          self.step++;
+          $(modal).modal('hide');
+          self.advance();
+        }
+        else {
+          $(modal).modal('show');
+          setTimeout(function(){
+           $(modal).modal('show');
+           console.log('waiting...');
+           self.waitForGroup(userId, groupId, groupTasksId, modal);
+         }, 1000);
+        }
+    });
+  }
+
+  waitForLeader(userId, groupId, groupTasksId, modal) {
+    console.log(this.step);
+    self = this;
+    $.get( "/check-leader-ready", { user_id: userId, group_id: groupId, group_tasks_id: groupTasksId, step: this.step,} )
       .done(function( response ) {
         if(response == '1') {
           // Increment the step counter

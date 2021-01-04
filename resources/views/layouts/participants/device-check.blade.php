@@ -86,7 +86,7 @@ $( document ).ready(function() {
 					</h5>
 				</li><br/>
 				<li>
-					<h5 style='text-align:center;margin:auto;'> A prompt will appear asking your permission to access your microphone/camera. <b>Make sure to select "allow"</b>. 
+					<h5 style='text-align:center;margin:auto;'> A prompt may appear asking your permission to access your microphone/camera. <b>Make sure to select "allow"</b>. 
 					</h5>
 				</li><br/>
 				<li>

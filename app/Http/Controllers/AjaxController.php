@@ -113,6 +113,18 @@ class AjaxController extends Controller
      return ($group == $ready) ? 1 : 0;
    }
 
+   public function checkLeaderReady(Request $request) {
+     $group_leader = \Teamwork\User::where('group_id', $request->group_id)->where('group_role','leader')->first();
+     $ready = \DB::table('waiting')
+                 ->where('group_id', $request->group_id)
+                 ->where('group_tasks_id', $request->group_tasks_id)
+                 ->where('user_id',$group_leader->id)
+                 ->where('step', $request->step)
+                 ->count();
+
+     return (1 == $ready) ? 1 : 0;
+   }
+
    public function getProbVal(Request $request) {
      $ch = curl_init();
      curl_setopt($ch, CURLOPT_HEADER, 0);

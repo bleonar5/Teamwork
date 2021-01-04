@@ -1030,18 +1030,6 @@ class Memory {
       'type' => 'intro',
       'directory' => '/img/memory-task/bodies/',
       'blocks' => [
-        ['type' => 'text_intro',
-         'header' => 'Memory Task',
-         'wait_for_all' => 'true',
-         'text' => ['Next is a test of your group’s collective memory. This
-                     will be similar to the individual memory tasks you
-                     completed earlier. We will ask you to remember images,
-                     words and stories.',
-                     'The group task has a twist. <strong>We’ll ask you to memorize all
-                       three types of stimuli at the same time</strong>.',
-                     'We’ll start with a practice round.',
-                     'The practice will begin when all three members of your group have clicked "Next".'
-                   ]],
         ['type' => 'text',
          'header' => 'Memory: practice round',
          'wait_for_all' => 'true',
@@ -1049,17 +1037,12 @@ class Memory {
                     'Your group has <strong>20 seconds</strong> to memorize
                     <strong>3</strong> images, <strong>6</strong> words, and
                     <strong>2</strong> very short stories.',
-                    'During the memorization period, each person will look at
-                    their own laptop and try to memorize as much as they can.
-                    It is possible, but difficult, for one person to remember
-                    all three types of stimuli.',
-                    '<span class="text-danger">You are NOT allowed to write anything down.</span>'
+                    '<strong>During the memorization period, each person can look at whatever stimulus they like</strong>',
+                    '<span class="text-danger">Reminder: You are NOT allowed to write anything down.</span>'
                    ]],
           ['type' => 'review_choice',
            'header' => 'Practice Round',
-          'text' => ['This is the page where you can choose what to memorize.
-                      We will ask your group about all three types of stimuli:
-                      Images, Words and Stories.',
+          'text' => ['This is the page where you can choose what to memorize..',
                      'If you want, you can try to memorize several types of stimuli.
                       For example, you might start with "Stories" (by clicking
                       on the <span class="text-danger">Stories</span> button).
@@ -1068,7 +1051,7 @@ class Memory {
                       and/or the <span class="text-success">Images</span>.',
                       '<strong>Take a minute to discuss with your group how you\'ll
                       approach this task.</strong>',
-                     '<strong>Reminder</strong>: in this practice round there
+                     '<strong>Recall</strong>: in this practice round there
                      are 6 words; 3 images; and 2 very short stories.',
                      'Your 20 seconds will begin when everyone in the group has
                      clicked on a button below.'],
@@ -1108,19 +1091,28 @@ class Memory {
           'review_time' => 20],
 
           ['type' => 'text',
-           'header' => 'Memory: practice round',
+           'header' => 'Practice round: QUESTIONS',
            'end_individual_section' => 'true',
-           'text' => ['Now we will ask you some questions about the stimuli.
-                       Remember, this is a practice!<br><br>
-                       You will answer as a group. When you’re answering the
-                       questions <strong>everyone should be able to see the Reporter\'s
-                       laptop</strong>.<br><br>
-                       If you are not the Reporter, leave your laptop open. You\'ll
-                       come back to it shortly.<br><br>
-                       The practice questions will begin when The Reporter clicks "Next"'
+           'wait_for_all' => 'true',
+           'role' =>True,
+           'leader' => ['Now we will ask you some questions about the stimuli.',
+                       'You are the <strong>leader</strong> and are responsible for answering on behalf of the group.',
+                       'The practice questions will begin when you all click next'
+                     ],
+            'follower1' => ['Now we will ask you some questions about the stimuli.',
+                      'You will see the questions on your computer.',
+                       "<strong>Your group leader will answer on the group's behalf</strong>",
+                       'The practice questions will begin when you all click next'
+                     ],
+            'follower2' => ['Now we will ask you some questions about the stimuli.',
+                      'You will see the questions on your computer.',
+                       "<strong>Your group leader will answer on the group's behalf</strong>",
+                       'The practice questions will begin when you all click next'
                      ]],
 
+
          ['type' => 'text',
+          'wait_for_all' => 'true',
           'header' => 'Memory: practice round',
           'text' => ['Make sure all your group members
                       can see this screen. We are about to ask questions about
@@ -1414,21 +1406,33 @@ class Memory {
       'type' => 'intro',
       'directory' => '/img/memory-task/cars/',
       'blocks' => [
+        ['type'=>'text',
+        'header'=>'',
+        'wait_for_all','true',
+        'text' =>[
+          'Now for the actual task',
+          '<strong>This will determine your score</strong>',
+          'Your group will have <strong>40</strong> seconds to memorize 6 images, 12 words and 2 short stories. This is like the practice, but you have <strong>twice as long</strong> to <strong>remember twice as much</strong>',
+          'Click "Next" for some more information'
+        ]],
         ['type' => 'text',
          'header' => '',
          'wait_for_all' => 'true',
-         'text' => ['Now for the actual task. <strong>Everyone should go back to their own laptop</strong>.',
-                    'Your group will have <strong>40</strong> seconds to memorize 6 images, 12 words and 2 short
-                    stories. This will be the same as the practice, but you have twice as long to
-                    remember twice as many things.',
-                    'As in the practice, you will use your own laptop to memorize the stimuli. Again, you
-                    have the option of looking at multiple types of stimuli
-                    (e.g. <span class="text-danger">stories</span> AND
-                    <span class="text-success">images</span>). Or,
-                    you can divide the responsibilities of memorizing different things.',
-                    '<strong>Take some time to discuss how you will approach this task.</strong>',
-                    'You will receive some final instructions when each group member has clicked "Next".'
-                   ]],
+         'role' => True,
+         'leader' => ['Now we will ask you some questions about the stimuli.',
+                       'You are the <strong>leader</strong> and are responsible for answering on behalf of the group.',
+                       'The practice questions will begin when you all click next'
+                     ],
+            'follower1' => ['Now we will ask you some questions about the stimuli.',
+                      'You will see the questions on your computer.',
+                       "<strong>Your group leader will answer on the group's behalf</strong>",
+                       'The practice questions will begin when you all click next'
+                     ],
+            'follower2' => ['Now we will ask you some questions about the stimuli.',
+                      'You will see the questions on your computer.',
+                       "<strong>Your group leader will answer on the group's behalf</strong>",
+                       'The practice questions will begin when you all click next'
+                     ]],
           ['type' => 'review_choice',
           'text' => ['You will have <strong>40</strong> seconds to memorize everything as a group. There
                       is a timer in the top right of the screen.',
@@ -1476,6 +1480,7 @@ class Memory {
 
           ['type' => 'text',
            'header' => '',
+           'wait_for_all','true',
            'end_individual_section' => 'true',
            'text' => ['We will now ask you questions.',
                       '<strong>Everyone should be able to see the screen of the Reporter\'s laptop</strong>. You will
