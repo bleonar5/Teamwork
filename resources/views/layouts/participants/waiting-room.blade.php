@@ -74,7 +74,7 @@ $( document ).ready(function() {
           $.post("/leave-room", {
             _token: "{{ csrf_token() }}"
           } );
-          window.location.href='get-group-task';
+          window.location.href='/get-group-task';
         }
     });
 
