@@ -28,14 +28,14 @@ class LoginController extends Controller
                                    'participant_id' => $request->participant_id,
                                    'password' => bcrypt('participant'),
                                    'role_id' => 3,
-                                   'group_id'=>0]);
+                                   'group_id'=>1]);
       $user->save();
       \Auth::login($user);
 
       //$group = Group::where('group_number',$user->id)->first();
       $newGroup = false;
       // If the group doesn't exist yet, create it
-      if($user->group_id == 0){
+      if($user->group_id == 1){
         $newGroup = true;
         $group = new Group;
         $group->save();
