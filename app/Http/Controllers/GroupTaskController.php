@@ -588,7 +588,7 @@ class GroupTaskController extends Controller
       
       // We need to set a start time so when the non-reporters submit the task,
       // it records properly
-      $this->recordStartTime($request, 'intro');
+      //$this->recordStartTime($request, 'intro');
 
       $mapping = (new \Teamwork\Tasks\Cryptography)->getMapping('random');
       $aSorted = $mapping;
@@ -617,7 +617,7 @@ class GroupTaskController extends Controller
       $parameters = unserialize($currentTask->parameters);
       if($parameters->type == "intro")
         return redirect('/cryptography-intro');
-      $this->recordEndTime($request, 'intro');
+      //$this->recordEndTime($request, 'intro');
 
       $whose_turn = $currentTask->whose_turn;
       $currentTask->started = 1;
