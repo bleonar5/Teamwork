@@ -610,13 +610,14 @@ class GroupTaskController extends Controller
     public function cryptography(Request $request) {
       $user = User::find(\Auth::user()->id);
       $isReporter = $this->isReporter(\Auth::user()->id, \Auth::user()->group_id);
-      $this->recordEndTime($request, 'intro');
+      
       $currentTask = GroupTask::with('Response')->find($request->session()->get('currentGroupTask'));
       Log::debug($request->session()->get('currentGroupTask'));
       #$#time_elapsed = $currentTask->updated_at
       $parameters = unserialize($currentTask->parameters);
       if($parameters->type == "intro")
         return redirect('/cryptography-group-intro');
+      $this->recordEndTime($request, 'intro');
 
       $whose_turn = $currentTask->whose_turn;
       $currentTask->started = 1;
