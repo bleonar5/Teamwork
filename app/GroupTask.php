@@ -122,7 +122,8 @@ class GroupTask extends Model
 
     public static function initializeCryptoTasks($group_id, $randomize) {
       $taskArray = '[
-        {"taskName":"Cryptography","taskParams":{"hasIndividuals":"false","intro":"group_1","hasGroup":"true","mapping":"random","maxResponses":"10"}},
+        {"taskName":"Cryptography","taskParams":{"hasIndividuals":"false","intro":"group_1","hasGroup":"true","mapping":"random","maxResponses":"10","type":"intro"}},
+        {"taskName":"Cryptography","taskParams":{"hasIndividuals":"false","intro":"group_1","hasGroup":"true","mapping":"random","maxResponses":"10","type":"task"}},
         {"taskName":"Conclusion","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"group_1","hasCode":"false","displayScoreGroup":"false", "digitalReceipt":"true", "sonaId": "547", "payment": "30", "feedback":"false", "feedbackLinkType":"group1Pilot"}}
         ]';
       return Self::initializeTasks($group_id, $taskArray, $randomize);

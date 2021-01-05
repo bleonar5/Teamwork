@@ -87,7 +87,7 @@ class GroupTaskController extends Controller
           return redirect('/memory-group');
 
         case "Cryptography":
-          return redirect('/cryptography-group-intro');
+          return redirect('/cryptography-group');
 
         case "Optimization":
           return redirect('/optimization-group-intro');
@@ -614,11 +614,15 @@ class GroupTaskController extends Controller
       $currentTask = GroupTask::with('Response')->find($request->session()->get('currentGroupTask'));
       Log::debug($request->session()->get('currentGroupTask'));
       #$#time_elapsed = $currentTask->updated_at
+      $parameters = unserialize($currentTask->parameters);
+      if($parameters->type == "intro")
+        return redirect('/cryptography-group-intro');
+
       $whose_turn = $currentTask->whose_turn;
       $currentTask->started = 1;
       $currentTask->intro_completed = 1;
       $currentTask->save();
-      $parameters = unserialize($currentTask->parameters);
+      
 
       $mapping = unserialize($currentTask->mapping);
       $maxResponses = $parameters->maxResponses;
