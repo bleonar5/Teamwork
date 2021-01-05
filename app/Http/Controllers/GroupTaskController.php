@@ -616,7 +616,7 @@ class GroupTaskController extends Controller
       #$#time_elapsed = $currentTask->updated_at
       $parameters = unserialize($currentTask->parameters);
       if($parameters->type == "intro")
-        return redirect('/cryptography-group-intro');
+        return redirect('/cryptography-intro');
       $this->recordEndTime($request, 'intro');
 
       $whose_turn = $currentTask->whose_turn;
