@@ -87,7 +87,7 @@ class GroupTaskController extends Controller
           return redirect('/memory-group');
 
         case "Cryptography":
-          return redirect('/cryptography-group');
+          return redirect('/cryptography');
 
         case "Optimization":
           return redirect('/optimization-group-intro');
