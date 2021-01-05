@@ -28,11 +28,40 @@ class LoginController extends Controller
                                    'participant_id' => $request->participant_id,
                                    'password' => bcrypt('participant'),
                                    'role_id' => 3,
-                                   'group_id'=>1]);
+                                   'group_id'=>0]);
       $user->save();
       \Auth::login($user);
 
-      
+      //$group = Group::where('group_number',$user->id)->first();
+      $newGroup = false;
+      // If the group doesn't exist yet, create it
+      if($user->group_id == 0){
+        $newGroup = true;
+        $group = new Group;
+        $group->save();
+
+      }
+      else{
+        return redirect('waiting-room');
+      }
+
+      // If the user exists, update the user's group ID, if needed
+      if($group->id != $user->group_id) {
+       $user->group_id = $group->id;
+       $user->save();
+      }
+
+      try{
+        \DB::table('group_user')
+           ->insert(['user_id' => $user->id,
+                     'group_id' => $group->id,
+                     'created_at' => date("Y-m-d H:i:s"),
+                     'updated_at' => date("Y-m-d H:i:s")]);
+      }
+
+      catch(\Exception $e){
+        // Will throw an exception if the group ID and user ID are duplicates. Just ignore
+      }
 
 
       // If this is a newly created group, create some tasks if requested
