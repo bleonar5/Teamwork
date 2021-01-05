@@ -40,7 +40,8 @@
       preload(preloadImages);
 
       var callback = function() {
-        console.log("BINGOOOOOO");
+        $('#memory-form').submit();
+        /*console.log("BINGOOOOOO");
           $.ajax({url:'memory-group',
             type:'post',
             data:$('#memory-form').serialize(),
@@ -62,7 +63,7 @@
               });
             }
 
-          }).fail(function(){console.log('fail')});
+          }).fail(function(){console.log('fail')});*/
       };
       var memory = new Memory(tests, isReporter, callback);
       memory.begin();

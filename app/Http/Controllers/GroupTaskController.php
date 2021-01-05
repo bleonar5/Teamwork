@@ -30,6 +30,9 @@ class GroupTaskController extends Controller
     public function getTask(Request $request) {
       $group_id = \Auth::user()->group_id;
 
+      //$task_id = $request->session()->get('currentGroupTask');
+      //$task_name = GroupTask::find($task_id)->name;
+
       Log::debug(\Auth::user());
 
       $groupTasksAll = GroupTask::where('group_id', $group_id)
@@ -54,6 +57,7 @@ class GroupTaskController extends Controller
       }
 
       $currentTask = $groupTasks->first();
+
 
       $request->session()->put('currentGroupTask', $currentTask->id);
 
