@@ -55,6 +55,19 @@ class WaitingRoomController extends Controller
     public function getWaitingRoom(Request $request){
 
         $group_task = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+        if($group_task->name != "WaitingRoom"){
+            if($group_task->name === 'Cryptography'){
+                return redirect('/task-room');
+            }
+
+            elseif($group_task->name === "Memory"){
+                return redirect('/task-room');
+            }
+            else{
+                return redirect('/get-group-task');
+            }
+
+        }
 
         $parameters = unserialize($group_task->parameters);
         if($parameters->task === '1'){
