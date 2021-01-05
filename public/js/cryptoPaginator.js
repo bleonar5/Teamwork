@@ -48,7 +48,7 @@ function instructionPaginator(callback) {
             //$("#waiting").show();
 
             $.get('/end-group-task', function(data) {
-              $('#content').html(data);
+              window.location.href='/task-room';
             });
           }
 

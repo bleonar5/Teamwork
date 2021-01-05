@@ -53,7 +53,7 @@ $( document ).ready(function() {
             localStorage.setItem('pageCount',1);
 
             $.get('/end-group-task', function(data) {
-              $('#content').html(data);
+              window.location.href= '/task-room';
             });
           }
 
