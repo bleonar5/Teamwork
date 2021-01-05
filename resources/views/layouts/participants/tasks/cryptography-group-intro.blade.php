@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="{{ URL::asset('css/tasks.css') }}">
 
 <script>
-  var mapping = ['J', 'A', 'H', 'C', 'G', 'B', 'E', 'I', 'F', 'D'];
+  //var mapping = ['J', 'A', 'H', 'C', 'G', 'B', 'E', 'I', 'F', 'D'];
   var trialStage = 1;
   var hypothesisCount = 0;
   var user_id = {{ $user->id }};
@@ -52,7 +52,7 @@ $( document ).ready(function() {
             channel.unbind('all-ready');
             localStorage.setItem('pageCount',1);
 
-            $.get('/cryptography', function(data) {
+            $.get('/get-group-task', function(data) {
               $('#content').html(data);
             });
           }

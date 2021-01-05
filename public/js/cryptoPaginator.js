@@ -47,7 +47,7 @@ function instructionPaginator(callback) {
             $('.instr_nav').hide();
             //$("#waiting").show();
 
-            $.get('/cryptography', function(data) {
+            $.get('/get-group-task', function(data) {
               $('#content').html(data);
             });
           }
