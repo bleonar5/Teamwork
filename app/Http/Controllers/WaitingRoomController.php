@@ -122,6 +122,19 @@ class WaitingRoomController extends Controller
             //$room_users[$indices[2]]->group_id = $room_users[$indices[0]]->group_id;
             foreach($room_users as $key=>$room_user){
                 $room_user->group_id = $group->id;
+
+                try{
+                    \DB::table('group_user')
+                       ->insert(['user_id' => $room_user->id,
+                                 'group_id' => $group->id,
+                                 'created_at' => date("Y-m-d H:i:s"),
+                                 'updated_at' => date("Y-m-d H:i:s")]);
+                  }
+
+                  catch(\Exception $e){
+                    // Will throw an exception if the group ID and user ID are duplicates. Just ignore
+                  }
+
                 if($room_user->task_id == 0)
                     $room_user->task_id = rand(1,16);
                 else
