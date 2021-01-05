@@ -48,7 +48,8 @@ function instructionPaginator(callback) {
             //$("#waiting").show();
 
             $.get('/end-group-task', function(data) {
-              window.location.href='/task-room';
+              console.log(data);
+              //window.location.href='/task-room';
             });
           }
 
