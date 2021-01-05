@@ -575,8 +575,8 @@ class GroupTaskController extends Controller
       $user = User::find(\Auth::user()->id);
       $user->waiting = 0;
       $user->save();
-      //GroupTask::find($request->session()->get('currentGroupTask'));
-      $currentTask = \Teamwork\GroupTask::where('group_id',$user->group_id)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
+      GroupTask::find($request->session()->get('currentGroupTask'));
+      //$currentTask = \Teamwork\GroupTask::where('group_id',$user->group_id)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
       $currentTask->started = 1;
       $currentTask->save();
       $request->session()->put('currentGroupTask', $currentTask->id);
