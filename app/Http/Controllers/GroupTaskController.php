@@ -178,7 +178,7 @@ class GroupTaskController extends Controller
 
     public function memory(Request $request) {
       $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
-      $currentTask->intro_completed = 1;
+      $currentTask->started = 1;
       $currentTask->save();
       $parameters = unserialize($currentTask->parameters);
       $memory = new \Teamwork\Tasks\Memory;

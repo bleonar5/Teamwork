@@ -32,34 +32,7 @@ class LoginController extends Controller
       $user->save();
       \Auth::login($user);
 
-      //$group_id = User::find($user()->id)->group_id;//Group::where('group_number', $request->group_id)->first();
-      //$group = Group::where('group_number',$user->id)->first();
-      $newGroup = false;
-      // If the group doesn't exist yet, create it
-      if(true){
-        $newGroup = true;
-        $group = new Group;
-        $group->save();
-
-      }
-
-      // If the user exists, update the user's group ID, if needed
-      if($group->id != $user->group_id) {
-       $user->group_id = $group->id;
-       $user->save();
-      }
-
-      try{
-        \DB::table('group_user')
-           ->insert(['user_id' => $user->id,
-                     'group_id' => $group->id,
-                     'created_at' => date("Y-m-d H:i:s"),
-                     'updated_at' => date("Y-m-d H:i:s")]);
-      }
-
-      catch(\Exception $e){
-        // Will throw an exception if the group ID and user ID are duplicates. Just ignore
-      }
+      
 
 
       // If this is a newly created group, create some tasks if requested
