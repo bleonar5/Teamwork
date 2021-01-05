@@ -3,6 +3,7 @@
 namespace Teamwork;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class GroupTask extends Model
 {
