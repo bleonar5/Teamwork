@@ -25,6 +25,12 @@ Route::get('/get-group-task', [
 	'roles' => ['Participant', 'Group'] // Only a logged in user can view this page
 ]);
 
+Route::get('/check-task', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'GroupTaskController@checkTask',
+	'roles' => ['Participant', 'Group'] // Only a logged in user can view this page
+]);
+
 Route::get('/group-experiment-end', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'GroupTaskController@endExperiment',
@@ -111,7 +117,7 @@ Route::get('/check-leader-ready', [
 	'roles' => ['Participant'] // Only a logged in user can view this page
 ]);
 
-Route::post('/task-room/leader-answered', [
+Route::post('/leader-answered', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'GroupTaskController@leaderAnswered',
 	'roles' => ['Participant','Group'] // Only a logged in user can view this page
@@ -633,7 +639,7 @@ Route::post('/still-here', [
 	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
 ]);
 
-Route::get('/task-room/{task}', [
+Route::get('/task-room', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'TaskRoomController@taskRoom',
 	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page

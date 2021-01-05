@@ -20,6 +20,13 @@ use Illuminate\Support\Facades\Log;
 class GroupTaskController extends Controller
 {
 
+    public function checkTask(Request $request){
+      $group_id = \Auth::user()->group_id;
+      $task_id = $request->session()->get('currentGroupTask');
+      $task_name = GroupTask::find($task_id)->name;
+      return $task_name;
+    }
+
     public function getTask(Request $request) {
       $group_id = \Auth::user()->group_id;
 
@@ -73,10 +80,10 @@ class GroupTaskController extends Controller
           return redirect('/waiting-room');
 
         case "Memory":
-          return redirect('/task-room/memory');
+          return redirect('/memory-group');
 
         case "Cryptography":
-          return redirect('/task-room/cryptography');
+          return redirect('/cryptography-group-intro');
 
         case "Optimization":
           return redirect('/optimization-group-intro');

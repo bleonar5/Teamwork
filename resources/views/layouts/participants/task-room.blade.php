@@ -75,7 +75,11 @@ $( document ).ready(function() {
         });
       join(rtc,params);
     });
-  if("{{ $task->name }}" === "Cryptography"){
+  jQuery.get('/get-group-task', function(data){
+        console.log(data);
+        $('#content').html(data);
+      });
+  /*if("{{ $task->name }}" === "Cryptography"){
     if ("{{ $task->intro_completed }}" === "1"){
       jQuery.get('/cryptography', function(data){
         console.log(data);
@@ -102,7 +106,7 @@ $( document ).ready(function() {
       $('#content').html(data);
     });
     }
-  }
+  }*/
 
 });
 

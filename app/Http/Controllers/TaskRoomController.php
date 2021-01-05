@@ -12,11 +12,7 @@ use \Teamwork\Progress;
 class TaskRoomController extends Controller
 {
 
-    public function taskRoom(Request $request,$task){
-    	if ($task == "cryptography")
-    		$task = "Cryptography";
-    	if ($task == 'memory')
-    		$task = "Memory";
+    public function taskRoom(Request $request){
     	$user = \Teamwork\User::find(\Auth::user()->id);
     	$currentTask = GroupTask::where('id',($request->session()->get('currentGroupTask')))->first();
    		//$currentTask = \Teamwork\GroupTask::where('group_id',$user->group_id)->where('name',$task)->orderBy('created_at','DESC')->first();

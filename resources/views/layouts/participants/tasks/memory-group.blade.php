@@ -40,7 +40,29 @@
       preload(preloadImages);
 
       var callback = function() {
-        $("#memory-form").submit();
+        console.log("BINGOOOOOO");
+          $.ajax({url:'memory-group',
+            type:'post',
+            data:$('#memory-form').serialize(),
+            success:function(data){
+              console.log(data);
+              console.log('1');
+              $.ajax({url:'/check-task',
+                type:'get',
+                _token: "{{ csrf_token() }}",
+                success: function(task_name){
+                  console.log(2);
+                  console.log('###');
+                  console.log(task_name);
+                  if (task_name != "Cryptography" && task_name !='Memory')
+                    window.location.href='/end-group-task';
+                  else
+                    $('#content').html(data);
+                }
+              });
+            }
+
+          }).fail(function(){console.log('fail')});
       };
       var memory = new Memory(tests, isReporter, callback);
       memory.begin();

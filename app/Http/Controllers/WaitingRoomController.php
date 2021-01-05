@@ -78,7 +78,7 @@ class WaitingRoomController extends Controller
         
 
         if($group_task->started && $group_task->completed == 0){
-            return redirect('/task-room/'.strtolower($task_name));
+            return redirect('/task-room');
         }
 
         $room_users = User::where('in_room',$task)->get();
@@ -121,7 +121,7 @@ class WaitingRoomController extends Controller
                         \Teamwork\GroupTask::initializeCryptoTasks($group->id,$randomize=false);
                     else
                         \Teamwork\GroupTask::initializeMemoryTasks($group->id,$randomize=false);
-                    $group_task = \Teamwork\GroupTask::where('group_id',$group->id)->where('name',$task_name)->orderBy('created_at','DESC')->first();
+                    $group_task = \Teamwork\GroupTask::where('group_id',$group->id)->where('name',$task_name)->orderBy('order','ASC')->first();
                     $group_task->task_id = $room_user->task_id;
                     $group_task->save();
                     event(new SendToTask($room_user));
@@ -133,13 +133,13 @@ class WaitingRoomController extends Controller
                 
             }
             
-            return redirect('/get-group-task');
+            return redirect('/task-room');
         }
 
         $this_group = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name',$task_name)->orderBy('created_at','DESC')->first();
         if($this_group){
             if($this_group->started && $group_task->completed == 0)
-                return redirect('/get-group-task');
+                return redirect('/task-room');
         }
         
 

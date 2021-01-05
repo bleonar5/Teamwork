@@ -1149,6 +1149,7 @@ class Memory {
       'task_type' => 'mixed',
       'type' => 'intro',
       'directory' => '/img/memory-task/faces/',
+      'wait_for_all'=>'true',
       'blocks' => [
         ['type' => 'text_intro',
          'header' => 'Memory Task',
@@ -1415,31 +1416,12 @@ class Memory {
           'Your group will have <strong>40</strong> seconds to memorize 6 images, 12 words and 2 short stories. This is like the practice, but you have <strong>twice as long</strong> to <strong>remember twice as much</strong>',
           'Click "Next" for some more information'
         ]],
-        ['type' => 'text',
-         'header' => '',
-         'wait_for_all' => 'true',
-         'role' => True,
-         'leader' => ['Now we will ask you some questions about the stimuli.',
-                       'You are the <strong>leader</strong> and are responsible for answering on behalf of the group.',
-                       'The questions will begin when you all click next'
-                     ],
-            'follower1' => ['Now we will ask you some questions about the stimuli.',
-                      'You will see the questions on your computer.',
-                       "<strong>Your group leader will answer on the group's behalf</strong>",
-                       'The questions will begin when you all click next'
-                     ],
-            'follower2' => ['Now we will ask you some questions about the stimuli.',
-                      'You will see the questions on your computer.',
-                       "<strong>Your group leader will answer on the group's behalf</strong>",
-                       'The questions will begin when you all click next'
-                     ]],
-          ['type' => 'review_choice',
-          'text' => ['You will have <strong>40</strong> seconds to memorize everything as a group. There
-                      is a timer in the top right of the screen.',
-                     'Remember, during the 40 seconds, you can always change the stimuli
-                     you are memorizing by clicking on a different button.',
-                     '<strong>You’re NOT allowed to write anything down.</strong>',
-                     'The time starts when everyone has clicked on one of the buttons.'],
+        ['type' => 'review_choice',
+          'header' => 'Memory Task',
+          'text' => ['This is the page where you can choose what to memorize.',
+                     'If you want, you can try to memorize several types of stimuli.',
+                     '<strong>Your 40 seconds starts when everyone in the group has made a choice.</strong>',
+                     '<strong style="color:red">You’re NOT allowed to write anything down.</strong>'],
           'choices' => [['color' => 'success', 'type' => 'images'],
                         ['color' => 'warning', 'type' => 'words'],
                         ['color' => 'danger', 'type' => 'stories']],
@@ -1477,22 +1459,27 @@ class Memory {
                         ['color' => 'warning', 'type' => 'words'],
                         ['color' => 'danger', 'type' => 'stories']],
           'review_time' => 40],
-
-          ['type' => 'text',
-           'header' => '',
-           'wait_for_all','true',
-           'end_individual_section' => 'true',
-           'text' => ['We will now ask you questions.',
-                      '<strong>Everyone should be able to see the screen of the Reporter\'s laptop</strong>. You will
-                       answer as a group, on The Reporter\'s laptop.',
-                       'The questions will begin when The Reporter clicks "Next"'
+        ['type' => 'text',
+         'header' => '',
+         'wait_for_all' => 'true',
+         'role' => True,
+         'leader' => ['Now we will ask you some questions about the stimuli.',
+                       'You are the <strong>leader</strong> and are responsible for answering on behalf of the group.',
+                       'The questions will begin when you all click next'
+                     ],
+            'follower1' => ['Now we will ask you some questions about the stimuli.',
+                      'You will see the questions on your computer.',
+                       "<strong>Your group leader will answer on the group's behalf</strong>",
+                       'The questions will begin when you all click next'
+                     ],
+            'follower2' => ['Now we will ask you some questions about the stimuli.',
+                      'You will see the questions on your computer.',
+                       "<strong>Your group leader will answer on the group's behalf</strong>",
+                       'The questions will begin when you all click next'
                      ]],
-         ['type' => 'text',
-          'text' => ['Make sure all your group members
-                      can see this screen. We are about to ask questions about
-                      the words, stories and images you memorized.<br>
-                      Click "Next" to continue.'
-                    ]],
+          
+
+          
           [ 'type' => 'test_images',
            'selection_type' => 'select_one',
            'show_numbers' => 'false',
