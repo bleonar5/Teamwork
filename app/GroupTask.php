@@ -136,7 +136,7 @@ class GroupTask extends Model
 
     public static function initializeCryptoWaitingRoomTasks($group_id, $randomize) {
       $taskArray = '[
-        {"taskName":"WaitingRoom","taskParams":{"hasIndividuals":"false","hasGroup":"true","task":"2"}},
+        {"taskName":"WaitingRoom","taskParams":{"hasIndividuals":"false","hasGroup":"true","task":"1"}},
         ]';
       return Self::initializeTasks($group_id, $taskArray, $randomize);
     }
