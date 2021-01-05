@@ -132,7 +132,7 @@ class GroupTaskController extends Controller
                                     ->where('role_id', 3)
                                     ->count();
 
-      if(true) {
+      if($numUsersCompleted == $usersInGroup) {
         $task->completed = true;
         $task->save();
         // Remove any waiting messages that were set
