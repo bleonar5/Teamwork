@@ -283,7 +283,9 @@ class GroupTask extends Model
 
 
     public static function initializeTasks($group_id, $requiredTasks, $randomize = false) {
+      Log::debug($requiredTasks);
       $tasks = json_decode($requiredTasks);
+      Log::debug($tasks);
       foreach ($tasks as $key => $task) {
         $g = new GroupTask;
         $g->group_id = $group_id;
