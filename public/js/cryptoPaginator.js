@@ -47,7 +47,7 @@ function instructionPaginator(callback) {
             $('.instr_nav').hide();
             //$("#waiting").show();
 
-            $.get('/get-group-task', function(data) {
+            $.get('/end-group-task', function(data) {
               $('#content').html(data);
             });
           }

@@ -52,7 +52,7 @@ $( document ).ready(function() {
             channel.unbind('all-ready');
             localStorage.setItem('pageCount',1);
 
-            $.get('/get-group-task', function(data) {
+            $.get('/end-group-task', function(data) {
               $('#content').html(data);
             });
           }
