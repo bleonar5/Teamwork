@@ -79,7 +79,6 @@ $( document ).ready(function() {
         });
       join(rtc,params);
     });
-  if()
   jQuery.get('/get-group-task', function(data){
         console.log(data);
         $('#content').html(data);
