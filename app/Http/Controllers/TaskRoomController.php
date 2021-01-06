@@ -13,6 +13,10 @@ class TaskRoomController extends Controller
 {
 
     public function taskRoom(Request $request){
+      if ($request->clear)
+        $clear=true;
+      else
+        $clear = false;
     	$user = \Teamwork\User::find(\Auth::user()->id);
     	$currentTask = GroupTask::where('group_id',$user->group_id)
                               ->where('completed',0)
@@ -28,6 +32,7 @@ class TaskRoomController extends Controller
 
       return view('layouts.participants.task-room')
       	->with('user', $user)
-      	->with('task',$currentTask);
+      	->with('task',$currentTask)
+        ->with('clear',$clear);
     }
 }

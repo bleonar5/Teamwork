@@ -48,6 +48,10 @@
 
 
 $( document ).ready(function() {
+  if('{{ $clear }}' === 'true')
+    localStorage.clear();
+
+
 
   jQuery.get( "https://teamwork-token-gen.herokuapp.com/access_token?channel=group{{ $user->group_id }}&uid={{ $user->id }}", function( data ) {
       token = data.token;
@@ -75,6 +79,7 @@ $( document ).ready(function() {
         });
       join(rtc,params);
     });
+  if()
   jQuery.get('/get-group-task', function(data){
         console.log(data);
         $('#content').html(data);

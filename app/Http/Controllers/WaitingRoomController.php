@@ -159,7 +159,7 @@ class WaitingRoomController extends Controller
                 
             }
             
-            return redirect('/task-room');
+            return redirect('/task-room?clear=true');
         }
 
         $this_group = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name',$task_name)->orderBy('created_at','DESC')->first();
