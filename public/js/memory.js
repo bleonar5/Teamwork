@@ -262,7 +262,8 @@ var Memory = class Memory {
   setTimer() {
     var timer = $("#timer_"+this.testIndex+"_"+this.blockIndex);
     if (localStorage.getItem('time')){
-      tests[this.testIndex].blocks[this.blockIndex].review_time = localStorage.getItem('time');
+      if(parseInt(localStorage.getItem('time')))
+        tests[this.testIndex].blocks[this.blockIndex].review_time = localStorage.getItem('time');
 
     }
     timer.html(tests[this.testIndex].blocks[this.blockIndex].review_time);
