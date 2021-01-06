@@ -21,6 +21,7 @@ function shuffle(a) {
 var room_type;
 
 $( document ).ready(function() {
+  localStorage.clear();
   room_type='{{ $task }}'; 
   
   console.log($('#roomTotal').text());
