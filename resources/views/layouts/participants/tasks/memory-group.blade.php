@@ -12,6 +12,7 @@
 @section('content')
 
 <script>
+  var itv;
   function leaderAnswered(){
     $.post('leader-answered', {
             _token : "{{ csrf_token() }}",
@@ -67,6 +68,7 @@
 
       var callback = function() {
         localStorage.clear();
+        clearInterval(itv);
         $('#memory-form').submit();
         
         /*console.log("BINGOOOOOO");
