@@ -262,12 +262,14 @@ var Memory = class Memory {
   setTimer() {
     var timer = $("#timer_"+this.testIndex+"_"+this.blockIndex);
     if (localStorage.getItem('time')){
-      if(parseInt(localStorage.getItem('time')))
-        tests[this.testIndex].blocks[this.blockIndex].review_time = localStorage.getItem('time');
+      if(parseInt(localStorage.getItem('time')) ){
+        if(parseInt(localStorage.getItem('time')) > 0)
+          tests[this.testIndex].blocks[this.blockIndex].review_time = localStorage.getItem('time');
+      }
 
     }
     timer.html(tests[this.testIndex].blocks[this.blockIndex].review_time);
-    setInterval(function(){
+    itv = setInterval(function(){
       var time = parseInt(timer.html()) - 1;
       localStorage.setItem('time',time);
       timer.html(time);
