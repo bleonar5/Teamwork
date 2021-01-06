@@ -21,6 +21,32 @@
 
     var tests = <?php echo  $enc_tests; ?>;
     $( document ).ready(function() {
+      for (var i = 0; i < localStorage.length; i++){
+        var key = localStorage.key(i);
+        console.log('$%$%$%$%$%$%');
+        console.log(key);
+        var val = localStorage.getItem(key);
+        console.log(val)
+
+        if (key.includes('response')){
+          if (key.includes('checkbox')){
+            console.log('im in');
+            key = key.split('#')[0];
+            var vals = val.split(',');
+            console.log(vals);
+            vals.forEach(function(e){
+              $('input[name="'+key.toString()+'"][value="'+e+'"]').attr('checked',true);
+              console.log('input[name="'+key.toString()+'"][value="'+e+'"]');
+              console.log($('input[name="'+key.toString()+'"][value="'+e+'"]'));
+            });
+            console.log('im in');
+          }
+          else{
+            $('input[name="'+key.toString()+'"]').val(val);
+          }
+        }
+      }
+
       Pusher.logToConsole = true;
 
       var pusher = new Pusher('{{ config("app.PUSHER_APP_KEY") }}', {
@@ -40,7 +66,9 @@
       preload(preloadImages);
 
       var callback = function() {
+        localStorage.clear();
         $('#memory-form').submit();
+        
         /*console.log("BINGOOOOOO");
           $.ajax({url:'memory-group',
             type:'post',
@@ -127,7 +155,7 @@
 
       $('.select-all').on('change', function(event) {
         var response = $(this).attr('name');
-        $('.no-selection[name="'+response+'"]').prop('checked', false);
+        $('.no-selection[name="'+response+'"]').attr('checked', false);
       });
 
       // Target images
@@ -152,8 +180,24 @@
             _token : "{{ csrf_token() }}",
             key : key
           });
+
         }
 
+      });
+      $('input[name*="response"]').on('change',function(event){
+        console.log('input changed');
+        if($(event.target).attr('type') === "checkbox"){
+          var radios = $('input[name*="'+$(event.target).attr('name')+'"][type="checkbox"]');
+          var checked_vals = [];
+          $('input[name*="'+$(event.target).attr('name')+'"][type="checkbox"]').each(function(i){
+            if($(this).is(':checked')){
+              checked_vals.push($(this).val());
+            }
+          });
+          localStorage.setItem($(event.target).attr('name')+'#checkbox',checked_vals.join(','));
+        }
+        else
+          localStorage.setItem($(event.target).attr('name'),$(event.target).val());
       });
 
       $("#popup-continue").on('click', function(event) {

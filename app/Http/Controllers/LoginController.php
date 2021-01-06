@@ -41,8 +41,13 @@ class LoginController extends Controller
         $group->save();
 
       }
-      else{
-        return redirect('waiting-room');
+      $currentTask = \Teamwork\GroupTask::where('group_id',$user->group_id)
+                              ->where('completed',0)
+                              ->orderBy('order','ASC')
+                              ->first();
+      if($currentTask){
+        $request->session()->put('currentGroupTask', $currentTask->id);
+        return redirect('/waiting-room');
       }
 
       // If the user exists, update the user's group ID, if needed
@@ -65,7 +70,7 @@ class LoginController extends Controller
 
 
       // If this is a newly created group, create some tasks if requested
-      if($newGroup && isset($request->task_package)) {
+      if(isset($request->task_package)) {
        if($request->task_package == 'group-memory'){
          \Teamwork\GroupTask::initializeMemoryWaitingRoomTasks(\Auth::user()->group_id, $randomize = false);
          return redirect('/get-group-task');

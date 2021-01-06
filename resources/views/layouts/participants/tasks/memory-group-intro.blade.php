@@ -27,7 +27,7 @@ $( document ).ready(function() {
       $('#next').attr('disabled',false);
       $("#inst_" + page_count).hide();
       page_count += 1;
-      //localStorage.setItem('pageCount',page_count);
+      localStorage.setItem('page_count',page_count);
       //alert(JSON.stringify(data));
           if(page_count > $(".inst").length){
             console.log('longer');
@@ -40,6 +40,7 @@ $( document ).ready(function() {
             //ocalStorage.setItem('pageCount',1);
 
             $.get('/end-group-task', function(data) {
+              localStorage.clear();
               $('#content').html(data);
             });
           }

@@ -124,7 +124,7 @@ class GroupTask extends Model
       $taskArray = '[
         {"taskName":"Cryptography","taskParams":{"hasIndividuals":"false","intro":"group_1","hasGroup":"true","mapping":"random","maxResponses":"10","type":"intro"}},
         {"taskName":"Cryptography","taskParams":{"hasIndividuals":"false","intro":"group_1","hasGroup":"true","mapping":"random","maxResponses":"10","type":"task"}},
-        {"taskName":"Conclusion","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"group_1","hasCode":"false","displayScoreGroup":"false", "digitalReceipt":"true", "sonaId": "547", "payment": "30", "feedback":"false", "feedbackLinkType":"group1Pilot"}}
+        {"taskName":"Conclusion","taskParams":{"hasIndividuals":"false","hasGroup":"true","type":"group_1","hasCode":"false","displayScoreGroup":"false", "digitalReceipt":"true", "sonaId": "547", "payment": "30", "feedback":"false", "feedbackLinkType":"group1Pilot"}}
         ]';
       return Self::initializeTasks($group_id, $taskArray, $randomize);
     }
@@ -145,10 +145,9 @@ class GroupTask extends Model
 
     public static function initializeMemoryTasks($group_id, $randomize) {
       $taskArray = '[
-        {"taskName":"Memory","taskParams":{"hasIndividuals":"false","hasGroup":"true","test":"intro"}},
         {"taskName":"Memory","taskParams":{"hasIndividuals":"false","hasGroup":"true","test":"group_1_instructions"}},
         {"taskName":"Memory","taskParams":{"hasIndividuals":"false","hasGroup":"true","test":"group_1"}},
-        {"taskName":"Conclusion","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"group_1","hasCode":"false","displayScoreGroup":"false", "digitalReceipt":"false", "sonaId": "547", "payment": "30", "feedback":"false", "feedbackLinkType":"group1Pilot"}}
+        {"taskName":"Conclusion","taskParams":{"hasIndividuals":"false","hasGroup":"true","type":"group_1","hasCode":"false","displayScoreGroup":"false", "digitalReceipt":"false", "sonaId": "547", "payment": "30", "feedback":"false", "feedbackLinkType":"group1Pilot"}}
         ]';
       return Self::initializeTasks($group_id, $taskArray, $randomize);
     }

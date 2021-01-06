@@ -4,7 +4,37 @@ namespace Teamwork\Tasks;
 class Memory {
 
   private $memoryTests = [
-    'intro' => ['test_name' => 'intro','task_type' => 'intro'],
+    'intro' => ['test_name' => 'intro',
+                'task_type' => 'intro',
+                'blocks' => [
+                  ['type'=>'text',
+                   'header'=> 'Welcome to the final set of group tasks!',
+                   'wait_for_all','true',
+                   'text'=>[
+                      'You will be working together for 10-12 minutes, trying to solve the COLLECTIVE MEMORY task.',
+                      'Please take a moment to introduce yourselves.'
+                    ]
+                  ],
+                  ['type'=>'text',
+                   'header'=> '',
+                   'wait_for_all','true',
+                   'text'=>[
+                      'This task is similar to the memory tasks you completed as an individual.',
+                      'Now, you will be working on the task <strong>as a group</strong>'
+                    ]
+                  ],
+                  ['type'=>'text',
+                   'header'=> '',
+                   'wait_for_all','true',
+                   'text'=>[
+                      "The collective Memory task examines three types of memory: <span style='color:green'>images</span>, <span style='color:yellow'>words</span>, and <span style='color:red'>stories</span>",
+                      'Your group must memorize all three types of stimuli <strong>at the same time</strong>',
+                      "<strong>Please do NOT write anything down during this task</strong>",
+                      "We'll start with a practice round"
+                    ]
+                  ]
+                ]
+              ],
     'group_1_intro' => ['test_name' => 'group_1_intro','type' => 'intro', 'task_type' => 'intro', 'blocks' => []],
     'results' => ['test_name' => 'results', 'task_type' => 'results'],
     'images_instructions' => [
@@ -1030,6 +1060,32 @@ class Memory {
       'type' => 'intro',
       'directory' => '/img/memory-task/bodies/',
       'blocks' => [
+        ['type'=>'text',
+                   'header'=> 'Welcome to the final set of group tasks!',
+                   'wait_for_all'=>'true',
+                   'text'=>[
+                      'You will be working together for 10-12 minutes, trying to solve the COLLECTIVE MEMORY task.',
+                      'Please take a moment to introduce yourselves.'
+                    ]
+                  ],
+                  ['type'=>'text',
+                   'header'=> '',
+                   'wait_for_all'=>'true',
+                   'text'=>[
+                      'This task is similar to the memory tasks you completed as an individual.',
+                      'Now, you will be working on the task <strong>as a group</strong>'
+                    ]
+                  ],
+                  ['type'=>'text',
+                   'header'=> '',
+                   'wait_for_all'=>'true',
+                   'text'=>[
+                      "The collective Memory task examines three types of memory: <span style='color:green'>images</span>, <span style='color:yellow'>words</span>, and <span style='color:red'>stories</span>",
+                      'Your group must memorize all three types of stimuli <strong>at the same time</strong>',
+                      "<strong>Please do NOT write anything down during this task</strong>",
+                      "We'll start with a practice round"
+                    ]
+                  ],
         ['type' => 'text',
          'header' => 'Memory: practice round',
          'wait_for_all' => 'true',
@@ -1109,16 +1165,6 @@ class Memory {
                        "<strong>Your group leader will answer on the group's behalf</strong>",
                        'The practice questions will begin when you all click next'
                      ]],
-
-
-         ['type' => 'text',
-          'wait_for_all' => 'true',
-          'header' => 'Memory: practice round',
-          'text' => ['Make sure all your group members
-                      can see this screen. We are about to ask questions about
-                      the words, stories and images you memorized.<br>
-                      Click "Next" to continue.'
-                    ]],
 
           ['type' => 'practice_test_stories',
            'selection_type' => 'select_one',
@@ -1407,6 +1453,7 @@ class Memory {
       'type' => 'intro',
       'directory' => '/img/memory-task/cars/',
       'blocks' => [
+        
         ['type'=>'text',
         'header'=>'',
         'wait_for_all','true',

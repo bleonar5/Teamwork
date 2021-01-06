@@ -2,22 +2,25 @@ var Memory = class Memory {
 
   constructor(tests, isReporter, callback) {
     this.tests = tests;
-    this.blockIndex = 0;
-    this.testIndex = 0;
+    this.blockIndex = localStorage.getItem('blockIndex') ? localStorage.getItem('blockIndex') : 0 ;
+    this.testIndex = localStorage.getItem('testIndex') ? localStorage.getItem('testIndex') : 0;
     this.callback = callback;
-    this.step = 1;
+    this.step = localStorage.getItem('step') ? localStorage.getItem('step') : 1;
     this.isReporter = isReporter;
 
-    this.navTargetPosition = 0;
-    this.autoNavInterval;
+    this.navTargetPosition = localStorage.getItem('navTargetPosition') ? localStorage.getItem('navTargetPosition') : 0;
+    this.autoNavInterval = localStorage.getItem('autoNavInterval') ? localStorage.getItem('autoNavInterval') : null;
     this.popupTimeout; // Holds the timeout for any current instruction popups
     this.popupSeen = []; // Holds popups that have already been seen
-    this.groupTestReviewChoice;
-    this.navImgTargetPosition;
-    this.navWordTargetPosition;
+    this.groupTestReviewChoice = localStorage.getItem('groupTestReviewChoice') ?  localStorage.getItem('groupTestReviewChoice') : null;
+    this.navImgTargetPosition = localStorage.getItem('navImgTargetPosition') ? localStorage.getItem('navImgTargetPosition') : null;
+    this.navWordTargetPosition = localStorage.getItem('navWordTargetPosition') ? localStorage.getItem('navImgTargetPosition') : null;
+
+
   }
 
   begin() {
+    console.log(this.testIndex);
     $(".memory").hide();
     $(`#memory_${this.testIndex}_${this.blockIndex}`).show();
     this.initializeBlock();
@@ -26,15 +29,19 @@ var Memory = class Memory {
   advance() {
     $(`#memory_${this.testIndex}_${this.blockIndex}`).hide();
     this.blockIndex++;
+    localStorage.setItem('blockIndex',this.blockIndex);
     this.checkPosition();
     $(`#memory_${this.testIndex}_${this.blockIndex}`).show();
   }
 
 
   advanceImageTest(val) {
-    $(`#response_${this.testIndex}_${this.blockIndex}`).val(val)
+    $(`#response_${this.testIndex}_${this.blockIndex}`).val(val);
+    localStorage.setItem($(`#response_${this.testIndex}_${this.blockIndex}`).attr('name'),val);
     $(`#memory_${this.testIndex}_${this.blockIndex}`).hide();
     this.blockIndex++;
+    localStorage.setItem('blockIndex',this.blockIndex);
+    localStorage.setItem($(`#response_${this.testIndex}_${this.blockIndex}`).attr('name'),val);
     this.checkPosition();
     $(`#memory_${this.testIndex}_${this.blockIndex}`).show();
 
@@ -50,6 +57,8 @@ var Memory = class Memory {
 
     this.navTargetPosition = (this.navTargetPosition < items - 1) ? this.navTargetPosition += 1 : 0;
 
+    localStorage.setItem('navTargetPosition',this.navTargetPosition);
+
     $('.target-' + this.navTargetPosition).show();
 
   }
@@ -63,6 +72,8 @@ var Memory = class Memory {
     $('.img-target-' + this.navImgTargetPosition).hide();
 
     this.navImgTargetPosition = (this.navImgTargetPosition < items - 1) ? this.navImgTargetPosition += 1 : 0;
+
+    localStorage.setItem('navImgTargetPosition',this.navImgTargetPosition);
 
     $('.img-target-' + this.navImgTargetPosition).show();
 
@@ -78,12 +89,14 @@ var Memory = class Memory {
 
     if(dir == 'next'){
       this.navWordTargetPosition += 1;
+      localStorage.setItem('navWordTargetPosition',this.navWordTargetPosition);
       $('.memory-review:visible .back').prop('disabled', false);
       if(this.navWordTargetPosition == items - 1) $('.memory-review:visible .next').prop('disabled', true);
     }
 
     if(dir == 'back'){
       this.navWordTargetPosition -= 1;
+      localStorage.setItem('navWordTargetPosition',this.navWordTargetPosition);
       $('.memory-review:visible .next').prop('disabled', false);
       if(this.navWordTargetPosition == 0) $('.memory-review:visible .back').prop("disabled",true);
     }
@@ -96,6 +109,7 @@ var Memory = class Memory {
 
     $('.target-' + this.navTargetPosition).hide();
     this.navTargetPosition++;
+    localStorage.setItem('navTargetPosition',this.navTargetPosition);
 
     //  If there are no other targets
     if(this.navTargetPosition == this.tests[this.testIndex].blocks[this.blockIndex].targets.length) {
@@ -121,6 +135,8 @@ var Memory = class Memory {
       else {
         this.testIndex++;
         this.blockIndex = 0;
+        localStorage.setItem('testIndex',this.testIndex);
+        localStorage.setItem('blockIndex',this.blockIndex);
       }
     }
     this.initializeBlock();
@@ -144,6 +160,7 @@ var Memory = class Memory {
 
     if(this.tests[this.testIndex].blocks[this.blockIndex].type == 'review') {
       this.navTargetPosition = 0;
+      localStorage.setItem('navTargetPosition',this.navTargetPosition);
       //$('.target-nav-back').hide();
       $('.target').hide();
       $('.target-' + this.navTargetPosition).show();
@@ -162,6 +179,8 @@ var Memory = class Memory {
     if(this.tests[this.testIndex].blocks[this.blockIndex].type == 'mixed_review') {
       this.navImgTargetPosition = 0;
       this.navWordTargetPosition = 0;
+      localStorage.setItem('navImgTargetPosition',this.navImgTargetPosition);
+      localStorage.setItem('navWordTargetPosition',this.navWordTargetPosition);
       $('.mixed-mem-targets').hide();
       $('#'+this.groupTestReviewChoice+'_'+this.testIndex+'_'+this.blockIndex).show();
 
@@ -230,20 +249,26 @@ var Memory = class Memory {
 
   setGroupTestReviewChoice(choice) {
     this.groupTestReviewChoice = choice;
+    localStorage.setItem('groupTestReviewChoice',this.groupTestReviewChoice);
   }
 
   switchMemReviewType(type) {
     $('.mixed-mem-targets').hide();
     this.groupTestReviewChoice = type;
+    localStorage.setItem('groupTestReviewChoice',this.groupTestReviewChoice);
     $('#'+this.groupTestReviewChoice+'_'+this.testIndex+'_'+this.blockIndex).show();
   }
 
   setTimer() {
     var timer = $("#timer_"+this.testIndex+"_"+this.blockIndex);
+    if (localStorage.getItem('time')){
+      tests[this.testIndex].blocks[this.blockIndex].review_time = localStorage.getItem('time');
 
+    }
     timer.html(tests[this.testIndex].blocks[this.blockIndex].review_time);
     setInterval(function(){
       var time = parseInt(timer.html()) - 1;
+      localStorage.setItem('time',this.time);
       timer.html(time);
     }, 1000);
     setTimeout(function() {
@@ -268,6 +293,7 @@ var Memory = class Memory {
         if(response == '1') {
           // Increment the step counter
           self.step++;
+          localStorage.setItem('step',self.step);
           $(modal).modal('hide');
           self.advance();
         }

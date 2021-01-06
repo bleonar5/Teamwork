@@ -110,6 +110,8 @@ class GroupTaskController extends Controller
       $task = \Teamwork\GroupTask::with('response')
                                  ->with('progress')
                                  ->find($request->session()->get('currentGroupTask'));
+      Log::debug('end task debug');
+      Log::debug($task);
 
       // If this is an individual-only task, mark it as done
       $parameters = unserialize($task->parameters);
@@ -126,11 +128,18 @@ class GroupTaskController extends Controller
       $progress->group_tasks_id = $task->id;
       $progress->save();
 
+      $task = \Teamwork\GroupTask::with('response')
+                                 ->with('progress')
+                                 ->find($request->session()->get('currentGroupTask'));
+
       $numUsersCompleted = count($task->progress->groupBy('user_id'));
+      Log::debug($numUsersCompleted);
+
 
       $usersInGroup = \Teamwork\User::where('group_id', \Auth::user()->group_id)
                                     ->where('role_id', 3)
                                     ->count();
+      Log::debug($usersInGroup);
 
       if($numUsersCompleted == $usersInGroup) {
         $task->completed = true;
@@ -184,7 +193,6 @@ class GroupTaskController extends Controller
       $memory = new \Teamwork\Tasks\Memory;
       $test = $memory->getTest($parameters->test);
       $imgsToPreload = $memory->getImagesForPreloader($test['test_name']);
-      if($test['task_type'] == 'intro') return redirect('/memory-group-intro');
       if($test['task_type'] == 'results') return redirect('/memory-group-results');
       if($test['type'] == 'intro') {
         $this->recordStartTime($request, 'intro');
@@ -269,7 +277,7 @@ class GroupTaskController extends Controller
       }
       // Look up the test based on the response key
       foreach ($responses as $key => $response) {
-        if(!$isReporter) continue;
+        //if(!$isReporter) continue;
         $indices = explode('_', $key);
         $test = $tests[$indices[1]]['blocks'][$indices[2]];
 
@@ -533,7 +541,7 @@ class GroupTaskController extends Controller
     public function clearStorage(Request $request){
       $user = User::find(\Auth::user()->id);
       Log::debug($user);
-      $group_task = GroupTask::where('group_id',$user->group_id)->where('name','Cryptography')->first();
+      $group_task = GroupTask::with('Response')->find($request->session()->get('currentGroupTask'));
       $group_task->whose_turn = 0;
       $group_task->started = 0;
       $group_task->save();
@@ -579,7 +587,7 @@ class GroupTaskController extends Controller
       //$currentTask = \Teamwork\GroupTask::where('group_id',$user->group_id)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
       $currentTask->started = 1;
       $currentTask->save();
-      $request->session()->put('currentGroupTask', $currentTask->id);
+      //$request->session()->put('currentGroupTask', $currentTask->id);
       $parameters = unserialize($currentTask->parameters);
       $maxResponses = $parameters->maxResponses;
       //$introType = $parameters->intro;
