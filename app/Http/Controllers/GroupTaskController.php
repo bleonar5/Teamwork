@@ -146,7 +146,7 @@ class GroupTaskController extends Controller
         $task->save();
         // Remove any waiting messages that were set
         $request->session()->forget('waitingMsg');
-        return redirect('/get-group-task');
+        return redirect('/task-room');
       }
       else {
         return redirect('/waiting');

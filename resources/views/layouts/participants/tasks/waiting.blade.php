@@ -6,7 +6,7 @@
     setInterval(function(){
       $.get( "/check-task-completion", function( result ) {
         console.log(result);
-        if(result == '1') window.location="/end-group-task";
+        if(result == '1') window.location="/task-room";
       });
     }, 1000);
   });

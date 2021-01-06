@@ -268,7 +268,7 @@ var Memory = class Memory {
     timer.html(tests[this.testIndex].blocks[this.blockIndex].review_time);
     setInterval(function(){
       var time = parseInt(timer.html()) - 1;
-      localStorage.setItem('time',this.time);
+      localStorage.setItem('time',time);
       timer.html(time);
     }, 1000);
     setTimeout(function() {
