@@ -94,7 +94,7 @@ $( document ).ready(function() {
       </div>
       <div id="inst_3" class="inst">
         <h4>
-          The collective Memory task examines three types of memory: <span style='color:green'>images</span>, <span style='color:yellow'>words</span>, and <span style='color:red'>stories</span>
+          The collective Memory task examines three types of memory: <span style='color:green'>images</span>, <span style='color:#e0ac13'>words</span>, and <span style='color:red'>stories</span>
         </h4>
         <h4>
           Your group must memorize all three types of stimuli <b>at the same time</b>

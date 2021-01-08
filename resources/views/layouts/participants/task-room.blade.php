@@ -48,7 +48,7 @@
 
 
 $( document ).ready(function() {
-  if('{{ $clear }}' === 'true')
+  if('{{ $clear }}' === '1')
     localStorage.clear();
 
 
@@ -118,10 +118,10 @@ $( document ).ready(function() {
 
 <div class="container">
   <div class="row vertical-center">
-    <div class='col-sm-9 text-center' id='content'>
+    <div class='col-sm-8 text-center' id='content'>
       
     </div>
-    <div class="col-sm-3 text-center">
+    <div class="col-sm-4 text-center">
       <h4> Your Team: </h4>
       <div class="agora-theme" border='solid black 1px'>
         <div class="video-grid" id="video">
