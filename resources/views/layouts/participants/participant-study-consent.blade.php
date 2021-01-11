@@ -74,13 +74,7 @@
             the relationship between measures of social skill and fluid intelligence.
           </p>
           <p>
-            <span class="consent-em">WHAT YOU’LL DO</span>: You will be asked to
-            solve puzzles, perform memory tasks, and identify people’s emotions
-            based on photographs. The online tasks (which you can do at home) should
-            take around 50 minutes. Then participants will come into the lab TWICE. The first
-            session will take less than an hour. The second session will take around
-            80 minutes. Both times you'll be working on puzzles and problems with a small
-            group of people.
+            <span class="consent-em">WHAT YOU’LL DO</span>:You will be asked to solve puzzles, perform memory tasks, and identify people’s emotions based on photographs. <strong>The entire experiment will be completed online.</strong> The first set of tasks are completed individually and take around 60 minutes. You will then be asked to sign up for sessions where you solve puzzles in a group of 3 people. There will be a video link between you and 2 other people. Each of these sessions will last around 60 minutes.
           </p>
           <p>
             <span class="consent-em">RISKS</span>: There are no risks
@@ -88,15 +82,10 @@
             computer use, including fatigue and mild stress.
           </p>
           <p>
-            <span class="consent-em">COMPENSATION</span>: Overall, compensation for this
-            experiment will be $90. This requires participants to complete these online
-            tasks and to come to <strong>two</strong> lab sessions.
+            <span class="consent-em">COMPENSATION</span>: OAverage payment will be $X per person (with a minimum of $Y). Payment will depend in part on how well your groups perform.
           </p>
           <p>
-            <span class="consent-em">PLEASE NOTE</span>: This study contains a
-            number of checks to make sure that participants are finishing the
-            tasks honestly and completely. Also, please be aware that we will be
-            recording lab sessions, and analyzing group communication.
+            <span class="consent-em">PLEASE NOTE</span>: This study contains a number of checks to make sure that participants are finishing the tasks honestly and completely.
           </p>
           <p>
             <span class="consent-em">VOLUNTARY PARTICIPATION AND RIGHT TO
@@ -105,9 +94,7 @@
               close your browser window. Partial data will not be analyzed.
           </p>
           <p>
-            <span class="consent-em">CONFIDENTIALITY</span>: All data collected as part
-            of this study will be anonymized (and personal information, such as your
-            email address, will be removed).
+            <span class="consent-em">CONFIDENTIALITY</span>:  All data collected as part of this study will be anonymized (and personal information, such as your email address, will be deleted at the conclusion of the study). Please note that we will be recording and analyzing the video interactions between you and your group. These videos will be permanently deleted at the conclusion of the project.
           </p>
           <p>
             <span class="consent-em">CONTACT INFORMATION</span>: If you have any
@@ -128,11 +115,7 @@
               the relationship between measures of social skill and fluid intelligence.
             </p>
             <p>
-              <span class="consent-em">WHAT YOU’LL DO</span>: You will be asked to
-              solve puzzles, perform memory tasks, and identify people’s emotions
-              based on photographs. The online tasks (which you can do at home) should
-              take around 50 minutes. Then participants will come into the lab and
-              solve similar problems in groups. This will take around 80 minutes.
+              <span class="consent-em">WHAT YOU’LL DO</span>: You will be asked to solve puzzles, perform memory tasks, and identify people’s emotions based on photographs. <strong>The entire experiment will be completed online.</strong> The first set of tasks are completed individually and take around 60 minutes. You will then be asked to sign up for sessions where you solve puzzles in a group of 3 people. There will be a video link between you and 2 other people. Each of these sessions will last around 60 minutes.
             </p>
             <p>
               <span class="consent-em">RISKS</span>: There are no risks
@@ -140,8 +123,7 @@
               computer use, including fatigue and mild stress.
             </p>
             <p>
-              <span class="consent-em">COMPENSATION</span>: Overall, compensation for this
-              pilot will be $35.
+              <span class="consent-em">COMPENSATION</span>: Average payment will be $X per person (with a minimum of $Y). Payment will depend in part on how well your groups perform.
             <p>
               <span class="consent-em">PLEASE NOTE</span>: This study contains a
               number of checks to make sure that participants are finishing the
@@ -154,9 +136,7 @@
                 close your browser window. Partial data will not be analyzed.
             </p>
             <p>
-              <span class="consent-em">CONFIDENTIALITY</span>: All data collected as part
-              of this study will be anonymized (and personal information, such as your
-              email address, will be removed).
+              <span class="consent-em">CONFIDENTIALITY</span>: All data collected as part of this study will be anonymized (and personal information, such as your email address, will be deleted at the conclusion of the study). Please note that we will be recording and analyzing the video interactions between you and your group. These videos will be permanently deleted at the conclusion of the project.
             </p>
             <p>
               <span class="consent-em">CONTACT INFORMATION</span>: If you have any

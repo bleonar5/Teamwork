@@ -23,8 +23,8 @@
           Task {{ \Session::get('completedTasks') + 1 }} of {{ \Session::get('totalTasks') }}
         </h3>
         <h4>
-          Last are some tests of memory.<br>
-          We will test three different types of memory.
+          This task measures your short-term memory.
+          There are three short parts, in which we ask you to remember:
         </h4>
         <div class="row">
           <div class="col-md-3 offset-md-4">
@@ -37,11 +37,11 @@
             </h4>
           </div>
         </div>
-        <h4>
-          The tests are short. In total, all the memory tests will take around 10 minutes.
-        </h4>
         <h4 class="text-danger">
           <strong>Please do NOT write anything down during these tasks.</strong>
+        </h4>
+        <h4>
+          There are no performance payments for this section.
         </h4>
       </div>
 

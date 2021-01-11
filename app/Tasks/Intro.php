@@ -6,11 +6,11 @@ class Intro {
   private $intro = [
     'mturk' => [[
                   'type' => 'header',
-                  'content' => 'Welcome to the Harvard Study Of Intelligence and Social Skill'
+                  'content' => 'Individual Tasks'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'Over the next <strong>60-70 minutes</strong> you will complete a
+                  'content' => 'Over the next <span style = "background-color: yellow;"><strong>60-70 minutes</strong></span> you will complete a
                   range of different tasks. Our goal is to understand how well
                   you solve problems, your ability to perceive emotions in
                   others, and your short-term memory. This is a research study
@@ -77,7 +77,7 @@ class Intro {
                 ]
       ],
 
-  'eligibility' => [[
+/*'eligibility' => [[
                 'type' => 'header',
                 'content' => 'Eligibility Notice'
               ],
@@ -110,7 +110,44 @@ class Intro {
                 <a href="/end-individual-task" role="button" class="btn btn-lg btn-success float-right">I Agree</a>
                 '
               ],
+    ],*/
+
+    'eligibility' => [[
+                'type' => 'header',
+                'content' => 'Welcome to the Harvard Study Of Individual and Group Problem Solving.'
+              ],
+              [
+                'type' => 'paragraph',
+                'content' => 'The study has 2 parts.'
+              ],
+              [
+                'type' => 'paragraph',
+                'content' => '<strong>Part 1</strong>'
+              ],
+              [
+                'type' => 'paragraph',
+                'content' => 'Individual Survey. You can do this immediately, and it takes 60-70 minutes. The individual survey involves answering questions about yourself and solving some puzzles.'
+              ],
+              [
+                'type' => 'paragraph',
+                'content' => '<strong>Part 2.</strong>'
+              ],
+              [
+                'type' => 'paragraph',
+                'content' => 'Group problem solving sessions. These sessions will last about 60 minutes each. You can sign up for these online. We will try to schedule sessions across different days (Mon-Sat) and times.<strong>Please continue ONLY if you are willing to sign up for AT LEAST FOUR (4) GROUP SESSIONS.</strong>'
+              ],
+              [
+                'type' => 'paragraph',
+                'content' => '<strong>Payment can only be provided to participants who commit to completing both parts (total of 5 hours)</strong>'
+              ],
+              [
+                'type' => 'paragraph',
+                'content' => '
+                <a href="/no-study-consent" role="button" class="btn btn-lg btn-warning float-left">I <strong>cannot</strong> commit to both parts of the experiment</a>
+                <a href="/end-individual-task" role="button" class="btn btn-lg btn-success float-right">I <strong>can</strong> commit to both parts (individual session + at least 4 group sessions over the period XX to XX)</a>'
+              ],
     ],
+
 
     'hdsl_individual_important_info' => [[
                   'type' => 'header',
