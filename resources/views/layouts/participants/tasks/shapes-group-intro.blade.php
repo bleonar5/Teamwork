@@ -108,7 +108,7 @@
         </div>
         <div id="inst_2" class="inst">
           <h3>
-            Instructions and examples
+            <i>The second set of shapes puzzles are a little different.</i>
           </h3>
           <h4>
             In each question you will see five boxes. Three of the boxes will be
@@ -154,19 +154,15 @@
               </tr>
             </table>
           </div>
-          <h4>
-            When all three of your group members are ready, click "Next".
-          </h4>
         </div>
         <div id="inst_4" class="inst">
+          <h3>
+            <i>You will complete the rest yourself.</i>
+          </h3>
           <h4>
             After clicking the "next" button, your group will complete the rest
             yourselves. Remember: <strong>choose two figures in each row that are
             <em>different</em> from the others</strong>.
-          </h4>
-          <h4>
-            As always, take a moment to discuss
-            how you will approach this task.
           </h4>
           <h4>
             There are 14 questions and you have 4 minutes. You may not have time
