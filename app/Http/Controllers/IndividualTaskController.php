@@ -37,18 +37,14 @@ class IndividualTaskController extends Controller
      }
 
       $currentTask = $groupTasks->first();
+      Log::debug('??????');
+      Log::debug($currentTask);
       $individualTask = $currentTask->individualTasks->first();
 
       $request->session()->put('currentGroupTask', $currentTask->id);
 
-      if($individualTask) {
         $request->session()->put('currentIndividualTask', $currentTask->individualTasks->first()->id);
         return $this->routeTask($currentTask);
-      }
-
-      else {
-        return redirect('/get-group-task');
-      }
     }
 
     public function routeTask($task) {
@@ -64,6 +60,10 @@ class IndividualTaskController extends Controller
         case "Intro":
           request()->session()->put('currentIndividualTaskName', 'Intro');
           return redirect('/study-intro');
+
+        case "DeviceCheck":
+          request()->session()->put('currentIndividualTaskName','DeviceCheck');
+          return redirect('/device-check');
 
         case "ChooseReporter":
           return redirect('/choose-reporter');
@@ -134,33 +134,23 @@ class IndividualTaskController extends Controller
 
     public function endTask(Request $request) {
 
+      Log::debug('ENDING');
+
+
 
       $task = \Teamwork\GroupTask::with('response')
                                  ->find($request->session()->get('currentGroupTask'));
 
+      Log::debug($task);
+
       // If this is an individual-only task, mark it as done
       $parameters = unserialize($task->parameters);
-      if($parameters->hasGroup == 'false') {
-        $task->completed = true;
+
+        $task->completed = 1;
         $task->save();
+        Log::debug('###');
+        Log::debug($task);
         return redirect('/get-individual-task');
-      }
-
-      $numUsersResponded = count($task->response->groupBy('user_id'));
-
-
-      $usersInGroup = \Teamwork\User::where('group_id', \Auth::user()->group_id)
-                                    ->where('role_id', 3)
-                                    ->count();
-
-      if($numUsersResponded == $usersInGroup) {
-        $task->completed = true;
-        $task->save();
-        return redirect('/get-individual-task');
-      }
-      else {
-        return view('layouts.participants.tasks.waiting');
-      }
     }
 
     public function endExperiment() {
@@ -835,7 +825,7 @@ class IndividualTaskController extends Controller
         $this->getProgress();
         $this_user = User::where('id',\Auth::user()->id)->first();
 
-        $currentTask = \Teamwork\GroupTask::where('name','Cryptography')->where('group_id',$this_user->group_id)->first();
+        $currentTask = \Teamwork\GroupTask::where('name','Cryptography')->where('completed',0)->where('group_id',$this_user->group_id)->first();
 
         $prior_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','<',$currentTask->order)->get();
         $later_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','>=',$currentTask->order)->get();
@@ -871,10 +861,13 @@ class IndividualTaskController extends Controller
       $sorted = $mapping;
       sort($sorted); // Sort and re-index
 
-      //if($parameters->intro == 'individual_alt') {
-      //  return view('layouts.participants.tasks.cryptography-individual-alt-intro')
-      //         ->with('maxResponses', $maxResponses);
-      //}
+      if($parameters->intro == 'individual_alt') {
+        return view('layouts.participants.tasks.cryptography-individual-alt-intro')
+               ->with('maxResponses', $maxResponses)
+               ->with('mapping', json_encode($mapping))
+                ->with('aSorted', $aSorted)
+                ->with('sorted', $aSorted);
+      }
 
       return view('layouts.participants.tasks.cryptography-individual-intro')
              ->with('maxResponses', $maxResponses)
@@ -890,9 +883,9 @@ class IndividualTaskController extends Controller
 
     public function cryptography(Request $request) {
       $user = User::find(\Auth::user()->id);
-      $isReporter = $this->isReporter(\Auth::user()->id, \Auth::user()->group_id);
+      //$isReporter = $this->isReporter(\Auth::user()->id, \Auth::user()->group_id);
       $this->recordEndTime($request, 'intro');
-      $currentTask = GroupTask::find($request->session()->get('currentGroupTask'));
+      $currentTask = \Teamwork\GroupTask::with('response')->find($request->session()->get('currentGroupTask'));
       //$whose_turn = $currentTask->whose_turn;
       //$currentTask->started = 1;
       //$currentTask->save();
@@ -902,17 +895,30 @@ class IndividualTaskController extends Controller
       $sorted = $mapping;
       sort($sorted);
 
-      // Record the start time for this task
-      $this->recordStartTime($request, 'task');
+
+      $time = Time::where('user_id',\Auth::user()->id)
+                    ->where('group_tasks_id',$request->session()->get('currentGroupTask'))
+                    ->where('type','task')
+                    ->first();
+      if ($time){
+        $time_remaining = 600 - \Carbon\Carbon::parse($time->start_time)->diffInSeconds(\Carbon\Carbon::now());
+        
+      }
+
+      else{
+        $this->recordStartTime($request, 'task');
+        $time_remaining = 600;
+      }
 
       return view('layouts.participants.tasks.cryptography-individual')
              ->with('user',$user)
              ->with('task_id',$currentTask->task_id)
              ->with('mapping',json_encode($mapping))
              ->with('sorted', $sorted)
-             ->with('whose_turn',$whose_turn)
              ->with('maxResponses', $maxResponses)
-             ->with('isReporter', $isReporter)
+             ->with('isReporter', false)
+             ->with('responses',$currentTask->response)
+             ->with('time_remaining',$time_remaining)
              ->with('hasGroup', $parameters->hasGroup);
     }
 
@@ -921,7 +927,6 @@ class IndividualTaskController extends Controller
       $this->recordEndTime($request, 'task');
       $task = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
       $task->points = $request->task_result;
-      $task->completed = true;
       $task->save();
 
       // Record the end time for this task
@@ -930,8 +935,7 @@ class IndividualTaskController extends Controller
                   ->first();
       $time->recordEndTime();
 
-      if(\Auth::user()->role_id == 3) return redirect('/end-individual-task');
-      else return redirect('/get-group-task');
+      return redirect('/end-individual-task');
     }
 
     public function optimizationIntro(Request $request) {
@@ -1235,6 +1239,36 @@ class IndividualTaskController extends Controller
       }
 
       return $this->getMemoryTaskResults();
+    }
+
+    public function getIndividualMemoryTaskResults() {
+
+      //$groupTasks = \Teamwork\GroupTask::where('name', 'Memory')
+        //                           ->where('group_id', \Auth::user()->group_id)
+          //                         ->with('response')->get();
+
+      $groupTasks = \Teamwork\Response::where('user_id',\Auth::user()->id)->get()->groupBy('group_tasks_id');
+
+      Log::debug($groupTasks);
+
+
+      $performance = ['words_1' => 0, 'faces_1' => 0, 'story_1' => 0];
+
+      foreach($groupTasks as $id => $array) {
+        $task = \Teamwork\GroupTask::where('id',(int) $id)->first();
+        if($task->name != "Memory")
+          continue;
+        Log::debug($task->parameters);
+        $parameters = unserialize($task->parameters);
+        if($parameters->test == 'words_1' || $parameters->test == 'faces_1' || $parameters->test == 'story_1') {
+          $avg = $array->avg('points');
+
+          $performance[substr($parameters->test, 0, -2)] = $this->calculateMemoryPercentileRank(substr($parameters->test, 0, -2), $avg);
+        }
+      }
+
+      return $performance;
+
     }
 
     public function getMemoryTaskResults() {

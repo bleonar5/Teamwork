@@ -202,6 +202,16 @@ class GroupTaskController extends Controller
         $this->recordStartTime($request, 'task');
       }
 
+      $group_users_array = [];
+
+      $group_users = \Teamwork\User::where('group_id',\Auth::user()->group_id)->get();
+      foreach($group_users as $key => $group_user){
+        $scores = $this->getIndividualMemoryTaskResults($group_user);
+        $group_users_array[$group_user->participant_id] = $scores;
+        Log::debug($scores);
+      }
+      Log::debug($group_users_array);
+
       // Determine is this user is the reporter for the group
       $isReporter = $this->isReporter(\Auth::user()->id, \Auth::user()->group_id);
       $user_id = \Auth::user()->id;
@@ -217,6 +227,7 @@ class GroupTaskController extends Controller
              ->with('taskId', $currentTask->id)
              ->with('enc_tests', json_encode([$test]))
              ->with('imgsToPreload', $imgsToPreload)
+             ->with('scores',json_encode($group_users_array))
              ->with('isReporter', ($isReporter) ? 1 : 0);
     }
 
@@ -666,6 +677,58 @@ class GroupTaskController extends Controller
              ->with('hasGroup', $parameters->hasGroup)
              ->with('time_remaining',$time_remaining);
       
+    }
+
+    public function getIndividualMemoryTaskResults($user) {
+
+      //$groupTasks = \Teamwork\GroupTask::where('name', 'Memory')
+        //                           ->where('group_id', \Auth::user()->group_id)
+          //                         ->with('response')->get();
+
+      $groupTasks = \Teamwork\Response::where('user_id',$user->id)->get()->groupBy('group_tasks_id');
+
+      Log::debug($groupTasks);
+
+
+      $performance = ['words_1' => 0, 'faces_1' => 0, 'story_1' => 0, 'words' => 'n/a', 'faces' => 'n/a', 'story' =>'n/a'];
+
+      foreach($groupTasks as $id => $array) {
+        $task = \Teamwork\GroupTask::where('id',$id)->first();
+        if($task->name != "Memory")
+          continue;
+        Log::debug($task->parameters);
+        $parameters = unserialize($task->parameters);
+        if($parameters->test == 'words_1' || $parameters->test == 'faces_1' || $parameters->test == 'story_1') {
+          $avg = $array->avg('points');
+
+          $performance[substr($parameters->test, 0, -2)] = $this->calculateMemoryPercentileRank(substr($parameters->test, 0, -2), $avg);
+        }
+      }
+
+      return $performance;
+
+    }
+
+    private function calculateMemoryPercentileRank($test, $avg){
+      $percentiles = [
+      'words' => ['20' => 2.076, '30' => 2.290,
+                         '40' => 2.415, '50' => 2.465, '60' => 2.340, '70' => 2.390,
+                         '80' => 2.665, '90' => 2.790],
+
+      'faces' => ['20' => 1.490, '30' => 1.540,
+                        '40' => 1.750, '50' => 1.865, '60' => 1.890, '70' => 2.140,
+                        '80' => 2.240, '90' => 2.615],
+
+      'story' => ['20' => 1.490, '30' => 1.540,
+                         '40' => 1.590, '50' => 1.865, '60' => 2.140, '70' => 2.240,
+                         '80' => 2.600, '90' => 2.615]
+      ];
+      foreach (array_reverse($percentiles[$test], true) as $key => $value) {
+        if($avg >= $value) {
+          return $key;
+        }
+      }
+      return '20';
     }
 
     public function groupCryptography(Request $request) {

@@ -22,6 +22,17 @@
 
     var tests = <?php echo  $enc_tests; ?>;
     $( document ).ready(function() {
+      //console.log("{{ $scores }}");
+      scores = JSON.parse("{{ $scores }}".replace(/&quot;/g,'"'));
+      console.log(scores);
+      count = 1;
+      jQuery.each(scores, function(key, val) {
+        $('#pid_'+count.toString()).text(key);
+        $('#faces_'+count.toString()).text(val['faces']);
+        $('#words_'+count.toString()).text(val['words']);
+        $('#stories_'+count.toString()).text(val['story']);
+        count++;
+      });
       for (var i = 0; i < localStorage.length; i++){
         var key = localStorage.key(i);
         console.log('$%$%$%$%$%$%');
@@ -426,24 +437,25 @@
                                for="response_{{ $key }}_{{ $b_key }}">
                                {{ $choice }}
                         </label><br>
-                        <input type="checkbox" style='pointer-events: auto !important;position:auto !important; opacity:1 !important;'
-                        @if($user->group_role != 'leader')
-                          disabled 
-                        @endif
+                        
+                        @if($user->group_role == 'leader')
+                          <input type="checkbox" style='pointer-events: auto !important;position:auto !important; opacity:1 !important;'  
+                        
                                name="response_{{ $key }}_{{ $b_key }}[]"
                                value="{{ $c_key + 1 }}">
+                        @endif
                         </h2>
                       </div>
                     @endforeach
                   </div>
                   <div class="text-center">
-                    <input class="btn btn-primary memory-nav btn-lg" onclick='leaderAnswered()'
-                    @if($user->group_role != 'leader')
-                      disabled 
-                    @endif
-                           type="button" name="next"
+                    
+                    @if($user->group_role == 'leader')
+                      <input class="btn btn-primary memory-nav btn-lg" onclick='leaderAnswered()'  type="button" name="next"
                            id="continue_{{ $key }}_{{ $b_key }}"
                            value="Next">
+                    @endif
+                           
                   </div>
                 </div>
               @endif {{-- End if blocktype = practice_text_words --}}

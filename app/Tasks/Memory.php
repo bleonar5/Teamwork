@@ -1456,11 +1456,63 @@ class Memory {
         
         ['type'=>'text',
         'header'=>'',
-        'wait_for_all','true',
+        'wait_for_all'=>'true',
         'text' =>[
           'Now for the actual task',
           '<strong>This will determine your score</strong>',
           'Your group will have <strong>40</strong> seconds to memorize 6 images, 12 words and 2 short stories. This is like the practice, but you have <strong>twice as long</strong> to <strong>remember twice as much</strong>',
+          'Click "Next" for some more information'
+        ]],
+        ['type'=>'text',
+        'header'=>'Final Instructions',
+        'wait_for_all'=>'true',
+        'text' =>[
+          'Your group will have <strong>40</strong> seconds to memorize the words, images, and stories <strong>as a group</strong>',
+          "It may be helpful to reference your teammates' scores on the individual memory test to determine who should focus on each category",
+          "<table style='border:1px solid black'>
+            <tr style='border:1px solid black'>
+              <th style='border:1px solid black'>Participant ID</th>
+              <th style='border:1px solid black;color:green;background-color:#bdd8b6'>
+                Images
+              </th>
+              <th style='border:1px solid black;color:#ffd400;background-color:#fff7db'>
+                Words
+              </th>
+              <th style='border:1px solid black;color:red;background-color:#f7d3d3'>
+                Stories
+              </th>
+            </tr>
+            <tr style='border:1px solid black'>
+              <td id='pid_1' style='border:1px solid black;text-align:center'>
+              </td>
+              <td id ='faces_1' style='border:1px solid black;text-align:center''>
+              </td>
+              <td id='words_1' style='border:1px solid black;text-align:center''>
+              </td>
+              <td id='stories_1' style='border:1px solid black;text-align:center''>
+              </td>
+            </tr>
+            <tr style='border:1px solid black'>
+              <td id='pid_2' style='border:1px solid black;text-align:center''>
+              </td>
+              <td id ='faces_2' style='border:1px solid black;text-align:center''>
+              </td>
+              <td id='words_2' style='border:1px solid black;text-align:center''>
+              </td>
+              <td id='stories_2' style='border:1px solid black;text-align:center''>
+              </td>
+            </tr>
+            <tr style='border:1px solid black'>
+              <td id='pid_3' style='border:1px solid black;text-align:center''>
+              </td>
+              <td id ='faces_3' style='border:1px solid black;text-align:center''>
+              </td>
+              <td id='words_3' style='border:1px solid black;text-align:center''>
+              </td>
+              <td id='stories_3' style='border:1px solid black;text-align:center''>
+              </td>
+            </tr>
+          </table>",
           'Click "Next" for some more information'
         ]],
         ['type' => 'review_choice',

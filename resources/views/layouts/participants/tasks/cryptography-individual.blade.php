@@ -14,21 +14,85 @@
 
 var mapping = <?php echo  $mapping; ?>;
 var maxResponses = {{ $maxResponses }};
+var responses = '';
+var time_remaining;
 
 var trialStage = 1;
 var trials = 1;
+var equations = [];
+var hypotheses = [];
+var mapping_guess = '';
+var payment = 8.00;
+var guesses = [];
+var page = 1;
 
 $( document ).ready(function() {
+  time_remaining = parseInt('{{ $time_remaining }}');
+
+  responses = $('<div>').html('{{ $responses }}')[0].textContent;
+  responses = JSON.parse(responses);
+
+  if (responses.length  > 0){
+    for(var i = 0; i < responses.length; i++){
+      if(responses[i]['prompt'].includes('Guess Full Mapping')){
+        trialStage = 1;
+        console.log(responses[i]['response'].split(', Correct: ')[0]);
+        if(responses[i]['response'].split(', Correct: ')[0].includes(','))
+          guesses = responses[i]['response'].split(', Correct: ')[0].split(',');
+        else
+          guesses = [responses[i]['response'].split(', Correct: ')[0]];
+        console.log(guesses);
+        $(".full-mapping").each(function(i, el){
+          
+          $(el).val(guesses[i].split('=')[1]);
+        });
+        //mapping_guess = '['+responses[i]['response'].split(', Correct: ')[0]+']';
+        //mapping_guess = JSON.parse(mapping_guess);
+        console.log(mapping_guess);
+        trials++;
+      }
+      if(responses[i]['prompt'].includes('Propose Hypothesis')){
+        trialStage = 3;
+        $("#hypothesis-result").append('<h5>' + responses[i]['response'].replace(':','is').replace('=',' = ') + '</h5>');
+      }
+      if(responses[i]['prompt'].includes('Propose Equation')){
+        trialStage = 2;
+        $("#answers").append('<h5 class="answer">' + responses[i]['response'].replace('=',' = ') + '</h5>');
+        //equations.push(response[i]['response']);
+      }
+    }
+    $("#trial-counter").html(trials);
+
+    
+    //$('#mapping-list').html(localStorage.getItem('mapping'));
+    //local_guess = JSON.parse(localStorage.getItem('mapping'));
+    //$(".full-mapping").each(function(i, el){
+        //$(el).val(local_guess[i]);
+      //});
+  }
 
   $("#alert").hide();
   $("#hypothesis").hide();
   $("#guess-full-mapping").hide();
   $("#task-end").hide();
 
+  if (trialStage == 2){
+      console.log('sliding');
+      $('#hypothesis').show();
+      $('#propose-equation').slideUp();
+      $('#guess-full-mapping').slideUp();
+      
+    }
+    if (trialStage == 3){
+      $('#propose-equation').slideUp();
+      $('#guess-full-mapping').slideDown();
+      $('#hypothesis').slideUp();
+    }
+
   var crypto = new Cryptography(mapping);
 
 
-  initializeTimer(600, function() {
+  initializeTimer(time_remaining, function() {
     $("#crypto-header").hide();
     $("#crypto-ui").hide();
     $("#task-end").show();
@@ -57,6 +121,7 @@ $( document ).ready(function() {
       var equation = $("#equation").val().toUpperCase().replace(/=/g, '');
       if(equation == '') {
         event.preventDefault();
+        $('#invalid_equation').modal('toggle');
         return;
       };
 
@@ -88,7 +153,12 @@ $( document ).ready(function() {
     }
 
     else if(trialStage == 2) {
-      trialStage++;
+      if ($("#hypothesis-left").val() === '---' || $("#hypothesis-right").val() === '---'){
+        $('#invalid-hypothesis').modal('toggle');
+        event.preventDefault();
+      }
+      else{
+        trialStage++;
       var result = crypto.testHypothesis($("#hypothesis-left").val(), $("#hypothesis-right").val());
       var output = (result) ? "true" : "false";
       $("#hypothesis-result").append('<h5>' + $("#hypothesis-left").val() + " = " + $("#hypothesis-right").val() + " is " + output + '</h5>');
@@ -100,6 +170,8 @@ $( document ).ready(function() {
           prompt: "Propose Hypothesis",
           guess: $("#hypothesis-left").val() + '=' + $("#hypothesis-right").val() + ' : ' + output
         } );
+      }
+      
     }
 
     else if(trialStage == 3) {
@@ -263,9 +335,9 @@ $( document ).ready(function() {
     <div class="row vertical-center" id="task-end">
       <div class="col-md-8 offset-md-2">
         @if($isReporter)
-          <form action="/cryptography-end" id="cryptography-end-form" method="post">
+          <form action="/cryptography-individual-end" id="cryptography-end-form" method="post">
         @else
-          <form action="/cryptography-end" id="cryptography-end-form" method="post">
+          <form action="/cryptography-individual-end" id="cryptography-end-form" method="post">
         @endif
           {{ csrf_field() }}
           <input type="hidden" name="task_result" id="task-result" value="0">
@@ -334,6 +406,36 @@ $( document ).ready(function() {
         </div>
         <div class="modal-body text-center">
           <button class="btn btn-lg btn-primary pull-right" id="ok-timer-warning" data-dismiss="modal" type="button">Ok</button>
+        </div>
+      </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+  </div><!-- modal -->
+
+  <div class="modal fade" id="invalid_equation">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 id='alert-text-equation' class="modal-title text-center">
+          The equation you submitted is not valid. Please only use the letters A-J plus '+' and '-'.
+          </h4>
+        </div>
+        <div class="modal-body text-center">
+          <button class="btn btn-lg btn-primary pull-right"  data-dismiss="modal" type="button">Ok</button>
+        </div>
+      </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+  </div><!-- modal -->
+
+  <div class="modal fade" id="invalid-hypothesis">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 id='alert-text' class="modal-title text-center">
+            The hypothesis you submitted is not valid. Please make sure you have selected a letter and a value from the dropdowns.
+          </h4>
+        </div>
+        <div class="modal-body text-center">
+          <button class="btn btn-lg btn-primary pull-right" data-dismiss="modal" type="button">Ok</button>
         </div>
       </div><!-- modal-content -->
     </div><!-- modal-dialog -->

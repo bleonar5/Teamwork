@@ -20,6 +20,12 @@
         </script>
         <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
         <script>
+          window.addEventListener('keydown', function(e) {
+              if (e.keyIdentifier == 'U+000A' || e.keyIdentifier == 'Enter' || e.keyCode == 13) {
+                      e.preventDefault();
+                      return false;
+              }
+          }, true);
           // Disable auto-complete for all forms
           $(document).ready(function(){
             $('form,input,select,textarea').attr("autocomplete", "off");

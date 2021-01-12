@@ -9,7 +9,7 @@
 <script>
 
     $( document ).ready(function() {
-      instructionPaginator(function(){ window.location = '/end-individual-task';});
+      instructionPaginator(function(){ localStorage.clear();window.location = '/end-individual-task';});
     });
 
 </script>

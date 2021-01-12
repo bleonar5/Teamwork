@@ -155,6 +155,7 @@ class GroupTask extends Model
     public static function initializeLabIndividualTasks($group_id, $randomize) {
       $taskArray = '[
           {"taskName":"Consent","taskParams":{"hasIndividuals":"true","hasGroup":"false","subjectPool":"hdsl_individual"}},
+          {"taskName":"DeviceCheck","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"eligibility"}},
           {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"eligibility"}},
           {"taskName":"Eyes","taskParams":{"hasIndividuals":"true","hasGroup":"false"}},
           {"taskName":"BigFive","taskParams":{"hasIndividuals":"true","hasGroup":"false","statementOrder":"random"}},
@@ -169,7 +170,8 @@ class GroupTask extends Model
           {"taskName":"PsiIri","taskParams":{"hasIndividuals":"true","hasGroup":"false","statementOrder":"random"}},
           {"taskName":"Shapes","taskParams":{"hasIndividuals":"true","hasGroup":"false","subtest":"subtest5"}},
           {"taskName":"Leadership","taskParams":{"hasIndividuals":"true","hasGroup":"false","statementOrder":"random"}},
-          {"taskName":"Cryptography","taskParams":{"hasIndividuals":"true","hasGroup":"false","mapping":"random","maxResponses":"10"}},
+          {"taskName":"Cryptography","taskParams":{"intro":"intro","hasIndividuals":"true","hasGroup":"false","mapping":"random","maxResponses":"10"}},
+          {"taskName":"Cryptography","taskParams":{"intro":"individual_alt","hasIndividuals":"true","hasGroup":"false","mapping":"random","maxResponses":"10"}},
           {"taskName":"Conclusion","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"hdsl_individual","hasCode":"false","displayScoreGroup":"true","digitalReceipt":"false","feedback":"false", "feedbackLinkType":"pilot"}}
         ]';
       return Self::initializeTasks($group_id, $taskArray, $randomize);

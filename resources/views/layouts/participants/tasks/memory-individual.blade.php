@@ -11,16 +11,45 @@
 
 @section('content')
 
-<script>
+<script> 
+    var itv;
 
     var tests = <?php echo  $enc_tests; ?>;
     $( document ).ready(function() {
+
+      for (var i = 0; i < localStorage.length; i++){
+        var key = localStorage.key(i);
+        console.log('$%$%$%$%$%$%');
+        console.log(key);
+        var val = localStorage.getItem(key);
+        console.log(val)
+
+        if (key.includes('response')){
+          if (key.includes('checkbox')){
+            console.log('im in');
+            key = key.split('#')[0];
+            var vals = val.split(',');
+            console.log(vals);
+            vals.forEach(function(e){
+              $('input[name="'+key.toString()+'"][value="'+e+'"]').attr('checked',true);
+              console.log('input[name="'+key.toString()+'"][value="'+e+'"]');
+              console.log($('input[name="'+key.toString()+'"][value="'+e+'"]'));
+            });
+            console.log('im in');
+          }
+          else{
+            $('input[name="'+key.toString()+'"]').val(val);
+          }
+        }
+      }
 
       var preloadImages = <?= json_encode($imgsToPreload); ?>
       // Preload all images
       preload(preloadImages);
 
       var callback = function() {
+        localStorage.clear();
+        clearInterval(itv);
         $("#memory-form").submit();
       };
       var memory = new Memory(tests, isReporter=false, callback);
