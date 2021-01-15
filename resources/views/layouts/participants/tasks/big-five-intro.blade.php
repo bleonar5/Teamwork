@@ -22,10 +22,10 @@ $( document ).ready(function() {
         Task {{ \Session::get('completedTasks') + 1 }} of {{ \Session::get('totalTasks') }}
       </h3>
       <h4>
-        Next, we’ll ask one more set of questions about you.
+        Next, we’ll ask you some questions about your personality.
       </h4>
       <h4>
-        This will take about <strong>5 minutes</strong>. Remember, your answers will be kept in absolute confidence, and deleted at the conclusion of the study. 
+        This will take about <strong>5-10 minutes</strong>. Remember, your answers will be kept in absolute confidence, and deleted at the conclusion of the study. 
       </h4>
       <h4>
         Please be honest. Select the option that best describes yourself.

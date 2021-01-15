@@ -37,7 +37,7 @@
         <p>
           <span class="consent-em">PLEASE NOTE</span>: This study contains a
           number of checks to make sure that participants are finishing the
-          tasks honestly and completely.  As long as you read the instructions
+          tasks <span style = "background-color: yellow">honestly and completely.</span> As long as you read the instructions
           and complete the tasks, your HIT will be definitely be approved!
         </p>
         <p>
@@ -85,7 +85,7 @@
             <span class="consent-em">COMPENSATION</span>: OAverage payment will be $X per person (with a minimum of $Y). Payment will depend in part on how well your groups perform.
           </p>
           <p>
-            <span class="consent-em">PLEASE NOTE</span>: This study contains a number of checks to make sure that participants are finishing the tasks honestly and completely.
+            <span class="consent-em">PLEASE NOTE</span>: This study contains a number of checks to make sure that participants are finishing the tasks <span style = "background-color: yellow">honestly and completely.</span>
           </p>
           <p>
             <span class="consent-em">VOLUNTARY PARTICIPATION AND RIGHT TO
@@ -127,7 +127,7 @@
             <p>
               <span class="consent-em">PLEASE NOTE</span>: This study contains a
               number of checks to make sure that participants are finishing the
-              tasks honestly and completely.
+              tasks <span style = "background-color: yellow">honestly and completely.</span>
             </p>
             <p>
               <span class="consent-em">VOLUNTARY PARTICIPATION AND RIGHT TO

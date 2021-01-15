@@ -70,7 +70,7 @@
         @else
           <h2>Eligibility Notice</h2>
           <h4>
-            Based on your responses, unfortunately you are not yet eligible to participate in the Superteams Study.
+            Based on your responses, unfortunately you are not yet eligible to participate in the study.
           </h4>
           <h4>
             As noted at the start of these tasks, we included several checks to ensure
