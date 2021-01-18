@@ -291,8 +291,10 @@ class IndividualTaskController extends Controller
       if(config('app.debug') == true){
         $this->getProgress();
         $this_user = User::where('id',\Auth::user()->id)->first();
+        $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+        if($currentTask->name != 'Intro')
+          $currentTask = \Teamwork\GroupTask::where('name','Intro')->where('group_id',$this_user->group_id)->first();
 
-        $currentTask = \Teamwork\GroupTask::where('name','Intro')->where('group_id',$this_user->group_id)->first();
 
         $prior_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','<',$currentTask->order)->get();
         $later_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','>=',$currentTask->order)->get();
@@ -1263,7 +1265,7 @@ class IndividualTaskController extends Controller
         if($parameters->test == 'words_1' || $parameters->test == 'faces_1' || $parameters->test == 'story_1') {
           $avg = $array->avg('points');
 
-          $performance[substr($parameters->test, 0, -2)] = $this->calculateMemoryPercentileRank(substr($parameters->test, 0, -2), $avg);
+          $performance[$parameters->test] = $this->calculateMemoryPercentileRank($parameters->test, $avg);
         }
       }
 
@@ -1608,6 +1610,7 @@ class IndividualTaskController extends Controller
                                       ->where('name', '!=', 'Intro')
                                       ->where('name', '!=', 'ChooseReporter')
                                       ->where('name', '!=', 'Feedback')
+                                      ->where('name', '!=', 'DeviceCheck')
                                       ->where('name', '!=', 'Survey')
                                       ->where('name', '!=', 'Conclusion')
                                       ->get();
