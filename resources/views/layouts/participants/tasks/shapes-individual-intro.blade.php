@@ -91,8 +91,6 @@
             <h4>
               The missing piece is the one that fits the patterns that appear across the rows and columns.
             </h4>
-            <h4>
-              <strong>We'll start with a practice.</strong></h4>
           </div>
           <div id="inst_3" class="inst">
             <div class="row">

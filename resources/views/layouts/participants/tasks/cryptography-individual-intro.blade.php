@@ -97,7 +97,7 @@ $( document ).ready(function() {
           numerical value. Your goal is to find out the value of each letter.
         </h4>
         <h4>
-          This task will take around 12 minutes.
+          This task will take around 20 minutes.
         </h4>
       </div> <!-- End inst_1 -->
       <div id="inst_2" class="inst">

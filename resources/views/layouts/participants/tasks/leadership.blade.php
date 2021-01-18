@@ -48,9 +48,6 @@
   </div>
   <div class="row">
     <div class="col-md-10 text-center">
-      <h5 class="mb-lg-4">
-        In relation to other people of the same gender who are roughly the same age, I would say that I:
-      </h5>
       <form id="leadership-form" action="/leadership" method="post">
         {{ csrf_field() }}
 

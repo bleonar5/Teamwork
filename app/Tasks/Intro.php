@@ -122,19 +122,11 @@ class Intro {
               ],
               [
                 'type' => 'paragraph',
-                'content' => '<strong>Part 1</strong>'
+                'content' => '<strong>Part 1</strong> Individual Survey. You can do this immediately, and it takes 60-70 minutes. The individual survey involves answering questions about yourself and solving some puzzles.'
               ],
               [
                 'type' => 'paragraph',
-                'content' => 'Individual Survey. You can do this immediately, and it takes 60-70 minutes. The individual survey involves answering questions about yourself and solving some puzzles.'
-              ],
-              [
-                'type' => 'paragraph',
-                'content' => '<strong>Part 2.</strong>'
-              ],
-              [
-                'type' => 'paragraph',
-                'content' => 'Group problem solving sessions. These sessions will last about 60 minutes each. You can sign up for these online. We will try to schedule sessions across different days (Mon-Sat) and times.<strong>Please continue ONLY if you are willing to sign up for AT LEAST FOUR (4) GROUP SESSIONS.</strong>'
+                'content' => '<strong>Part 2.</strong> Group problem solving sessions. These sessions will last about 60 minutes each. You can sign up for these online. We will try to schedule sessions across different days (Mon-Sat) and times.<strong>Please continue ONLY if you are willing to sign up for AT LEAST FOUR (4) GROUP SESSIONS.</strong>'
               ],
               [
                 'type' => 'paragraph',
