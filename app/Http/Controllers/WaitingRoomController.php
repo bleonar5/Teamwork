@@ -54,21 +54,47 @@ class WaitingRoomController extends Controller
 
     public function getWaitingRoom(Request $request){
 
+        $group_task = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+        if($group_task->name != "WaitingRoom"){
+            if($group_task->name === 'Cryptography'){
+                return redirect('/task-room');
+            }
+
+            elseif($group_task->name === "Memory"){
+                return redirect('/task-room');
+            }
+            else{
+                return redirect('/get-group-task');
+            }
+
+        }
+
+        $parameters = unserialize($group_task->parameters);
+        if($parameters->task === '1'){
+            $task = 1;
+            $task_name = 'Cryptography';
+        }
+
+        else{
+            $task = 2;
+            $task_name = 'Memory';
+        }
+
         $user_id = \Auth::user()->id;
 
         $this_user = User::where('id',$user_id)->first();
 
-        $this_user->in_room = 1;
+        $this_user->in_room = $task;
         $this_user->save();
 
 
-        $group_task = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
+        
 
         if($group_task->started && $group_task->completed == 0){
-            return redirect('/task-room/cryptography');
+            return redirect('/task-room');
         }
 
-        $room_users = User::where('in_room',1)->get();
+        $room_users = User::where('in_room',$task)->get();
 
 
 
@@ -80,7 +106,105 @@ class WaitingRoomController extends Controller
             }
         }
 
-        $room_users = User::where('in_room',1)->get();
+        $room_users = User::where('in_room',$task)->get();
+
+        $indices = [0,1,2];
+        shuffle($indices);
+        $assignments = ['leader','follower1','follower2'];
+        if(count($room_users) == 3){
+            $group = new Group;
+            $group->save();
+            $room_users[$indices[0]]->group_role = 'leader';
+
+            $room_users[$indices[1]]->group_role = 'follower1';
+            //$room_users[$indices[1]]->group_id = $room_users[$indices[0]]->group_id;
+            $room_users[$indices[2]]->group_role = 'follower2';
+            //$room_users[$indices[2]]->group_id = $room_users[$indices[0]]->group_id;
+            foreach($room_users as $key=>$room_user){
+                $room_user->group_id = $group->id;
+
+                try{
+                    \DB::table('group_user')
+                       ->insert(['user_id' => $room_user->id,
+                                 'group_id' => $group->id,
+                                 'created_at' => date("Y-m-d H:i:s"),
+                                 'updated_at' => date("Y-m-d H:i:s")]);
+                  }
+
+                  catch(\Exception $e){
+                    // Will throw an exception if the group ID and user ID are duplicates. Just ignore
+                  }
+
+                if($room_user->task_id == 0)
+                    $room_user->task_id = rand(1,16);
+                else
+                    $room_user->task_id = (($room_user->task_id + 1) % 16) + 1;
+                
+                if($room_user->group_role == 'leader'){
+                    $room_user->in_room = 0;
+                    //$group_task = \Teamwork\GroupTask::firstOrCreate('group_id',$room_user->group_id)->where('name','Cryptography')->first();
+                    if ($task == 1)
+                        \Teamwork\GroupTask::initializeCryptoTasks($group->id,$randomize=false);
+                    else
+                        \Teamwork\GroupTask::initializeMemoryTasks($group->id,$randomize=false);
+                    $group_task = \Teamwork\GroupTask::where('group_id',$group->id)->where('name',$task_name)->orderBy('order','ASC')->first();
+                    $group_task->task_id = $room_user->task_id;
+                    $group_task->save();
+                    event(new SendToTask($room_user));
+                }
+                else{
+                    event(new SendToTask($room_user));
+                }
+                $room_user->save();
+                
+            }
+            
+            return redirect('/task-room?clear=true');
+        }
+
+        $this_group = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name',$task_name)->orderBy('created_at','DESC')->first();
+        if($this_group){
+            if($this_group->started && $group_task->completed == 0)
+                return redirect('/task-room');
+        }
+        
+
+        event(new PlayerJoinedWaitingRoom($this_user));
+        return view('layouts.participants.waiting-room')
+            ->with('users',$room_users)
+            ->with('task',$task)
+            ->with('PUSHER_APP_KEY',config('app.PUSHER_APP_KEY'));
+    }
+
+    public function getMemoryWaitingRoom(Request $request){
+
+        $user_id = \Auth::user()->id;
+
+        $this_user = User::where('id',$user_id)->first();
+
+        $this_user->in_room = 2;
+        $this_user->save();
+
+
+        $group_task = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name','Memory')->orderBy('created_at','DESC')->first();
+
+        if($group_task->started && $group_task->completed == 0){
+            return redirect('/task-room/memory');
+        }
+
+        $room_users = User::where('in_room',2)->get();
+
+
+
+        foreach($room_users as $key => $room_user) {
+            $diff = $room_user->updated_at->diffInSeconds(\Carbon\Carbon::now());
+            if($diff > 30){
+                $room_user->in_room = 0;
+                $room_user->save();
+            }
+        }
+
+        $room_users = User::where('in_room',2)->get();
 
         $indices = [0,1,2];
         shuffle($indices);
@@ -104,8 +228,8 @@ class WaitingRoomController extends Controller
                 if($room_user->group_role == 'leader'){
                     $room_user->in_room = 0;
                     //$group_task = \Teamwork\GroupTask::firstOrCreate('group_id',$room_user->group_id)->where('name','Cryptography')->first();
-                    \Teamwork\GroupTask::initializeCryptoTasks($group->id,$randomize=false);
-                    $group_task = \Teamwork\GroupTask::where('group_id',$group->id)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
+                    \Teamwork\GroupTask::initializeMemoryTasks($group->id,$randomize=false);
+                    $group_task = \Teamwork\GroupTask::where('group_id',$group->id)->where('name','Memory')->orderBy('created_at','DESC')->first();
                     $group_task->task_id = $room_user->task_id;
                     $group_task->save();
                     event(new SendToTask($room_user));
@@ -117,17 +241,18 @@ class WaitingRoomController extends Controller
                 
             }
             
-            return redirect('/task-room/cryptography');
+            return redirect('/task-room/memory');
         }
 
-        $this_group = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
+        $this_group = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name','Memory')->orderBy('created_at','DESC')->first();
 
         if($this_group->started && $group_task->completed == 0)
-            return redirect('/task-room/cryptography');
+            return redirect('/task-room/memory');
 
         event(new PlayerJoinedWaitingRoom($this_user));
         return view('layouts.participants.waiting-room')
             ->with('users',$room_users)
+            ->with('task',2)
             ->with('PUSHER_APP_KEY',config('app.PUSHER_APP_KEY'));
     }
 

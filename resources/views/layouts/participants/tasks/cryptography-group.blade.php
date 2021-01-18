@@ -70,6 +70,7 @@ $( document ).ready(function() {
       }
     }
     $('#payment').text(payment.toFixed(2));
+    $("#trial-counter").html(trials);
     
     //$('#mapping-list').html(localStorage.getItem('mapping'));
     //local_guess = JSON.parse(localStorage.getItem('mapping'));
@@ -698,7 +699,7 @@ $( document ).ready(function() {
           </h4>
         </div>
         <div class="modal-body text-center">
-          <button class="btn btn-lg btn-primary pull-right" id="ok-time-up" data-dismiss="modal" type="button">Ok</button>
+          <button class="btn btn-lg btn-primary pull-right"  data-dismiss="modal" type="button">Ok</button>
         </div>
       </div><!-- modal-content -->
     </div><!-- modal-dialog -->
@@ -722,7 +723,7 @@ $( document ).ready(function() {
           </div>
         </div>
         <div class="modal-body text-center">
-          <button class="btn btn-lg btn-primary pull-right" id="ok-time-up" data-dismiss="modal" type="button">Ok</button>
+          <button class="btn btn-lg btn-primary pull-right" data-dismiss="modal" type="button">Ok</button>
         </div>
       </div><!-- modal-content -->
     </div><!-- modal-dialog -->
@@ -737,7 +738,7 @@ $( document ).ready(function() {
           </h4>
         </div>
         <div class="modal-body text-center">
-          <button class="btn btn-lg btn-primary pull-right" id="ok-time-up" data-dismiss="modal" type="button">Ok</button>
+          <button class="btn btn-lg btn-primary pull-right"  data-dismiss="modal" type="button">Ok</button>
         </div>
       </div><!-- modal-content -->
     </div><!-- modal-dialog -->

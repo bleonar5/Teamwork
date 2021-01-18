@@ -47,7 +47,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-12 text-center">
+    <div class="col-md-10 text-center">
       <form id="psi-iri-form" action="/psi-iri" method="post">
         {{ csrf_field() }}
 
@@ -87,6 +87,9 @@
               @if(($i + 1) % 10 == 0)
                   </table>
                 </div>
+              @elseif($i == count($statements) - 1)
+                </table>
+                </div>
               @endif
             @endfor
       </form>
@@ -94,7 +97,7 @@
         <input class="btn btn-primary instr_nav btn-lg" type="button" name="back" id="back" value="&#8678; Back">
         <input class="btn btn-primary instr_nav btn-lg" type="button" name="next" id="next" value="Next &#8680;">
         <span class="text-primary ml-md-4 text-lg" id="pagination-display">
-          <span id="curr-page">1</span> / {{ count($statements) / 10 }}
+          <span id="curr-page">1</span> / {{ ceil(count($statements) / 10) }}
         </span>
       </div>
     </div>

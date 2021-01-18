@@ -38,6 +38,7 @@
     ];
 
 $( document ).ready(function() {
+  $('#ins-text').hide();
 	jQuery.get( "https://teamwork-token-gen.herokuapp.com/access_token?channel=user{{ $user->id }}&uid={{ $user->id }}", function( data ) {
       token = data.token;
       console.log('token now: '+token);
@@ -66,38 +67,19 @@ $( document ).ready(function() {
     });
     $('#continue-button').on('click',function(event){
     	if($(event.target).text().includes('Proceed'))
-    		window.location.href = '/waiting-room';
-    	else
-    		$('#stop-warning').modal('toggle');
+    		window.location.href = '/end-individual-task';
+    	//else
+    		//$('#stop-warning').modal('toggle');
     });
 });
 
 </script>
 <div class="container" >
 	<div class='row'>
-		<div class='col-sm-9' style='margin:auto;border:1px solid black;margin:auto;'>
-			<ul style='list-style-type: none;padding:0'><li>
+		<div class='col-sm-9' style='margin:auto;margin:auto;'>
 				<h5 style='text-align:center;margin:auto;'>
 					Checking the status of your audio and video devices.</h5>
-				</li><br/>
-				<li>
-					<h5 style='text-align:center;margin:auto;'>
-						Make sure that you don't have any apps or webpages open that might be using your microphone/camera (e.g. Zoom, Skype, Omegle)
-					</h5>
-				</li><br/>
-				<li>
-					<h5 style='text-align:center;margin:auto;'> A prompt will appear asking your permission to access your microphone/camera. <b>Make sure to select "allow"</b>. 
-					</h5>
-				</li><br/>
-				<li>
-					<h5 style='text-align:center;margin:auto;'>If you fail to connect, check the top right of the URL bar at the top of your web browser for a camera/microphone icon. Click this icon and select "allow" or "always allow".
-					</h5>
-				</li><br/>
-				<li>
-					<h5 style='text-align:center;margin:auto;'> <b>Refresh the page to retry your connection.</b>
-					</h5>
-				</li>
-			</ul>
+				
 		</div>
 	</div><br/>
 	<div class='row'>
@@ -121,7 +103,31 @@ $( document ).ready(function() {
 			<button class='btn btn-primary' style='margin:auto;' id='continue-button' disabled>Waiting for connection...</button>
 
 		</div>
-	</div>
+	</div></div><br>
+  <div  id='ins-text' class='row'>
+    <ul style='list-style-type: none;border:1px black solid;padding:0;width:90%;margin:auto'><li>
+        <h5 style='text-align:center;margin:auto;'>
+          You must have an available microphone and camera to proceed.</h5>
+        </li><br/>
+        <li>
+          <h5 style='text-align:center;margin:auto;'>
+            1. Close any other apps or webpages open that use your microphone/camera (e.g. Zoom, Skype, Omegle). Then reload this page.
+          </h5>
+        </li><br/>
+        <li>
+          <h5 style='text-align:center;margin:auto;'>2. If a prompt appears on this page asking your permission to access your microphone/camera, <b>select "allow"</b>. 
+          </h5>
+        </li><br/>
+        <li>
+          <h5 style='text-align:center;margin:auto;'>3. Look for a camera/microphone <span style='color:red'>icon</span> next to the address bar in your browser. Click this icon and select "allow" or "always allow". Then reload this page.
+          </h5>
+        </li><br/>
+        <li>
+          <img src='img/mic-icon.png' />
+        </li>
+        
+      </ul>
+  </div>
 </div>
 
   <div class="modal fade" id="stop-warning">

@@ -48,6 +48,10 @@
 
 
 $( document ).ready(function() {
+  if('{{ $clear }}' === '1')
+    localStorage.clear();
+
+
 
   jQuery.get( "https://teamwork-token-gen.herokuapp.com/access_token?channel=group{{ $user->group_id }}&uid={{ $user->id }}", function( data ) {
       token = data.token;
@@ -75,7 +79,11 @@ $( document ).ready(function() {
         });
       join(rtc,params);
     });
-  if("{{ $task->name }}" === "Cryptography"){
+  jQuery.get('/get-group-task', function(data){
+        console.log(data);
+        $('#content').html(data);
+      });
+  /*if("{{ $task->name }}" === "Cryptography"){
     if ("{{ $task->intro_completed }}" === "1"){
       jQuery.get('/cryptography', function(data){
         console.log(data);
@@ -89,6 +97,20 @@ $( document ).ready(function() {
     });
     }
   }
+  if("{{ $task->name }}" === "Memory"){
+    if ("{{ $task->intro_completed }}" === "1"){
+      jQuery.get('/memory-group', function(data){
+        console.log(data);
+        $('#content').html(data);
+      });
+    }
+    else{
+      jQuery.get('/memory-group', function(data) {
+      console.log(data);
+      $('#content').html(data);
+    });
+    }
+  }*/
 
 });
 
@@ -96,10 +118,10 @@ $( document ).ready(function() {
 
 <div class="container">
   <div class="row vertical-center">
-    <div class='col-sm-9 text-center' id='content'>
+    <div class='col-sm-8 text-center' id='content'>
       
     </div>
-    <div class="col-sm-3 text-center">
+    <div class="col-sm-4 text-center">
       <h4> Your Team: </h4>
       <div class="agora-theme" border='solid black 1px'>
         <div class="video-grid" id="video">

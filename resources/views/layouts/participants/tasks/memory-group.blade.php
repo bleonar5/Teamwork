@@ -12,9 +12,62 @@
 @section('content')
 
 <script>
+  var itv;
+  function leaderAnswered(){
+    $.post('leader-answered', {
+            _token : "{{ csrf_token() }}",
+            key : '1'
+    });
+  }
 
     var tests = <?php echo  $enc_tests; ?>;
     $( document ).ready(function() {
+      //console.log("{{ $scores }}");
+      scores = JSON.parse("{{ $scores }}".replace(/&quot;/g,'"'));
+      console.log(scores);
+      count = 1;
+      jQuery.each(scores, function(key, val) {
+        $('#pid_'+count.toString()).text(key);
+        $('#faces_'+count.toString()).text(val['faces']);
+        $('#words_'+count.toString()).text(val['words']);
+        $('#stories_'+count.toString()).text(val['story']);
+        count++;
+      });
+      for (var i = 0; i < localStorage.length; i++){
+        var key = localStorage.key(i);
+        console.log('$%$%$%$%$%$%');
+        console.log(key);
+        var val = localStorage.getItem(key);
+        console.log(val)
+
+        if (key.includes('response')){
+          if (key.includes('checkbox')){
+            console.log('im in');
+            key = key.split('#')[0];
+            var vals = val.split(',');
+            console.log(vals);
+            vals.forEach(function(e){
+              $('input[name="'+key.toString()+'"][value="'+e+'"]').attr('checked',true);
+              console.log('input[name="'+key.toString()+'"][value="'+e+'"]');
+              console.log($('input[name="'+key.toString()+'"][value="'+e+'"]'));
+            });
+            console.log('im in');
+          }
+          else{
+            $('input[name="'+key.toString()+'"]').val(val);
+          }
+        }
+      }
+
+      Pusher.logToConsole = true;
+
+      var pusher = new Pusher('{{ config("app.PUSHER_APP_KEY") }}', {
+        cluster: 'us2'
+      });
+      var channel = pusher.subscribe('memory-channel');
+
+      console.log("{{ $user }}");
+      console.log('##############');
 
       userId = {{ \Auth::user()->id }};
       groupId = {{ \Auth::user()->group_id }};
@@ -25,10 +78,41 @@
       preload(preloadImages);
 
       var callback = function() {
-        $("#memory-form").submit();
+        localStorage.clear();
+        clearInterval(itv);
+        $('#memory-form').submit();
+        
+        /*console.log("BINGOOOOOO");
+          $.ajax({url:'memory-group',
+            type:'post',
+            data:$('#memory-form').serialize(),
+            success:function(data){
+              console.log(data);
+              console.log('1');
+              $.ajax({url:'/check-task',
+                type:'get',
+                _token: "{{ csrf_token() }}",
+                success: function(task_name){
+                  console.log(2);
+                  console.log('###');
+                  console.log(task_name);
+                  if (task_name != "Cryptography" && task_name !='Memory')
+                    window.location.href='/end-group-task';
+                  else
+                    $('#content').html(data);
+                }
+              });
+            }
+
+          }).fail(function(){console.log('fail')});*/
       };
       var memory = new Memory(tests, isReporter, callback);
       memory.begin();
+
+      channel.bind('leader-answered', function(data){
+        if(data['user']['group_id'].toString() === "{{ $user->group_id }}" && "{{ $user->group_role }}" != "leader")
+          memory.advance();
+      });
 
       $('.not-reporter').on('click', function(event) {
         $("#role").val('not-reporter');
@@ -48,6 +132,11 @@
         }
         if(memory.hasWait()) {
           memory.markMemoryChoice(userId, groupId, taskId, "{{ csrf_token() }}", "#waiting");
+          event.stopImmediatePropagation();
+          return;
+        }
+        if(memory.hasLeaderWait()) {
+          memory.markMemoryChoice(userId, groupId, taskId, "{{ csrf_token() }}", "#leader_waiting");
           event.stopImmediatePropagation();
           return;
         }
@@ -79,7 +168,7 @@
 
       $('.select-all').on('change', function(event) {
         var response = $(this).attr('name');
-        $('.no-selection[name="'+response+'"]').prop('checked', false);
+        $('.no-selection[name="'+response+'"]').attr('checked', false);
       });
 
       // Target images
@@ -94,8 +183,34 @@
       });
 
       $(document).keydown(function(event) {
+        console.log("{{ $user }}");
+        console.log('##############');
+
         var key = event.key;
-        if((key == 1 || key == 2 || key == 3) && ($(".memory-img").is(":visible") || $(".story-choices").is(":visible"))) memory.advanceImageTest(key);
+        if(((key == 1 || key == 2 || key == 3) && ($(".memory-img").is(":visible") || $(".story-choices").is(":visible"))) && "{{ $user->group_role }}" === "leader" ) {
+          memory.advanceImageTest(key);
+          $.post('leader-answered', {
+            _token : "{{ csrf_token() }}",
+            key : key
+          });
+
+        }
+
+      });
+      $('input[name*="response"]').on('change',function(event){
+        console.log('input changed');
+        if($(event.target).attr('type') === "checkbox"){
+          var radios = $('input[name*="'+$(event.target).attr('name')+'"][type="checkbox"]');
+          var checked_vals = [];
+          $('input[name*="'+$(event.target).attr('name')+'"][type="checkbox"]').each(function(i){
+            if($(this).is(':checked')){
+              checked_vals.push($(this).val());
+            }
+          });
+          localStorage.setItem($(event.target).attr('name')+'#checkbox',checked_vals.join(','));
+        }
+        else
+          localStorage.setItem($(event.target).attr('name'),$(event.target).val());
       });
 
       $("#popup-continue").on('click', function(event) {
@@ -142,20 +257,39 @@
               @endif {{-- End if blocktype = text_intro --}}
 
               @if($block['type'] == 'text')
-                <div class="memory memory-text text" id="memory_{{ $key }}_{{ $b_key }}">
-                  @if(isset($block['header']))
-                    <h2 class="text-primary">{{ $block['header'] }}</h2>
-                  @endif
-                  @foreach($block['text'] as $text)
-                    <h4>{!! $text !!}</h4>
-                  @endforeach
-                  <div class="text-center">
-                    <input class="btn btn-primary memory-nav btn-lg"
-                           type="button" name="next"
-                           id="continue_{{ $key }}_{{ $b_key }}"
-                           value="Next">
-                  </div>
-                </div>
+                @if(isset($block['role']))
+                    <div class="memory memory-text text" id="memory_{{ $key }}_{{ $b_key }}">
+                      @if(isset($block['header']))
+                        <h2 class="text-primary">{{ $block['header'] }}</h2>
+                      @endif
+                      @foreach($block[$user['group_role']] as $text)
+
+                        <h4>{!! $text !!}</h4>
+                      @endforeach
+                      <div class="text-center">
+                        <input class="btn btn-primary memory-nav btn-lg"
+                               type="button" name="next"
+                               id="continue_{{ $key }}_{{ $b_key }}"
+                               value="Next">
+                      </div>
+                    </div>
+                @else
+                  <div class="memory memory-text text" id="memory_{{ $key }}_{{ $b_key }}">
+                      @if(isset($block['header']))
+                        <h2 class="text-primary">{{ $block['header'] }}</h2>
+                      @endif
+                      @foreach($block['text'] as $text)
+
+                        <h4>{!! $text !!}</h4>
+                      @endforeach
+                      <div class="text-center">
+                        <input class="btn btn-primary memory-nav btn-lg"
+                               type="button" name="next"
+                               id="continue_{{ $key }}_{{ $b_key }}"
+                               value="Next">
+                      </div>
+                    </div>
+                @endif
               @endif {{-- End if blocktype = text --}}
 
               @if($block['type'] == 'review_choice')
@@ -169,7 +303,7 @@
                   <div class="row">
                     @foreach($block['choices'] as $choice)
                     <div class="col-md-4">
-                      <input class="btn btn-block btn-{{$choice['color']}} choose-mem-review-type"
+                      <input class="btn btn-block btn-{{$choice['color']}} choose-mem-review-type" 
                              type="button" name="next"
                              data-type="{{ $choice['type'] }}"
                              value="{{ ucfirst($choice['type']) }}">
@@ -250,7 +384,9 @@
               @if($block['type'] == 'practice_test_stories')
                 <div class="memory test practice-test" id="memory_{{ $key }}_{{ $b_key }}">
                   <h4>{{ $block['prompt'] }}</h4>
-                  <h4>Type [1], [2], or [3]</h4>
+                  @if($user->group_role == 'leader')
+                    <h4>As the leader, you can <strong>type the number '1', '2', or '3' on your keyboard</strong> to enter the group's answer</h4>
+                  @endif
                   <div class="row">
                     <div class="col-md-6 offset-md-3 text-left story-choices">
                       @foreach($block['choices'] as $c_key => $choice)
@@ -258,7 +394,8 @@
                             {{ $c_key + 1 }}) {{ $choice }}
                           </h4>
                       @endforeach
-                      <input type="hidden" name="response_{{ $key }}_{{ $b_key }}"
+                      <input type="hidden" 
+                      name="response_{{ $key }}_{{ $b_key }}"
                              id="response_{{ $key }}_{{ $b_key }}">
                     </div>
                   </div>
@@ -268,7 +405,9 @@
               @if($block['type'] == 'test_stories')
               <div class="memory test practice-test" id="memory_{{ $key }}_{{ $b_key }}">
                 <h4>{{ $block['prompt'] }}</h4>
-                <h4>Type [1], [2], or [3]</h4>
+                @if($user->group_role == 'leader')
+                    <h4>As the leader, you can <strong>type the number '1', '2', or '3' on your keyboard</strong> to enter the group's answer</h4>
+                  @endif
                 <div class="row">
                   <div class="col-md-6 offset-md-3 text-left story-choices">
                     @foreach($block['choices'] as $c_key => $choice)
@@ -276,7 +415,8 @@
                           {{ $c_key + 1 }}) {{ $choice }}
                         </h4>
                     @endforeach
-                    <input type="hidden" name="response_{{ $key }}_{{ $b_key }}"
+                    <input type="hidden" 
+                    name="response_{{ $key }}_{{ $b_key }}"
                            id="response_{{ $key }}_{{ $b_key }}">
                  </div>
                </div>
@@ -286,7 +426,9 @@
               @if($block['type'] == 'practice_test_words' || $block['type'] == 'test_words')
                 <div class="memory test" id="memory_{{ $key }}_{{ $b_key }}">
                   <h4>{{ $block['prompt'] }}</h4>
-                  <h4><strong><u>Select all that apply</u></strong>, then click "Next"</h4>
+                  @if($user->group_role == 'leader')
+                    <h4>As the leader, <strong>select all that apply,</strong> then click "Next"</h4>
+                  @endif
                   <div class="row justify-content-md-center word-choices">
                     @foreach($block['choices'] as $c_key => $choice)
                       <div class="col-md-3 form-group">
@@ -295,21 +437,25 @@
                                for="response_{{ $key }}_{{ $b_key }}">
                                {{ $choice }}
                         </label><br>
-                        <input class="checkbox select-all" type="checkbox"
+                        
+                        @if($user->group_role == 'leader')
+                          <input type="checkbox" style='pointer-events: auto !important;position:auto !important; opacity:1 !important;'  
+                        
                                name="response_{{ $key }}_{{ $b_key }}[]"
                                value="{{ $c_key + 1 }}">
+                        @endif
                         </h2>
                       </div>
                     @endforeach
-                    <input type="checkbox" class="no-selection"
-                           name="response_{{ $key }}_{{ $b_key }}[]"
-                           value="0" checked>
                   </div>
                   <div class="text-center">
-                    <input class="btn btn-primary memory-nav btn-lg"
-                           type="button" name="next"
+                    
+                    @if($user->group_role == 'leader')
+                      <input class="btn btn-primary memory-nav btn-lg" onclick='leaderAnswered()'  type="button" name="next"
                            id="continue_{{ $key }}_{{ $b_key }}"
                            value="Next">
+                    @endif
+                           
                   </div>
                 </div>
               @endif {{-- End if blocktype = practice_text_words --}}
@@ -317,7 +463,9 @@
               @if($block['type'] == 'practice_test_images')
                 <div class="memory test practice-test" id="memory_{{ $key }}_{{ $b_key }}">
                   <h4>{{ $block['prompt'] }}</h4>
-                  <h4>Type [1], [2], or [3]</h4>
+                  @if($user->group_role == 'leader')
+                    <h4>As the leader, you can <strong>type the number '1', '2', or '3' on your keyboard</strong> to enter the group's answer</h4>
+                  @endif
                   <img class="memory-img mt-lg-4 target-img-{{ $testName }}" src="{{ $test['directory'].$block['img'] }}">
                   @if($block['show_numbers'] == 'true')
                     <div class="row text-center justify-content-center">
@@ -326,7 +474,8 @@
                       <div class="col-md-3"><h2>3</h2></div>
                     </div>
                   @endif
-                  <input type="hidden" name="response_{{ $key }}_{{ $b_key }}"
+                  <input type="hidden" 
+                  name="response_{{ $key }}_{{ $b_key }}"
                          id="response_{{ $key }}_{{ $b_key }}">
                 </div>
               @endif {{-- End if blocktype = practice_test_images --}}
@@ -334,7 +483,9 @@
               @if($block['type'] == 'test_images')
                 <div class="memory test" id="memory_{{ $key }}_{{ $b_key }}">
                   <h4>{{ $block['prompt'] }}</h4>
-                  <h4>Type [1], [2], or [3]</h4>
+                  @if($user->group_role == 'leader')
+                    <h4>As the leader, you can <strong>type the number '1', '2', or '3' on your keyboard</strong> to enter the group's answer</h4>
+                  @endif
                   <img class="memory-img mt-lg-4 target-img-{{ $testName }}" src="{{ $test['directory'].$block['img'] }}">
                   @if($block['show_numbers'] == 'true')
                     <div class="row text-center justify-content-center">
@@ -343,7 +494,11 @@
                       <div class="col-md-3"><h2>3</h2></div>
                     </div>
                   @endif
-                  <input type="hidden" name="response_{{ $key }}_{{ $b_key }}"
+                  <input type="hidden" 
+                  @if($user->group_role != 'leader')
+                    disabled 
+                  @endif
+                  name="response_{{ $key }}_{{ $b_key }}"
                          id="response_{{ $key }}_{{ $b_key }}">
                 </div>
               @endif {{-- End if blocktype = test_images --}}
@@ -377,6 +532,18 @@
       <div class="modal-header">
         <h4 class="modal-title text-center" id="popup-text">
           Please wait for the other members of your group.
+        </h4>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="leader_waiting" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-center" id="popup-text">
+          Please wait for the leader to make a selection
         </h4>
       </div>
     </div><!-- /.modal-content -->

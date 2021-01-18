@@ -25,6 +25,12 @@ Route::get('/get-group-task', [
 	'roles' => ['Participant', 'Group'] // Only a logged in user can view this page
 ]);
 
+Route::get('/check-task', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'GroupTaskController@checkTask',
+	'roles' => ['Participant', 'Group'] // Only a logged in user can view this page
+]);
+
 Route::get('/group-experiment-end', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'GroupTaskController@endExperiment',
@@ -35,6 +41,12 @@ Route::get('/group-experiment-end', [
 Route::get('/get-individual-task', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'IndividualTaskController@getTask',
+	'roles' => ['Participant'] // Only a logged in user can view this page
+]);
+
+Route::get('/get-individual-memory-task-results', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'IndividualTaskController@getIndividualMemoryTaskResults',
 	'roles' => ['Participant'] // Only a logged in user can view this page
 ]);
 
@@ -103,6 +115,18 @@ Route::get('/check-group-ready', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'AjaxController@checkGroupReady',
 	'roles' => ['Participant'] // Only a logged in user can view this page
+]);
+
+Route::get('/check-leader-ready', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'AjaxController@checkLeaderReady',
+	'roles' => ['Participant'] // Only a logged in user can view this page
+]);
+
+Route::post('/leader-answered', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'GroupTaskController@leaderAnswered',
+	'roles' => ['Participant','Group'] // Only a logged in user can view this page
 ]);
 
 Route::get('/group-login-allowed', [
@@ -531,6 +555,12 @@ Route::post('/crypto-proceed', [
 	'roles' => ['Participant','Group'] // Only a logged in user can view this page
 ]);
 
+Route::post('/memory-proceed', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'GroupTaskController@nextMemoryPage',
+	'roles' => ['Participant','Group'] // Only a logged in user can view this page
+]);
+
 Route::post('/task-complete', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'GroupTaskController@taskComplete',
@@ -563,7 +593,7 @@ Route::get('/cryptography', [
 
 Route::get('/cryptography-individual', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
-	'uses' => 'IndividualTaskController@cryptographyIndividual',
+	'uses' => 'IndividualTaskController@cryptography',
 	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
 ]);
 
@@ -576,6 +606,12 @@ Route::post('/cryptography', [
 Route::get('/cryptography-test', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'GroupTaskController@saveCryptographyResponse',
+	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
+]);
+
+Route::post('/cryptography-individual-end', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'GroupTaskController@endCryptographyTask',
 	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
 ]);
 
@@ -615,7 +651,7 @@ Route::post('/still-here', [
 	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
 ]);
 
-Route::get('/task-room/{task}', [
+Route::get('/task-room', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'TaskRoomController@taskRoom',
 	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page

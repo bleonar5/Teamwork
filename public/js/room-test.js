@@ -309,6 +309,7 @@ function Toastify (options) {
             $('#audio-connected').css('color','red');
             $('#video-connected').text('Failed');
             $('#video-connected').css('color','red');
+            $('#ins-text').show();
           });
         }, function(err) {
           Toast.error("client join failed, please open console see more detail");

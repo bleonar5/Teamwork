@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Teamwork\GroupTask;
 use Teamwork\Response;
 use Teamwork\Events\AllReadyInGroup;
+use Teamwork\Events\LeaderAnswered;
 use \Teamwork\Tasks as Task;
 use Teamwork\Events\TaskComplete;
 use Teamwork\Events\ActionSubmitted;
@@ -19,8 +20,18 @@ use Illuminate\Support\Facades\Log;
 class GroupTaskController extends Controller
 {
 
+    public function checkTask(Request $request){
+      $group_id = \Auth::user()->group_id;
+      $task_id = $request->session()->get('currentGroupTask');
+      $task_name = GroupTask::find($task_id)->name;
+      return $task_name;
+    }
+
     public function getTask(Request $request) {
       $group_id = \Auth::user()->group_id;
+
+      //$task_id = $request->session()->get('currentGroupTask');
+      //$task_name = GroupTask::find($task_id)->name;
 
       Log::debug(\Auth::user());
 
@@ -47,6 +58,7 @@ class GroupTaskController extends Controller
 
       $currentTask = $groupTasks->first();
 
+
       $request->session()->put('currentGroupTask', $currentTask->id);
 
       //if($currentTask->individualTasks->isNotEmpty() && !$currentTask->individualTasks->first()->completed) {
@@ -65,14 +77,17 @@ class GroupTaskController extends Controller
     public function routeTask($task) {
 
       $this->getProgress();
+      Log::debug($task->name);
 
       switch($task->name) {
+        case "WaitingRoom":
+          return redirect('/waiting-room');
 
         case "Memory":
           return redirect('/memory-group');
 
         case "Cryptography":
-          return redirect('/task-room/cryptography');
+          return redirect('/cryptography');
 
         case "Optimization":
           return redirect('/optimization-group-intro');
@@ -95,6 +110,8 @@ class GroupTaskController extends Controller
       $task = \Teamwork\GroupTask::with('response')
                                  ->with('progress')
                                  ->find($request->session()->get('currentGroupTask'));
+      Log::debug('end task debug');
+      Log::debug($task);
 
       // If this is an individual-only task, mark it as done
       $parameters = unserialize($task->parameters);
@@ -111,18 +128,25 @@ class GroupTaskController extends Controller
       $progress->group_tasks_id = $task->id;
       $progress->save();
 
+      $task = \Teamwork\GroupTask::with('response')
+                                 ->with('progress')
+                                 ->find($request->session()->get('currentGroupTask'));
+
       $numUsersCompleted = count($task->progress->groupBy('user_id'));
+      Log::debug($numUsersCompleted);
+
 
       $usersInGroup = \Teamwork\User::where('group_id', \Auth::user()->group_id)
                                     ->where('role_id', 3)
                                     ->count();
+      Log::debug($usersInGroup);
 
       if($numUsersCompleted == $usersInGroup) {
         $task->completed = true;
         $task->save();
         // Remove any waiting messages that were set
         $request->session()->forget('waitingMsg');
-        return redirect('/get-individual-task');
+        return redirect('/task-room');
       }
       else {
         return redirect('/waiting');
@@ -147,22 +171,28 @@ class GroupTaskController extends Controller
     public function memoryGroupIntro(Request $request) {
       $this->recordStartTime($request, 'intro');
       $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+      $currentTask->started = 1;
+      $currentTask->save();
       $parameters = unserialize($currentTask->parameters);
       $memory = new \Teamwork\Tasks\Memory;
       $intro = $memory->getTest($parameters->test);
+      $user_id = \Auth::user()->id;
+
+        $this_user = User::where('id',$user_id)->first();
 
       return view('layouts.participants.tasks.memory-group-intro')
-             ->with('introType', $intro['test_name']);
+             ->with('introType', $intro['test_name'])
+             ->with('user',$this_user);
     }
 
     public function memory(Request $request) {
       $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
-
+      $currentTask->started = 1;
+      $currentTask->save();
       $parameters = unserialize($currentTask->parameters);
       $memory = new \Teamwork\Tasks\Memory;
       $test = $memory->getTest($parameters->test);
       $imgsToPreload = $memory->getImagesForPreloader($test['test_name']);
-      if($test['task_type'] == 'intro') return redirect('/memory-group-intro');
       if($test['task_type'] == 'results') return redirect('/memory-group-results');
       if($test['type'] == 'intro') {
         $this->recordStartTime($request, 'intro');
@@ -172,18 +202,42 @@ class GroupTaskController extends Controller
         $this->recordStartTime($request, 'task');
       }
 
+      $group_users_array = [];
+
+      $group_users = \Teamwork\User::where('group_id',\Auth::user()->group_id)->get();
+      foreach($group_users as $key => $group_user){
+        $scores = $this->getIndividualMemoryTaskResults($group_user);
+        $group_users_array[$group_user->participant_id] = $scores;
+        Log::debug($scores);
+      }
+      Log::debug($group_users_array);
+
       // Determine is this user is the reporter for the group
       $isReporter = $this->isReporter(\Auth::user()->id, \Auth::user()->group_id);
+      $user_id = \Auth::user()->id;
+
+        $this_user = User::where('id',$user_id)->first();
       // Originally, there was an array of multiple tests. We've separated the
       // different memory tasks into individual tasks but to avoid rewriting a
       // lot of code, we'll construct a single-element array with the one test.
       return view('layouts.participants.tasks.memory-group')
              ->with('testName', $test['test_name'])
+             ->with('user',$this_user)
              ->with('tests', [$test])
              ->with('taskId', $currentTask->id)
              ->with('enc_tests', json_encode([$test]))
              ->with('imgsToPreload', $imgsToPreload)
+             ->with('scores',json_encode($group_users_array))
              ->with('isReporter', ($isReporter) ? 1 : 0);
+    }
+
+    public function leaderAnswered(Request $request){
+      $user_id = \Auth::user()->id;
+
+        $this_user = User::where('id',$user_id)->first();
+
+        event(new LeaderAnswered($this_user));
+        return '200';
     }
 
     public function saveMemory(Request $request) {
@@ -203,12 +257,6 @@ class GroupTaskController extends Controller
         $r->prompt = 'Memory Intro';
         $r->response = 'n/a';
         $r->save();
-        if($isReporter) {
-          $request->session()->put('waitingMsg', 'Please wait for the experiment to continue...');
-        }
-        else {
-          $request->session()->put('waitingMsg', "For this part of the task you will be working on the Reporter's laptop");
-        }
         //return redirect('/end-group-task');
       }
 
@@ -240,7 +288,7 @@ class GroupTaskController extends Controller
       }
       // Look up the test based on the response key
       foreach ($responses as $key => $response) {
-        if(!$isReporter) continue;
+        //if(!$isReporter) continue;
         $indices = explode('_', $key);
         $test = $tests[$indices[1]]['blocks'][$indices[2]];
 
@@ -294,16 +342,6 @@ class GroupTaskController extends Controller
         $r->points = $points;
         $r->save();
 
-      }
-
-      // If this participant isn't the reporter, we'll set a message to
-      // display on the waiting page
-      if(!$isReporter) {
-        $waitingMsg = 'You\'ll complete this task on the reporter\'s laptop.';
-        $request->session()->put('waitingMsg', $waitingMsg);
-      }
-      else {
-        $request->session()->put('waitingMsg', 'Please wait for the experiment to continue...');
       }
 
       return redirect('/end-group-task');
@@ -466,6 +504,33 @@ class GroupTaskController extends Controller
       return 'GO';
     }
 
+    public function nextMemoryPage(Request $request){
+      Log::debug($request);
+      $this_user = User::find($request->id);
+      $user_group = $this_user->group_id;
+
+      $this_user->waiting = 1;
+      $this_user->save();
+
+      $team_users = User::where('group_id',$user_group)->get();
+      foreach($team_users as $key => $team_user){
+        if($team_user->waiting == 0){
+          return 'WAIT';
+        }
+      }
+      event(new AllReadyInGroup($this_user));
+
+      foreach($team_users as $key => $team_user){
+        $team_user->waiting = 0;
+        $team_user->save();
+      }
+
+      $group_task = \Teamwork\GroupTask::where('group_id',$user_group)->where('name','Memory')->orderBy('created_at','DESC')->first();
+      $group_task->instructions += 1;
+      $group_task->save();
+      return 'GO';
+    }
+
 
     public function getWaitingRoom(Request $request){
         $user_id = \Auth::user()->id;
@@ -487,7 +552,7 @@ class GroupTaskController extends Controller
     public function clearStorage(Request $request){
       $user = User::find(\Auth::user()->id);
       Log::debug($user);
-      $group_task = GroupTask::where('group_id',$user->group_id)->where('name','Cryptography')->first();
+      $group_task = GroupTask::with('Response')->find($request->session()->get('currentGroupTask'));
       $group_task->whose_turn = 0;
       $group_task->started = 0;
       $group_task->save();
@@ -529,11 +594,11 @@ class GroupTaskController extends Controller
       $user = User::find(\Auth::user()->id);
       $user->waiting = 0;
       $user->save();
-      //GroupTask::find($request->session()->get('currentGroupTask'));
-      $currentTask = \Teamwork\GroupTask::where('group_id',$user->group_id)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
+      $currentTask = GroupTask::find($request->session()->get('currentGroupTask'));
+      //$currentTask = \Teamwork\GroupTask::where('group_id',$user->group_id)->where('name','Cryptography')->orderBy('created_at','DESC')->first();
       $currentTask->started = 1;
       $currentTask->save();
-      $request->session()->put('currentGroupTask', $currentTask->id);
+      //$request->session()->put('currentGroupTask', $currentTask->id);
       $parameters = unserialize($currentTask->parameters);
       $maxResponses = $parameters->maxResponses;
       //$introType = $parameters->intro;
@@ -542,7 +607,7 @@ class GroupTaskController extends Controller
       
       // We need to set a start time so when the non-reporters submit the task,
       // it records properly
-      $this->recordStartTime($request, 'intro');
+      //$this->recordStartTime($request, 'intro');
 
       $mapping = (new \Teamwork\Tasks\Cryptography)->getMapping('random');
       $aSorted = $mapping;
@@ -564,15 +629,20 @@ class GroupTaskController extends Controller
     public function cryptography(Request $request) {
       $user = User::find(\Auth::user()->id);
       $isReporter = $this->isReporter(\Auth::user()->id, \Auth::user()->group_id);
-      $this->recordEndTime($request, 'intro');
+      
       $currentTask = GroupTask::with('Response')->find($request->session()->get('currentGroupTask'));
       Log::debug($request->session()->get('currentGroupTask'));
       #$#time_elapsed = $currentTask->updated_at
+      $parameters = unserialize($currentTask->parameters);
+      if($parameters->type == "intro")
+        return redirect('/cryptography-intro');
+      //$this->recordEndTime($request, 'intro');
+
       $whose_turn = $currentTask->whose_turn;
       $currentTask->started = 1;
       $currentTask->intro_completed = 1;
       $currentTask->save();
-      $parameters = unserialize($currentTask->parameters);
+      
 
       $mapping = unserialize($currentTask->mapping);
       $maxResponses = $parameters->maxResponses;
@@ -607,6 +677,58 @@ class GroupTaskController extends Controller
              ->with('hasGroup', $parameters->hasGroup)
              ->with('time_remaining',$time_remaining);
       
+    }
+
+    public function getIndividualMemoryTaskResults($user) {
+
+      //$groupTasks = \Teamwork\GroupTask::where('name', 'Memory')
+        //                           ->where('group_id', \Auth::user()->group_id)
+          //                         ->with('response')->get();
+
+      $groupTasks = \Teamwork\Response::where('user_id',$user->id)->get()->groupBy('group_tasks_id');
+
+      Log::debug($groupTasks);
+
+
+      $performance = ['words_1' => 0, 'faces_1' => 0, 'story_1' => 0, 'words' => 'n/a', 'faces' => 'n/a', 'story' =>'n/a'];
+
+      foreach($groupTasks as $id => $array) {
+        $task = \Teamwork\GroupTask::where('id',$id)->first();
+        if($task->name != "Memory")
+          continue;
+        Log::debug($task->parameters);
+        $parameters = unserialize($task->parameters);
+        if($parameters->test == 'words_1' || $parameters->test == 'faces_1' || $parameters->test == 'story_1') {
+          $avg = $array->avg('points');
+
+          $performance[substr($parameters->test, 0, -2)] = $this->calculateMemoryPercentileRank(substr($parameters->test, 0, -2), $avg);
+        }
+      }
+
+      return $performance;
+
+    }
+
+    private function calculateMemoryPercentileRank($test, $avg){
+      $percentiles = [
+      'words' => ['20' => 2.076, '30' => 2.290,
+                         '40' => 2.415, '50' => 2.465, '60' => 2.340, '70' => 2.390,
+                         '80' => 2.665, '90' => 2.790],
+
+      'faces' => ['20' => 1.490, '30' => 1.540,
+                        '40' => 1.750, '50' => 1.865, '60' => 1.890, '70' => 2.140,
+                        '80' => 2.240, '90' => 2.615],
+
+      'story' => ['20' => 1.490, '30' => 1.540,
+                         '40' => 1.590, '50' => 1.865, '60' => 2.140, '70' => 2.240,
+                         '80' => 2.600, '90' => 2.615]
+      ];
+      foreach (array_reverse($percentiles[$test], true) as $key => $value) {
+        if($avg >= $value) {
+          return $key;
+        }
+      }
+      return '20';
     }
 
     public function groupCryptography(Request $request) {
@@ -745,7 +867,7 @@ class GroupTaskController extends Controller
         //          ->where('group_tasks_id', '=', $task->id)
           //        ->first();
       //$time->recordEndTime();
-      $request->session()->put('waitingMsg', 'Please wait for the experiment to continue...');
+      //$request->session()->put('waitingMsg', 'Please wait for the experiment to continue...');
       if(!$parameters->hasGroup) return redirect('/end-individual-task');
       else return redirect('/end-group-task');
     }
@@ -844,7 +966,7 @@ class GroupTaskController extends Controller
       $results = 'You have completed the Shapes Task.';
       $request->session()->put('currentGroupTaskResult', $results);
       $request->session()->put('currentGroupTaskName', 'Shapes Task');
-      $request->session()->put('waitingMsg', 'Please wait for the experiment to continue...');
+      //$request->session()->put('waitingMsg', 'Please wait for the experiment to continue...');
       return redirect('/group-task-results');
     }
 

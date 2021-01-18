@@ -136,7 +136,7 @@ class Intro {
                 'type' => 'paragraph',
                 'content' => '
                 <a href="/no-study-consent" role="button" class="btn btn-lg btn-warning float-left">I <strong>cannot</strong> commit to both parts of the experiment</a>
-                <a href="/end-individual-task" role="button" class="btn btn-lg btn-success float-right">I <strong>can</strong> commit to both parts (individual session + at least 4 group sessions over the period XX to XX)</a>'
+                <a href="/end-individual-task" role="button" class="btn btn-lg btn-success float-right">I <strong>can</strong> commit to both parts (individual session + <br />at least 4 group sessions over the period XX to XX)</a>'
               ],
     ],
 

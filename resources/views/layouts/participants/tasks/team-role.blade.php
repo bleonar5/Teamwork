@@ -71,7 +71,7 @@
 
 <div class="container container-large">
   <div class="row vertical-center">
-    <div class="col-md-12 text-center">
+    <div class="col-md-10 text-center">
       <form id="team-role-responses" name="team-role-responses" action="/team-role" method="post">
         {{ csrf_field() }}
 

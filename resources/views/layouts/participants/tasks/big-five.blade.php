@@ -47,7 +47,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-12 text-center">
+    <div class="col-md-10 text-center">
       <form id="big-five-form" action="/big-five" method="post">
         {{ csrf_field() }}
 

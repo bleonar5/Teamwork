@@ -92,6 +92,27 @@ class AjaxController extends Controller
                 ->where('group_tasks_id', $request->group_tasks_id)
                 ->where('step', $request->step)
                 ->count();
+    $step = (int) $request->step;
+    $teammates = \Teamwork\User::where('group_id', $request->group_id)
+                                ->get();
+    foreach($teammates as $key => $teammate){
+      for($i = 1; $i < $step; $i++){
+        $has_turn_for_step = \DB::table('waiting')
+                                ->where('user_id', $teammate->id)
+                                ->where('group_tasks_id', $request->group_tasks_id)
+                                ->where('step', $i)
+                                ->count();
+
+        if(!$has_turn_for_step){
+          \DB::table('waiting')->insert(['user_id' => $teammate->id,
+                                     'group_id' => $request->group_id,
+                                     'group_tasks_id' => $request->group_tasks_id,
+                                     'step' => $i,
+                                     'created_at' => date("Y-m-d H:i:s"),
+                                     'updated_at' => date("Y-m-d H:i:s")]);
+        }
+      }
+    }
     if(!$exists){
       \DB::table('waiting')->insert(['user_id' => $request->user_id,
                                      'group_id' => $request->group_id,
@@ -111,6 +132,18 @@ class AjaxController extends Controller
                  ->count();
 
      return ($group == $ready) ? 1 : 0;
+   }
+
+   public function checkLeaderReady(Request $request) {
+     $group_leader = \Teamwork\User::where('group_id', $request->group_id)->where('group_role','leader')->first();
+     $ready = \DB::table('waiting')
+                 ->where('group_id', $request->group_id)
+                 ->where('group_tasks_id', $request->group_tasks_id)
+                 ->where('user_id',$group_leader->id)
+                 ->where('step', $request->step)
+                 ->count();
+
+     return (1 == $ready) ? 1 : 0;
    }
 
    public function getProbVal(Request $request) {

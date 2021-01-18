@@ -10,8 +10,12 @@
 
 @section('content')
 <script>
+var timeout;
 $( document ).ready(function() {
-  instructionPaginator(function(){window.location = '/cryptography';});
+  timeout = setTimeout(function() {
+    window.location = '/cryptography-individual';
+  },1000 * 180);
+  instructionPaginator(function(){clearTimeout(timeout); window.location = '/cryptography-individual';});
 });
 
 </script>

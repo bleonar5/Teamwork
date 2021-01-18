@@ -1,5 +1,5 @@
 function instructionPaginator(callback) {
-  page_count =  1;
+  page_count = localStorage.getItem('page_count') ? localStorage.getItem('page_count') : 1;
   $(".inst").hide();
   $("#instr_nav #back").hide();
   $("#inst_"+page_count).show();
@@ -19,7 +19,7 @@ function instructionPaginator(callback) {
   $('.instr_nav').click(function(event) {
     console.log('lfg');
 
-    $.post('/crypto-proceed', {id: user_id,_token: $('meta[name="csrf-token"]').attr('content')})
+    $.post('/memory-proceed', {id: user_id,_token: $('meta[name="csrf-token"]').attr('content')})
       .done(function(data) {
         console.log(data);
         if(data == 'WAIT'){
@@ -38,6 +38,7 @@ function instructionPaginator(callback) {
 
           // Increment or decrement the page count, based on nav button clicked
           page_count = (dir == 'next') ? page_count += 1 : page_count -= 1;
+          localStorage.setItem('page_count',page_count)
           console.log(page_count);
           // If we've reached the end of instructions, go to redirect url or callback
           if(page_count > $(".inst").length){
@@ -48,7 +49,8 @@ function instructionPaginator(callback) {
             //$("#waiting").show();
 
             $.get('/end-group-task', function(data) {
-              window.location.href='/task-room';
+              localStorage.clear();
+              $('#content').html(data);
             });
           }
 
