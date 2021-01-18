@@ -295,6 +295,13 @@ var Memory = class Memory {
       .done(function( response ) {
         if(response == '1') {
           // Increment the step counter
+          try{
+            $(modal).modal('hide');
+          }
+          catch(e){
+            location.reload();
+          }
+          
           self.step++;
           localStorage.setItem('step',self.step);
           $(modal).modal('hide');
