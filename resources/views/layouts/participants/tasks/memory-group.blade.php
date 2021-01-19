@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('js')
-  <script src="{{ URL::asset('js/memory.js') }}"></script>
+  <script src="{{ URL::asset('js/memory.js?v=1234') }}"></script>
   <script src="{{ URL::asset('js/image-preloader.js') }}"></script>
 @stop
 
