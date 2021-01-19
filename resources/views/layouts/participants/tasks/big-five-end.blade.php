@@ -6,7 +6,6 @@
   <div class="row vertical-center">
     <div class="col-md-12 text-center">
       <h3>
-        You have now completed this task.<br>
         Press Continue to move on to the next task.
       </h3>
       <div class="text-center">

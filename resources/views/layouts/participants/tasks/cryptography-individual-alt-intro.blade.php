@@ -25,9 +25,6 @@ $( document ).ready(function() {
     <div class="col-md-12 text-center">
       <div id="inst_1" class="inst">
         <h2 class="text-primary">Cryptography Task - Second Attempt</h2>
-        <h3 class="text-success">
-          Task {{ \Session::get('completedTasks') + 1 }} of {{ \Session::get('totalTasks') }}
-        </h3>
         <h4>
           You now have an opportunity to try the Cryptography Task for a second and final time. The task is the same, but the letter-number combinations have changed.
         </h4>
@@ -39,11 +36,10 @@ $( document ).ready(function() {
           Remember that the goal is to <strong>solve the puzzle in the SMALLEST number of trials</strong>
         </h4>
         <h4>
-          One participant whose performance on this second cryptography puzzle is in the top third of all participants will be randomly selected to win a prize of <strong>$100</strong>.
+          One participant who on this second puzzle is in the top third of all participants will be randomly selected to win a prize of <strong>$100</strong>.
         </h4>
         <h4>
           On the next page, we will give a quick refresher of the instructions.<br>
-          Overall, this task will take no more than 11 minutes.
         </h4>
       </div>
       <div id="inst_2" class="inst">
