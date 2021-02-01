@@ -17,8 +17,8 @@ $( document ).ready(function() {
     });
 
     $('#consent_button').on('click',function(event){
-      console.log(signaturePad.toDataURL());
-      console.log('turds');
+      //console.log(signaturePad.toDataURL());
+      //console.log('turds');
       event.preventDefault();
       if(signaturePad.isEmpty()) {
         alert('Please use the mouse to draw your signature in the box');
@@ -201,7 +201,7 @@ $( document ).ready(function() {
             </p>
       @endif
       <a href="/no-study-consent" role="button" class="btn btn-lg btn-warning float-left">I Do Not Consent</a>
-      <a id='consent_button' href="/end-individual-task" role="button" class="btn btn-lg btn-success float-right">I Consent</a>
+      <a id='consent_button' href="/{{ $url_endpoint }}" role="button" class="btn btn-lg btn-success float-right">I Consent</a>
     </div>
   </div>
 </div>
