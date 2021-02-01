@@ -67,7 +67,7 @@ $( document ).ready(function() {
     });
     $('#continue-button').on('click',function(event){
     	if($(event.target).text().includes('Proceed'))
-    		window.location.href = '/end-individual-task';
+    		window.location.href = '/end-group-task';
     	//else
     		//$('#stop-warning').modal('toggle');
     });

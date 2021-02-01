@@ -120,6 +120,22 @@ class GroupTask extends Model
       return Self::initializeTasks($group_id, $taskArray, $randomize);
     }
 
+    public static function initializeCryptoPilotTasks($group_id, $randomize) {
+      $taskArray = '[
+        {"taskName":"Consent","taskParams":{"url_endpoint":"end-group-task","hasIndividuals":"true","hasGroup":"false","subjectPool":"hdsl_individual"}},
+        {"taskName":"DeviceCheck","taskParams":{"hasIndividuals":"false","hasGroup":"true","type":"eligibility"}},
+        {"taskName":"WaitingRoom","taskParams":{"hasIndividuals":"false","hasGroup":"true","task":"1"}}
+        ]';
+      return Self::initializeTasks($group_id, $taskArray, $randomize);
+    }
+
+    public static function initializeCryptoPilotNoConsentTasks($group_id, $randomize) {
+      $taskArray = '[
+        {"taskName":"WaitingRoom","taskParams":{"hasIndividuals":"false","hasGroup":"true","task":"1"}}
+        ]';
+      return Self::initializeTasks($group_id, $taskArray, $randomize);
+    }
+
     public static function initializeCryptoTasks($group_id, $randomize) {
       $taskArray = '[
         {"taskName":"Cryptography","taskParams":{"hasIndividuals":"false","intro":"group_1","hasGroup":"true","mapping":"random","maxResponses":"10","type":"intro"}},
@@ -152,9 +168,34 @@ class GroupTask extends Model
       return Self::initializeTasks($group_id, $taskArray, $randomize);
     }
 
+    public static function initializeLabIndividualPilotTasks($group_id, $randomize) {
+      $taskArray = '[
+          {"taskName":"Consent","taskParams":{"url_endpoint":"end-individual-task",hasIndividuals":"true","hasGroup":"false","subjectPool":"hdsl_individual"}},
+          {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"eligibility"}},
+          {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"mturk"}},
+          {"taskName":"Eyes","taskParams":{"hasIndividuals":"true","hasGroup":"false"}},
+          {"taskName":"BigFive","taskParams":{"hasIndividuals":"true","hasGroup":"false","statementOrder":"random"}},
+          {"taskName":"Memory","taskParams":{"hasIndividuals":"true","hasGroup":"false","test":"intro"}},
+          {"taskName":"Memory","taskParams":{"hasIndividuals":"true","hasGroup":"false","test":"words_instructions"}},
+          {"taskName":"Memory","taskParams":{"hasIndividuals":"true","hasGroup":"false","test":"words_1"}},
+          {"taskName":"Memory","taskParams":{"hasIndividuals":"true","hasGroup":"false","test":"images_instructions"}},
+          {"taskName":"Memory","taskParams":{"hasIndividuals":"true","hasGroup":"false","test":"faces_1"}},
+          {"taskName":"Memory","taskParams":{"hasIndividuals":"true","hasGroup":"false","test":"story_instructions"}},
+          {"taskName":"Memory","taskParams":{"hasIndividuals":"true","hasGroup":"false","test":"story_1"}},
+          {"taskName":"Memory","taskParams":{"hasIndividuals":"true","hasGroup":"false","test":"results"}},
+          {"taskName":"PsiIri","taskParams":{"hasIndividuals":"true","hasGroup":"false","statementOrder":"random"}},
+          {"taskName":"Shapes","taskParams":{"hasIndividuals":"true","hasGroup":"false","subtest":"subtest5"}},
+          {"taskName":"Leadership","taskParams":{"hasIndividuals":"true","hasGroup":"false","statementOrder":"random"}},
+          {"taskName":"Cryptography","taskParams":{"intro":"intro","hasIndividuals":"true","hasGroup":"false","mapping":"random","maxResponses":"10"}},
+          {"taskName":"Cryptography","taskParams":{"intro":"individual_alt","hasIndividuals":"true","hasGroup":"false","mapping":"random","maxResponses":"10"}},
+          {"taskName":"Conclusion","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"hdsl_individual","hasCode":"false","displayScoreGroup":"true","digitalReceipt":"false","feedback":"false", "feedbackLinkType":"pilot"}}
+        ]';
+      return Self::initializeTasks($group_id, $taskArray, $randomize);
+    }
+
     public static function initializeLabIndividualTasks($group_id, $randomize) {
       $taskArray = '[
-          {"taskName":"Consent","taskParams":{"hasIndividuals":"true","hasGroup":"false","subjectPool":"hdsl_individual"}},
+          {"taskName":"Consent","taskParams":{"url_endpoint":"end-individual-task",hasIndividuals":"true","hasGroup":"false","subjectPool":"hdsl_individual"}},
           {"taskName":"DeviceCheck","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"eligibility"}},
           {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"eligibility"}},
           {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"mturk"}},

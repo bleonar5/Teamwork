@@ -41,6 +41,9 @@ class LoginController extends Controller
         $group->save();
 
       }
+      else{
+        $group = Group::find($user->group_id);
+      }
       $currentTask = \Teamwork\GroupTask::where('group_id',$user->group_id)
                               ->where('completed',0)
                               ->orderBy('order','ASC')
@@ -87,8 +90,11 @@ class LoginController extends Controller
        elseif($request->task_package == 'group-test'){
          \Teamwork\GroupTask::initializeGroupTestTasks(\Auth::user()->group_id, $randomize = false);
        }
-       elseif($request->task_package == 'lab-round-1'){
-         \Teamwork\GroupTask::initializeLabRoundOneTasks(\Auth::user()->group_id, $randomize = false);
+       elseif($request->task_package == 'crypto-pilot'){
+          if($user->signature != null)
+            \Teamwork\GroupTask::initializeCryptoPilotNoConsentTasks(\Auth::user()->group_id, $randomize = false);
+          else
+            \Teamwork\GroupTask::initializeCryptoPilotTasks(\Auth::user()->group_id, $randomize = false);
        }
        elseif($request->task_package == 'lab-round-2'){
          \Teamwork\GroupTask::initializeLabRoundTwoTasks(\Auth::user()->group_id, $randomize = false);

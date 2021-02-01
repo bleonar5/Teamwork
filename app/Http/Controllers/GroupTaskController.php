@@ -80,6 +80,9 @@ class GroupTaskController extends Controller
       Log::debug($task->name);
 
       switch($task->name) {
+        case "Consent":
+          return redirect('/study-consent');
+          
         case "WaitingRoom":
           return redirect('/waiting-room');
 

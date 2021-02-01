@@ -132,6 +132,14 @@ class IndividualTaskController extends Controller
 
     }
 
+    public function submitConsent(Request $request) {
+      $user = User::find(\Auth::user()->id);
+      $user->signature = $request->signature;
+      $user->signature_date = \Carbon\Carbon::now();
+      $user->save();
+      return '200';
+    }
+
     public function endTask(Request $request) {
 
       Log::debug('ENDING');
@@ -193,7 +201,8 @@ class IndividualTaskController extends Controller
       
       $parameters = unserialize($currentTask->parameters);
       return view('layouts.participants.participant-study-consent')
-             ->with('subjectPool', $parameters->subjectPool);
+             ->with('subjectPool', $parameters->subjectPool)
+             ->with('url_endpoint',$parameters->url_endpoint);
     }
 
     public function noStudyConsent(Request $request) {

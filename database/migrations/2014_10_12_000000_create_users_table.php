@@ -16,6 +16,8 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->string('signature',10000)->nullable();
+            $table->timestamp('signature_date')->nullable();
             $table->boolean('waiting')->default(0);
             $table->string('email');
             $table->Integer('task_id')->default(0);

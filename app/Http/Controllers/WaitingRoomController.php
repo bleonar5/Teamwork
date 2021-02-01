@@ -143,8 +143,9 @@ class WaitingRoomController extends Controller
                 if($room_user->group_role == 'leader'){
                     $room_user->in_room = 0;
                     //$group_task = \Teamwork\GroupTask::firstOrCreate('group_id',$room_user->group_id)->where('name','Cryptography')->first();
-                    if ($task == 1)
+                    if ($task == 1){
                         \Teamwork\GroupTask::initializeCryptoTasks($group->id,$randomize=false);
+                    }
                     else
                         \Teamwork\GroupTask::initializeMemoryTasks($group->id,$randomize=false);
                     $group_task = \Teamwork\GroupTask::where('group_id',$group->id)->where('name',$task_name)->orderBy('order','ASC')->first();

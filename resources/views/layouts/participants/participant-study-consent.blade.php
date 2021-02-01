@@ -1,7 +1,47 @@
 @extends('layouts.master')
 
+@section('js')
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+
+@stop
+
 
 @section('content')
+<script>
+$( document ).ready(function() {
+    var canvas = document.querySelector("canvas");
+    canvas.width  = $(canvas).parent().width();
+    var signaturePad = new SignaturePad(canvas);
+    $(window).on("resize", function() {
+      canvas.width  = $(canvas).parent().width();
+    });
+
+    $('#consent_button').on('click',function(event){
+      console.log(signaturePad.toDataURL());
+      console.log('turds');
+      event.preventDefault();
+      if(signaturePad.isEmpty()) {
+        alert('Please use the mouse to draw your signature in the box');
+        
+        return;
+      }
+      else{
+        console.log(signaturePad.toDataURL());
+        $.post('/submit-consent',data={
+          _token: '{{ csrf_token() }}',
+          signature: signaturePad.toDataURL(),
+        },success=function(data){
+          console.log(data);
+          window.location.href = '/{{ $url_endpoint }}';
+
+        }).fail(function(){
+          console.log('failure');
+        });
+      }
+    })
+  });
+
+</script>
 <div class="container">
   <div class="row vertical-center">
     <div class="col-md-12 text-left">
@@ -103,11 +143,20 @@
             or David Deming at <a href="mailto:david_deming@harvard.edu">david_deming@harvard.edu</a>
           </p>
           <p>
-            <span class="consent-em">CLICKING ACCEPT</span>: By clicking on the
+            <span class="consent-em">CLICKING ACCEPT</span>: By signing and clicking on the
             "I Consent" button, you indicate that you are 18 years of age or older,
             that you voluntarily agree to participate in this study and that you
             understand the information in this consent form.
           </p>
+          <p>
+            <span class="consent-em">SIGNATURE</span>: 
+          </p>
+          <div class="form-group row">
+              <div class="col-12">
+                <canvas style='border:1px solid black' class="img-responsive" width="100%" height="auto"></canvas>
+              </div>
+          </div>
+
 
           @elseif($subjectPool == 'hdsl_individual_pilot')
             <p>
@@ -152,7 +201,7 @@
             </p>
       @endif
       <a href="/no-study-consent" role="button" class="btn btn-lg btn-warning float-left">I Do Not Consent</a>
-      <a href="/end-individual-task" role="button" class="btn btn-lg btn-success float-right">I Consent</a>
+      <a id='consent_button' href="/end-individual-task" role="button" class="btn btn-lg btn-success float-right">I Consent</a>
     </div>
   </div>
 </div>
