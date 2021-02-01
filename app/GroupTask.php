@@ -122,7 +122,7 @@ class GroupTask extends Model
 
     public static function initializeCryptoPilotTasks($group_id, $randomize) {
       $taskArray = '[
-        {"taskName":"Consent","taskParams":{"url_endpoint":"end-group-task","hasIndividuals":"true","hasGroup":"false","subjectPool":"hdsl_individual"}},
+        {"taskName":"Consent","taskParams":{"url_endpoint":"end-group-task","hasIndividuals":"false","hasGroup":"true","subjectPool":"hdsl_individual"}},
         {"taskName":"DeviceCheck","taskParams":{"hasIndividuals":"false","hasGroup":"true","type":"eligibility"}},
         {"taskName":"WaitingRoom","taskParams":{"hasIndividuals":"false","hasGroup":"true","task":"1"}}
         ]';
