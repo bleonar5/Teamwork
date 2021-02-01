@@ -82,7 +82,10 @@ class GroupTaskController extends Controller
       switch($task->name) {
         case "Consent":
           return redirect('/study-consent');
-          
+
+        case "DeviceCheck":
+          return redirect('/device-check');
+
         case "WaitingRoom":
           return redirect('/waiting-room');
 
