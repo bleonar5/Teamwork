@@ -44,7 +44,8 @@
         value: "1080p"
       }
     ];
-
+var resourceId = '';
+var sid = '';
 
 
 $( document ).ready(function() {
@@ -56,6 +57,22 @@ $( document ).ready(function() {
       window.history.replaceState({}, document.title, clean_uri);
     }
   }
+  
+  window.addEventListener('beforeunload',function(event){
+    jQuery.ajax({
+                                  type:"POST",
+                                  url:"https://teamwork-agora-api-caller.herokuapp.com/stop",
+                                  data: JSON.stringify({
+                                    "resourceId":resourceId,
+                                    "sid":sid,
+                                    "cName":"group{{ $user->group_id }}"
+                                  }),
+                                  success: function(data){
+                                    console.log(data);
+                                  },
+                                  contentType: "application/json; charset=UTF-8"
+                                });
+  });
 
 
 
