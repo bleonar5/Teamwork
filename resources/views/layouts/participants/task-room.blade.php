@@ -84,6 +84,49 @@ $( document ).ready(function() {
           //M.AutoInit();
         });
       join(rtc,params);
+      $.ajax({
+          type: "POST",
+          url: "https://teamwork-agora-api-caller.herokuapp.com/acquire",
+          data: JSON.stringify({
+          "cName":"group{{ $user->group_id }}"
+          }),
+          success: function(data){
+            //console.log(data);
+            resourceId = data['resourceId'];
+            jQuery.ajax({
+              type:"POST",
+              url:"https://teamwork-agora-api-caller.herokuapp.com/start",
+              data: JSON.stringify({
+                "resourceId":data['resourceId'],
+                "cName":"group{{ $user->group_id }}",
+                "token":token
+              }),
+              success: function(data){
+                //console.log(data);
+                sid= data['sid'];
+
+                /*itv = setInterval(function(){
+                  jQuery.ajax({
+                    type:"POST",
+                    url:"https://agora-api-caller.herokuapp.com/query",
+                    data: JSON.stringify({
+                      "resourceId":data['resourceId'],
+                      "cName":"${e://Field/channelName}",
+                      "token":token,
+                      "sid":sid
+                    }),
+                    success: function(data){
+                      //console.log(data);
+                    },
+                    contentType: "application/json; charset=UTF-8"
+                  });
+                },10000);*/
+              },
+              contentType: "application/json; charset=UTF-8"
+            })
+          },
+          contentType: "application/json; charset=UTF-8"
+        });
     });
   jQuery.get('/get-group-task', function(data){
         console.log(data);
