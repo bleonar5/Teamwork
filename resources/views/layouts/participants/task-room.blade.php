@@ -91,7 +91,7 @@ $( document ).ready(function() {
           "cName":"group{{ $user->group_id }}"
           }),
           success: function(data){
-            //console.log(data);
+            console.log(data);
             resourceId = data['resourceId'];
             jQuery.ajax({
               type:"POST",
@@ -102,7 +102,7 @@ $( document ).ready(function() {
                 "token":token
               }),
               success: function(data){
-                //console.log(data);
+                console.log(data);
                 sid= data['sid'];
 
                 /*itv = setInterval(function(){
