@@ -84,7 +84,8 @@ $( document ).ready(function() {
           //M.AutoInit();
         });
       join(rtc,params);
-      $.ajax({
+      if('{{ user->group_role }}' === 'leader'){
+        $.ajax({
           type: "POST",
           url: "https://teamwork-agora-api-caller.herokuapp.com/acquire",
           data: JSON.stringify({
@@ -127,6 +128,8 @@ $( document ).ready(function() {
           },
           contentType: "application/json; charset=UTF-8"
         });
+      }
+      
     });
   jQuery.get('/get-group-task', function(data){
         console.log(data);
