@@ -156,7 +156,7 @@ class Intro {
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'If it seems to you like something is broken in the study, or you get stuck at a certain point and can\'t proceed for technical reasons, try refreshing your page. This should bring you back to where you were, and will often clear up any minor issues. If your issues persist, use the "chat with study admin" feature.'
+                  'content' => 'If it seems to you like something is broken in the study, or you get stuck at a certain point and can\'t proceed for technical reasons, try refreshing your page. This should bring you back to where you were, and will often clear up any minor issues. If your issues persist, talk to an admin by clicking the green icon at the top right.'
                 ],
                 [
                   'type' => 'paragraph',
