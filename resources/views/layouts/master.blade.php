@@ -16,11 +16,19 @@ s1.charset='UTF-8';
 s1.setAttribute('crossorigin','*');
 s0.parentNode.insertBefore(s1,s0);
 })();
-Tawk_API.visitor = {
-    name  : '<?php echo \Teamwork\User::find(\Auth::user()->id)->participant_id; ?>',
-    email : '<?php echo \Teamwork\User::find(\Auth::user()->id)->participant_id; ?>',
+Tawk_API.onLoad = function() {
+  Tawk_API.setAttributes({
+        group : '<?php echo \Teamwork\User::find(\Auth::user()->id)->group_id; ?>',
+        task : '<?php if(session('currentGroupTask')){echo session('currentGroupTask');} ?>',
+        id  : '<?php echo \Teamwork\User::find(\Auth::user()->id)->participant_id; ?>',
+    }, function(error){});
+  Tawk_API.visitor = {
+    prolific_id  : '<?php echo \Teamwork\User::find(\Auth::user()->id)->participant_id; ?>',
+    email : '<?php echo \Teamwork\User::find(\Auth::user()->id)->participant_id."@gmail.com"; ?>',
     hash  : '<?php echo hash_hmac("sha256", \Teamwork\User::find(\Auth::user()->id)->email, "3dafa7d435ae5ca17f6ba50b01eb7fe036d5df9a"); ?>'
-};
+  };
+}
+
 </script>
 <!--End of Tawk.to Script-->
         @yield('content')
