@@ -124,7 +124,7 @@ class GroupTask extends Model
       $taskArray = '[
         {"taskName":"Consent","taskParams":{"url_endpoint":"end-group-task","hasIndividuals":"false","hasGroup":"true","subjectPool":"hdsl_individual"}},
         {"taskName":"DeviceCheck","taskParams":{"hasIndividuals":"false","hasGroup":"true","type":"eligibility"}},
-        {"taskName":"Intro","taskParams":{"hasIndividuals":"false","hasGroup":"true","type":"crypto_pilot_guide"}},
+        {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"crypto_pilot_guide"}},
         {"taskName":"WaitingRoom","taskParams":{"hasIndividuals":"false","hasGroup":"true","task":"1"}}
         ]';
       return Self::initializeTasks($group_id, $taskArray, $randomize);
