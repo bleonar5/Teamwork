@@ -141,35 +141,27 @@ class Intro {
     ],
 
 
-    'hdsl_individual_important_info' => [[
+    'crypto_pilot_guide' => [[
                   'type' => 'header',
-                  'content' => 'Important information about this study'
+                  'content' => 'What to expect in this session'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'The study has three parts. First, an online test
-                  which you can complete at any time and location. Then there are
-                  <strong>two separate visits</strong> to the Harvard Decision Science Lab. If you
-                  successfully complete the online tasks, you will be eligible to
-                  participate in the Lab sessions. Payments will be made in cash,
-                  at the Lab:
-                  <ul>
-                    <li>$25 at the end of your first visit to the lab</li>
-                    <li>$35 at the end of your second visit to the lab</li>
-                  </ul>
-                  We will also pay a bonus based on performance, at the end of
-                  the second lab visit. If you complete the online test, but never
-                  come to the Lab, you will not receive payment.
+                  'content' => 'After this page, you will be sent to a "waiting room", where you will wait for your two teammates to arrive. Once everyone has arrived, you will be redirected to the main study, where (after a few seconds of loading time), you will be able to see your teammates\' video feeds at the right of the screen. 
                   '
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'Please click Continue if you wish to proceed'
+                  'content' => 'You won\'t be able to see your own video, so make sure to say hi to your teammates and confirm that they can hear/see you. If you have any issues with being seen or heard, make sure to check the "Device Instructions" button.'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'If it seems to you like something is broken in the study, or you get stuck at a certain point and can\'t proceed for technical reasons, try refreshing your page. This should bring you back to where you were, and will often clear up any minor issues. If your issues persist, use the "chat with study admin" feature.'
                 ],
                 [
                   'type' => 'paragraph',
                   'content' => '<div class="text-center">
-                          <a href="/end-individual-task" role="button" class="btn btn-lg btn-primary">Next</a>
+                          <a href="/end-group-task" role="button" class="btn btn-lg btn-primary">Next</a>
                         <div>'
                 ]
       ],

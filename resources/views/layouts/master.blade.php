@@ -3,7 +3,26 @@
     <head>
         @include('layouts.includes.head')
     </head>
+
     <body>
+        <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/60194dd2c31c9117cb74ffb1/1ethdfvhk';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+Tawk_API.visitor = {
+    name  : '<?php echo \Teamwork\User::find(\Auth::user()->id)->participant_id; ?>',
+    email : '<?php echo \Teamwork\User::find(\Auth::user()->id)->participant_id; ?>',
+    hash  : '<?php echo hash_hmac("sha256", \Teamwork\User::find(\Auth::user()->id)->email, "3dafa7d435ae5ca17f6ba50b01eb7fe036d5df9a"); ?>'
+};
+</script>
+<!--End of Tawk.to Script-->
         @yield('content')
         <!-- Include all compiled plugins (below), or include individual files as needed -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"

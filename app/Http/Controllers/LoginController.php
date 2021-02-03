@@ -20,7 +20,6 @@ class LoginController extends Controller
     }
 
     public function postParticipantLogin(Request $request) {
-      
 
       // Create or find the user
       $user = User::firstOrCreate(['participant_id' => $request->participant_id],
@@ -173,7 +172,7 @@ class LoginController extends Controller
 
         }
         else
-          \Teamwork\GroupTask::initializeLabIndividualTasks(\Auth::user()->group_id, $randomize = false);
+          \Teamwork\GroupTask::initializeLabIndividualPilotTasks(\Auth::user()->group_id, $randomize = false);
       }
 
       return redirect('/get-individual-task');

@@ -124,6 +124,7 @@ class GroupTask extends Model
       $taskArray = '[
         {"taskName":"Consent","taskParams":{"url_endpoint":"end-group-task","hasIndividuals":"false","hasGroup":"true","subjectPool":"hdsl_individual"}},
         {"taskName":"DeviceCheck","taskParams":{"hasIndividuals":"false","hasGroup":"true","type":"eligibility"}},
+        {"taskName":"Intro","taskParams":{"hasIndividuals":"false","hasGroup":"true","type":"crypto_pilot_guide"}},
         {"taskName":"WaitingRoom","taskParams":{"hasIndividuals":"false","hasGroup":"true","task":"1"}}
         ]';
       return Self::initializeTasks($group_id, $taskArray, $randomize);
@@ -170,7 +171,7 @@ class GroupTask extends Model
 
     public static function initializeLabIndividualPilotTasks($group_id, $randomize) {
       $taskArray = '[
-          {"taskName":"Consent","taskParams":{"url_endpoint":"end-individual-task",hasIndividuals":"true","hasGroup":"false","subjectPool":"hdsl_individual"}},
+          {"taskName":"Consent","taskParams":{"url_endpoint":"end-individual-task","hasIndividuals":"true","hasGroup":"false","subjectPool":"hdsl_individual"}},
           {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"eligibility"}},
           {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"mturk"}},
           {"taskName":"Eyes","taskParams":{"hasIndividuals":"true","hasGroup":"false"}},
@@ -195,7 +196,7 @@ class GroupTask extends Model
 
     public static function initializeLabIndividualTasks($group_id, $randomize) {
       $taskArray = '[
-          {"taskName":"Consent","taskParams":{"url_endpoint":"end-individual-task",hasIndividuals":"true","hasGroup":"false","subjectPool":"hdsl_individual"}},
+          {"taskName":"Consent","taskParams":{"url_endpoint":"end-individual-task","hasIndividuals":"true","hasGroup":"false","subjectPool":"hdsl_individual"}},
           {"taskName":"DeviceCheck","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"eligibility"}},
           {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"eligibility"}},
           {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"mturk"}},
@@ -283,11 +284,7 @@ class GroupTask extends Model
 
     public static function initializeLabRoundFiveTasks($group_id, $randomize) {
       $taskArray = '[
-        {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"group_5"}},
-        {"taskName":"ChooseReporter","taskParams":{"hasIndividuals":"true","hasGroup":"true"}},
-        {"taskName":"Cryptography","taskParams":{"hasIndividuals":"false","intro":"group_5","hasGroup":"true","mapping":"random","maxResponses":"10"}},
-        {"taskName":"Cryptography","taskParams":{"hasIndividuals":"false","intro":"group_5_alt","hasGroup":"true","mapping":"random","maxResponses":"10"}},
-        {"taskName":"Conclusion","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"group_5","hasCode":"false","displayScoreGroup":"false","digitalReceipt":"false", "feedback":"false"}}
+        {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"group_5"}}
         ]';
       return Self::initializeTasks($group_id, $taskArray, $randomize);
     }

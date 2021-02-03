@@ -47,7 +47,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-10 text-center">
+    <div class="col-md-12 text-center">
       <form id="leadership-form" action="/leadership" method="post">
         {{ csrf_field() }}
 

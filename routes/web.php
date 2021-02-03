@@ -667,6 +667,10 @@ Route::get('/participant-login', [
 	'uses' => 'LoginController@participantLogin',
 ]);
 
+Route::get('/prolific-login', [ 
+	'uses' => 'LoginController@postParticipantLogin',
+]);
+
 Route::get('/participant-login/{package}', [
 	'uses' => 'LoginController@participantPackageLogin',
 ]);

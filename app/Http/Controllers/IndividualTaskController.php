@@ -169,8 +169,11 @@ class IndividualTaskController extends Controller
       if(config('app.debug') == true){
         $this->getProgress();
         $this_user = User::where('id',\Auth::user()->id)->first();
+        Log::debug('???');
+        Log::debug($this_user);
 
         $currentTask = \Teamwork\GroupTask::where('name','Consent')->where('group_id',$this_user->group_id)->first();
+        Log::debug($currentTask);
 
         $prior_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','<',$currentTask->order)->get();
         $later_tasks = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('order','>=',$currentTask->order)->get();
@@ -184,8 +187,8 @@ class IndividualTaskController extends Controller
         }
 
         request()->session()->put('currentGroupTask', $currentTask->id);
-        request()->session()->put('currentIndividualTask', \Teamwork\IndividualTask::where('group_task_id',$currentTask->id)->first()->id);
-        request()->session()->put('currentIndividualTaskName', 'Consent');
+        //request()->session()->put('currentIndividualTask', \Teamwork\IndividualTask::where('group_task_id',$currentTask->id)->first()->id);
+        //request()->session()->put('currentIndividualTaskName', 'Consent');
 
 
 
