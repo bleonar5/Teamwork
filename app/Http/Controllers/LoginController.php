@@ -95,8 +95,9 @@ class LoginController extends Controller
           else
             \Teamwork\GroupTask::initializeCryptoPilotTasks(\Auth::user()->group_id, $randomize = false);
        }
-       elseif($request->task_package == 'lab-round-2'){
-         \Teamwork\GroupTask::initializeLabRoundTwoTasks(\Auth::user()->group_id, $randomize = false);
+       elseif($request->task_package == 'individual-pilot'){
+         \Teamwork\GroupTask::initializeLabIndividualPilotTasks(\Auth::user()->group_id, $randomize = false);
+         return redirect('/get-individual-task');
        }
        elseif($request->task_package == 'lab-round-3'){
          \Teamwork\GroupTask::initializeLabRoundThreeTasks(\Auth::user()->group_id, $randomize = false);

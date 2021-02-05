@@ -152,7 +152,7 @@ class Intro {
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'You won\'t be able to see your own video, so make sure to say hi to your teammates and confirm that they can hear/see you. If you have any issues with being seen or heard, make sure to check the "Device Instructions" button.'
+                  'content' => 'You won\'t be able to see your own video, so make sure to say "hi" to your teammates and confirm that they can hear/see you. If you have any issues with being seen or heard, make sure to check the "Device Instructions" button.'
                 ],
                 [
                   'type' => 'paragraph',
