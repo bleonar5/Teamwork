@@ -320,8 +320,8 @@ class IndividualTaskController extends Controller
         }
 
         request()->session()->put('currentGroupTask', $currentTask->id);
-        request()->session()->put('currentIndividualTask', \Teamwork\IndividualTask::where('group_task_id',$currentTask->id)->first()->id);
-        request()->session()->put('currentIndividualTaskName', 'Intro');
+        #request()->session()->put('currentIndividualTask', \Teamwork\IndividualTask::where('group_task_id',$currentTask->id)->first()->id);
+        #request()->session()->put('currentIndividualTaskName', 'Intro');
 
 
 

@@ -101,7 +101,7 @@ $( document ).ready(function() {
           //M.AutoInit();
         });
       join(rtc,params);
-      if('{{ user->group_role }}' === 'leader'){
+      if('{{ $user->group_role }}' === 'leader'){
         $.ajax({
           type: "POST",
           url: "https://teamwork-agora-api-caller.herokuapp.com/acquire",

@@ -17,6 +17,7 @@ var maxResponses = {{ $maxResponses }};
 var whose_turn = {{ $whose_turn }};
 var task_id = {{ $task_id }};
 var group_id = {{ $user->group_id }};
+var user_id = {{ $user->id }}
 var local_guess = [];
 var responses = '';
 var time_remaining;
@@ -188,45 +189,47 @@ $( document ).ready(function() {
 
   var channel = pusher.subscribe('task-channel');
     channel.bind('action-submitted',function(data){
-      console.log(data.group_task.whose_turn);
-      switch(data.group_task.whose_turn){
-        case 0:
-          $('#submit-mapping').attr('disabled',true);
-          $('#submit-mapping').text('Waiting for Team');
-          $('#submit-hypothesis').attr('disabled',true);
-          $('#submit-hypothesis').text('Waiting for Team');
-          $('#submit-equation').attr('disabled',false);
-          $('#submit-equation').text('Submit');
-          //$('#order-instructions').modal('toggle');
-          trials++;
-          $("#trial-counter").html(trials);
-          localStorage.setItem('trials',trials);
-          if(trials == maxResponses)
-            $('#last-trial').modal();
-          $('#payment').text((((parseFloat($('#payment').text()) - 0.50) > 0.00) ? (parseFloat($('#payment').text()) - 0.50) : 0.00).toFixed(2));
-          localStorage.setItem('payment',$('#payment').text());
-          break;
-        case 1:
-          $('#submit-mapping').attr('disabled',true);
-          $('#submit-mapping').text('Waiting for Team');
-          $('#submit-equation').attr('disabled',true);
-          $('#submit-equation').text('Waiting for Team');
-          $('#submit-hypothesis').attr('disabled',false);
-          $('#submit-hypothesis').text('Submit');
-          //$('#order-instructions').modal('toggle');
-          break;
-        case 2:
-          $('#submit-hypothesis').attr('disabled',true);
-          $('#submit-hypothesis').text('Waiting for Team');
-          $('#submit-equation').attr('disabled',true);
-          $('#submit-equation').text('Waiting for Team');
-          $('#submit-mapping').attr('disabled',false);
-          $('#submit-mapping').text('Submit');
-          //$('#order-instructions').modal('toggle');
-          break;
-        default:
-          break;
+      if (data['group_task']['id'] == task_id){
+        console.log(data.group_task.whose_turn);
+        switch(data.group_task.whose_turn){
+          case 0:
+            $('#submit-mapping').attr('disabled',true);
+            $('#submit-mapping').text('Waiting for Team');
+            $('#submit-hypothesis').attr('disabled',true);
+            $('#submit-hypothesis').text('Waiting for Team');
+            $('#submit-equation').attr('disabled',false);
+            $('#submit-equation').text('Submit');
+            //$('#order-instructions').modal('toggle');
+            trials++;
+            $("#trial-counter").html(trials);
+            localStorage.setItem('trials',trials);
+            if(trials == maxResponses)
+              $('#last-trial').modal();
+            $('#payment').text((((parseFloat($('#payment').text()) - 0.50) > 0.00) ? (parseFloat($('#payment').text()) - 0.50) : 0.00).toFixed(2));
+            localStorage.setItem('payment',$('#payment').text());
+            break;
+          case 1:
+            $('#submit-mapping').attr('disabled',true);
+            $('#submit-mapping').text('Waiting for Team');
+            $('#submit-equation').attr('disabled',true);
+            $('#submit-equation').text('Waiting for Team');
+            $('#submit-hypothesis').attr('disabled',false);
+            $('#submit-hypothesis').text('Submit');
+            //$('#order-instructions').modal('toggle');
+            break;
+          case 2:
+            $('#submit-hypothesis').attr('disabled',true);
+            $('#submit-hypothesis').text('Waiting for Team');
+            $('#submit-equation').attr('disabled',true);
+            $('#submit-equation').text('Waiting for Team');
+            $('#submit-mapping').attr('disabled',false);
+            $('#submit-mapping').text('Submit');
+            //$('#order-instructions').modal('toggle');
+            break;
+          default:
+            break;
 
+        }
       }
     });
     /*
@@ -246,16 +249,20 @@ $( document ).ready(function() {
 
     });*/
     channel.bind('task-complete', function(data){
-      localStorage.clear();
-      $("#task-result").val(1);
-      $("#crypto-header").hide();
-      $("#crypto-ui").hide();
-      $("#task-end").show();
+      if (data['user']['id'] == user_id){
+        localStorage.clear();
+        $("#task-result").val(1);
+        $("#crypto-header").hide();
+        $("#crypto-ui").hide();
+        $("#task-end").show();
+      }
     });
     channel.bind('rule-broken', function(data){
-      $("#rule_broken").modal('toggle');
-      $('#payment').text((((parseFloat($('#payment').text()) - 2.00) > 0.00) ? (parseFloat($('#payment').text()) - 2.00) : 0.00).toFixed(2));
-      localStorage.setItem('payment',$('#payment').text());
+      if (data['user']['group_id'] == group_id){
+        $("#rule_broken").modal('toggle');
+        $('#payment').text((((parseFloat($('#payment').text()) - 2.00) > 0.00) ? (parseFloat($('#payment').text()) - 2.00) : 0.00).toFixed(2));
+        localStorage.setItem('payment',$('#payment').text());
+      }
     });
     channel.bind('clear-storage', function(data){
       console.log('freedom!');

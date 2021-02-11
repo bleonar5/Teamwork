@@ -106,12 +106,12 @@ class WaitingRoomController extends Controller
             }
         }
 
-        $room_users = User::where('in_room',$task)->get();
+        $room_users = User::where('in_room',$task)->orderBy('updated_at','ASC')->get();
 
         $indices = [0,1,2];
         shuffle($indices);
         $assignments = ['leader','follower1','follower2'];
-        if(count($room_users) == 3){
+        if(count($room_users) >= 3){
             $group = new Group;
             $group->save();
             $room_users[$indices[0]]->group_role = 'leader';

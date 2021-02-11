@@ -10,6 +10,7 @@
   //var mapping = ['J', 'A', 'H', 'C', 'G', 'B', 'E', 'I', 'F', 'D'];
   var trialStage = 1;
   var hypothesisCount = 0;
+  var group_id  = {{ $user->group_id }};
   var user_id = {{ $user->id }};
   var page_count;
 
@@ -37,48 +38,50 @@ $( document ).ready(function() {
       window.location.href='/participant-login';
     });
     channel.bind('all-ready', function(data) {
-      $('#next').attr('disabled',false);
-      $("#inst_" + page_count).hide();
-      page_count += 1;
-      localStorage.setItem('pageCount',page_count);
-      //alert(JSON.stringify(data));
-          if(page_count > $(".inst").length){
-            console.log('longer');
+      if(data['user']['group_id'] == group_id){
+        $('#next').attr('disabled',false);
+        $("#inst_" + page_count).hide();
+        page_count += 1;
+        localStorage.setItem('pageCount',page_count);
+        //alert(JSON.stringify(data));
+            if(page_count > $(".inst").length){
+              console.log('longer');
 
-            $("#pagination-display").hide();
-            $('.instr_nav').hide();
-            //$("#waiting").show();
+              $("#pagination-display").hide();
+              $('.instr_nav').hide();
+              //$("#waiting").show();
 
-            channel.unbind('all-ready');
-            localStorage.setItem('pageCount',1);
+              channel.unbind('all-ready');
+              localStorage.setItem('pageCount',1);
 
-            $.get('/end-group-task', function(data) {
-              //console.log(data);
-              window.location.href= '/task-room';
-            });
-          }
+              $.get('/end-group-task', function(data) {
+                //console.log(data);
+                window.location.href= '/task-room';
+              });
+            }
 
-          // Show the new instruction
-          $("#inst_"+page_count).show();
+            // Show the new instruction
+            $("#inst_"+page_count).show();
 
-          // Hide back button if we're at the start
-          if(page_count <= 1){
-            $("#instr_nav #back").hide();
-          }
+            // Hide back button if we're at the start
+            if(page_count <= 1){
+              $("#instr_nav #back").hide();
+            }
 
-          else {
-            $("#instr_nav #back").show();
-          }
+            else {
+              $("#instr_nav #back").show();
+            }
 
-          // If there is a page # display, update it
-          if($("#pagination-display").length) {
+            // If there is a page # display, update it
+            if($("#pagination-display").length) {
 
-            $("#curr-page").html(page_count);
-          }
+              $("#curr-page").html(page_count);
+            }
 
-          $('#next').val('Next');
+            $('#next').val('Next');
 
-          event.preventDefault();
+            event.preventDefault();
+        }
 
     });
 
