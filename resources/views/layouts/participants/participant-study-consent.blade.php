@@ -114,7 +114,7 @@ $( document ).ready(function() {
             the relationship between measures of social skill and fluid intelligence.
           </p>
           <p>
-            <span class="consent-em">WHAT YOU’LL DO</span>:You will be asked to solve puzzles, perform memory tasks, and identify people’s emotions based on photographs. <strong>The entire experiment will be completed online.</strong> The first set of tasks are completed individually and take around 60 minutes. You will then be asked to sign up for sessions where you solve puzzles in a group of 3 people. There will be a video link between you and 2 other people. Each of these sessions will last around 60 minutes.
+            <span class="consent-em">WHAT YOU’LL DO</span>This is a pilot study. You will work together in a group of 3 people to solve a cryptography task, then fill in a feedback form. The study will last 25 minutes.
           </p>
           <p>
             <span class="consent-em">RISKS</span>: There are no risks
@@ -122,10 +122,7 @@ $( document ).ready(function() {
             computer use, including fatigue and mild stress.
           </p>
           <p>
-            <span class="consent-em">COMPENSATION</span>: OAverage payment will be $X per person (with a minimum of $Y). Payment will depend in part on how well your groups perform.
-          </p>
-          <p>
-            <span class="consent-em">PLEASE NOTE</span>: This study contains a number of checks to make sure that participants are finishing the tasks <span style = "background-color: yellow">honestly and completely.</span>
+            <span class="consent-em">COMPENSATION</span>:You will be paid $6.25
           </p>
           <p>
             <span class="consent-em">VOLUNTARY PARTICIPATION AND RIGHT TO
@@ -138,9 +135,7 @@ $( document ).ready(function() {
           </p>
           <p>
             <span class="consent-em">CONTACT INFORMATION</span>: If you have any
-            questions about this research, you may contact: Ben Weidmann at
-            <a href="mailto:benweidmann@g.harvard.edu">benweidmann@g.harvard.edu</a>,
-            or David Deming at <a href="mailto:david_deming@harvard.edu">david_deming@harvard.edu</a>
+            questions about this research, you may contact: <a href='mailto:skillslab@hks.harvard.edu'>skillslab@hks.harvard.edu</a>
           </p>
           <p>
             <span class="consent-em">CLICKING ACCEPT</span>: By signing and clicking on the
