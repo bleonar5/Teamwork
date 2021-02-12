@@ -1,13 +1,16 @@
-@extends('layouts.master')
+@extends('layouts.login-master')
 
 
 @section('content')
 
 <script>
 $( document ).ready(function() {
-  $("#sign-in").on("click", function() {
-    $("#sign-in").attr("disabled", true);
-    $("#sign-in-form").submit();
+  $("#sign-in").on("click", function(event) {
+    event.preventDefault();
+    if ($('#participant_id').val() != ""){
+      $("#sign-in").attr("disabled", true);
+      $("#sign-in-form").submit();
+    }
   });
 });
 
@@ -27,9 +30,9 @@ $( document ).ready(function() {
         {{ csrf_field() }}
         <fieldset class="bg-light p-4 rounded">
           <div class="form-group">
-            <label for="participant_id">Username</label>
-            <input type="text" class="form-control" name="participant_id"
-                   value="{{ old('participant_id') }}">
+            <label for="participant_id">PROLIFIC ID</label>
+            <input type="text" class="form-control" id='participant_id' name="participant_id"
+                   value="">
           </div>
           @if(isset($package))
             <input type="hidden" name="task_package" value="{{ $package }}">
