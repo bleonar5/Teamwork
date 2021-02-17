@@ -90,7 +90,8 @@ class LoginController extends Controller
          \Teamwork\GroupTask::initializeGroupTestTasks(\Auth::user()->group_id, $randomize = false);
        }
        elseif($request->task_package == 'crypto-pilot'){
-          if($user->signature != null)
+          $sig = \Teamwork\Response::where('user_id',\Auth::user()->id)->where('prompt','signature')->get();
+          if(count($sig) > 0)
             \Teamwork\GroupTask::initializeCryptoPilotNoConsentTasks(\Auth::user()->group_id, $randomize = false);
           else
             \Teamwork\GroupTask::initializeCryptoPilotTasks(\Auth::user()->group_id, $randomize = false);

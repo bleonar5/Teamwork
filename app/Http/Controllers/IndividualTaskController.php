@@ -134,9 +134,14 @@ class IndividualTaskController extends Controller
 
     public function submitConsent(Request $request) {
       $user = User::find(\Auth::user()->id);
-      $user->signature = $request->signature;
-      $user->signature_date = \Carbon\Carbon::now();
-      $user->save();
+
+
+      $r = new Response;
+        $r->group_tasks_id = $request->session()->get('currentGroupTask');
+        $r->user_id = $user->id;
+        $r->prompt = 'signature';
+        $r->response = $request->signature;
+        $r->save();
       return '200';
     }
 
