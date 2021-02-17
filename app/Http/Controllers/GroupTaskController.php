@@ -150,6 +150,8 @@ class GroupTaskController extends Controller
                                     ->count();
       Log::debug($usersInGroup);
 
+      
+
       if($numUsersCompleted == $usersInGroup) {
         $task->completed = true;
         $task->save();

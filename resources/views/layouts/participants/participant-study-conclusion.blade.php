@@ -92,9 +92,9 @@
 
       @if($feedbackLink)
         <h4>
-          Click the button below to add any feedback or comments on this study. Even a short sentance is very helpful to us!
+          To finish the study, please complete this feedback survey
         </h4>
-        <a class="btn btn-lg btn-success" href="{{ $feedbackLink }}">Feedback</a>
+        <a class="btn btn-lg btn-success" target='_blank' href="{{ $feedbackLink }}">Feedback</a>
       @endif
 
 

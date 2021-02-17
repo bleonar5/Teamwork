@@ -11,12 +11,22 @@ $( document ).ready(function() {
       $("#sign-in").attr("disabled", true);
       $("#sign-in-form").submit();
     }
+
   });
+  if($("#notify").width() > 0) {
+        console.log('no AB')
+    } else {
+        alert('We have detected that you are using adblocker. Please disable adblocker on our site, or the study may not work properly');
+    }
 });
 
 </script>
 
 <div class="container">
+  <div id="notify">
+      <div class="ads" style='width:1px'>
+      </div>
+  </div>
   <div class="row justify-content-center vertical-center">
     <div class="col-md-6 p-4">
       @if($errors)

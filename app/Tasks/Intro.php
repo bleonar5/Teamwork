@@ -140,6 +140,22 @@ class Intro {
               ],
     ],
 
+    'adblock' => [[
+                    'type' => 'header',
+                    'content' => 'Important Note'
+                  ],
+                  [
+                    'type' => 'paragraph',
+                    'content' => 'This study is not compatible with the Adblock chrome extension, or other extensions like it. If you are using an ad blocker, make sure it is always disabled for this website. Otherwise, the study may not function correctly.'
+                  ],
+                  [
+                  'type' => 'paragraph',
+                  'content' => '<div class="text-center">
+                          <a href="/end-group-task" role="button" class="btn btn-lg btn-primary">Next</a>
+                        <div>'
+                ]
+    ],
+
 
     'crypto_pilot_guide' => [[
                   'type' => 'header',
