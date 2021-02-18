@@ -262,7 +262,7 @@ class WaitingRoomController extends Controller
         
         $group_name = $request->room_type == '1' ? "Cryptography" : "Memory";
         
-        $group_task - \Teamwork\GroupTask::where('name',$group_name)->first();
+        $group_task = \Teamwork\GroupTask::where('name',$group_name)->first();
 
         $this_user = User::where('id',$user_id)->first();
 
