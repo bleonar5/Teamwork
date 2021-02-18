@@ -32,7 +32,7 @@ $( document ).ready(function() {
   var token = "{{ csrf_token() }}";
   var modal = "#waiting-for-group";
 
-  window.addEventListener('beforeunload',function(event){
+  window.onbeforeunload(function(event){
     console.log('yes');
     $.post("/leave-room", {
             _token: "{{ csrf_token() }}"
