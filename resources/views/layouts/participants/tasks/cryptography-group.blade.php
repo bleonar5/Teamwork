@@ -193,8 +193,8 @@ $( document ).ready(function() {
   var channel = pusher.subscribe('task-channel');
     channel.bind('action-submitted',function(data){
       console.log(data['group_task']['id']);
-      console.log(task_id);
-      if (data['group_task']['id'] == task_id){
+      console.log('{{ $user->group_task_id }}');
+      if (data['group_task']['id'].toString() == '{{ $user->group_task_id }}'){
         console.log(data.group_task.whose_turn);
         switch(data.group_task.whose_turn){
           case 0:
@@ -239,22 +239,24 @@ $( document ).ready(function() {
     });
     /*
     channel.bind('all-ready', function(data) {
+        if (data['user']['group_id'].toString() == '{{ $user->group_id }}'){
 
-        trials++;
-        $("#trial-counter").html(trials);
+            trials++;
+            $("#trial-counter").html(trials);
 
-        if(trials == maxResponses) {
-          $('#last-trial').modal();
+            if(trials == maxResponses) {
+              $('#last-trial').modal();
+            }
+          $('.sub-btn').attr('disabled',false);
+
+          $('.sub-btn').text('Submit');
+          //isReady = true;
+          $('#payment').text((((parseInt($('#payment').text()) - 0.50) > 0.00) ? (parseInt($('#payment').text()) - 0.50) : 0.00).toFixed(2));
         }
-      $('.sub-btn').attr('disabled',false);
-
-      $('.sub-btn').text('Submit');
-      //isReady = true;
-      $('#payment').text((((parseInt($('#payment').text()) - 0.50) > 0.00) ? (parseInt($('#payment').text()) - 0.50) : 0.00).toFixed(2));
 
     });*/
     channel.bind('task-complete', function(data){
-      if (data['user']['id'] == user_id){
+      if (data['user']['id'].toString() == user_id){
         localStorage.clear();
         $("#task-result").val(1);
         $("#crypto-header").hide();
@@ -263,7 +265,7 @@ $( document ).ready(function() {
       }
     });
     channel.bind('rule-broken', function(data){
-      if (data['user']['group_id'] == group_id){
+      if (data['user']['group_id'].toString() == '{{ $user->group_id }}'){
         $("#rule_broken").modal('toggle');
         $('#payment').text((((parseFloat($('#payment').text()) - 2.00) > 0.00) ? (parseFloat($('#payment').text()) - 2.00) : 0.00).toFixed(2));
         localStorage.setItem('payment',$('#payment').text());
