@@ -181,6 +181,9 @@ $( document ).ready(function() {
     $("#crypto-ui").hide();
     $("#task-end").show();
     $('#time-up').modal();
+    setTimeout(function(){
+        $('#continue').click();
+    },5000);
   });
 
   setTimeout(function() {
@@ -189,6 +192,8 @@ $( document ).ready(function() {
 
   var channel = pusher.subscribe('task-channel');
     channel.bind('action-submitted',function(data){
+      console.log(data['group_task']['id']);
+      console.log(task_id);
       if (data['group_task']['id'] == task_id){
         console.log(data.group_task.whose_turn);
         switch(data.group_task.whose_turn){
