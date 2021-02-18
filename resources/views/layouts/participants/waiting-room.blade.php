@@ -35,7 +35,8 @@ $( document ).ready(function() {
   window.addEventListener('beforeunload',function(event){
     console.log('yes');
     $.post("/leave-room", {
-            _token: "{{ csrf_token() }}"
+            _token: "{{ csrf_token() }}",
+            room_type:room_type
           } );
     return '200';
   });
