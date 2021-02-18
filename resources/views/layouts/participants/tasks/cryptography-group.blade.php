@@ -256,7 +256,7 @@ $( document ).ready(function() {
 
     });*/
     channel.bind('task-complete', function(data){
-      if (data['user']['id'].toString() == user_id){
+      if (data['user']['group_id'].toString() == '{{ $user->group_id }}'){
         localStorage.clear();
         $("#task-result").val(1);
         $("#crypto-header").hide();
