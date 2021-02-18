@@ -172,7 +172,6 @@ class WaitingRoomController extends Controller
 
         event(new PlayerJoinedWaitingRoom($this_user));
         return view('layouts.participants.waiting-room')
-            ->with('task_id',$this_group->id)
             ->with('users',$room_users)
             ->with('task',$task)
             ->with('PUSHER_APP_KEY',config('app.PUSHER_APP_KEY'));
