@@ -111,7 +111,7 @@ class GroupTaskController extends Controller
           return redirect('/brainstorming-intro');
         
         case "Conclusion":
-          return redirect('/study-conclusion')
+          return redirect('/study-conclusion');
               
       }
 
