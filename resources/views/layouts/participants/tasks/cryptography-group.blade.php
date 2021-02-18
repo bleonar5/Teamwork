@@ -193,8 +193,8 @@ $( document ).ready(function() {
   var channel = pusher.subscribe('task-channel');
     channel.bind('action-submitted',function(data){
       console.log(data['group_task']['id']);
-      console.log('{{ $user->group_task_id }}');
-      if (data['group_task']['id'].toString() == '{{ $user->group_task_id }}'){
+      console.log('{{ $user->group_id }}');
+      if (data['group_task']['group_id'].toString() == '{{ $user->group_id }}'){
         console.log(data.group_task.whose_turn);
         switch(data.group_task.whose_turn){
           case 0:
