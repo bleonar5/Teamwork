@@ -62,6 +62,8 @@ $( document ).ready(function() {
         //$('#waitingList').append("<li style='text-align:left' id='"+data['user']['id'].toString()+"'>"+data['user']['id']+" : "+data['user']['group_role']+"</li>");
     });
     channel.bind('player-left-room', function(data) {
+      console.log(data['user']['in_room'].toString());
+      console.log(room_type);
       if(room_type === data['user']['in_room'].toString()){
         roomTotal -= 1;
         $('#roomTotal').text((roomTotal < 0 ? 0 : roomTotal).toString());
