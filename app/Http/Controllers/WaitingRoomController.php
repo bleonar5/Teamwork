@@ -260,10 +260,13 @@ class WaitingRoomController extends Controller
     public function leaveWaitingRoom(Request $request){
         $user_id = \Auth::user()->id;
         
+        $group_name = $request->room_type == '1' ? "Cryptography" : "Memory";
+        
+        $group_task - \Teamwork\GroupTask::where('name',$group_name)->first();
 
         $this_user = User::where('id',$user_id)->first();
 
-        event(new PlayerLeftWaitingRoom($this_user));
+        event(new PlayerLeftWaitingRoom($group_task));
         
         $this_user->in_room = 0;
 
