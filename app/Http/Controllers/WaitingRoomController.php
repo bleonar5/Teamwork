@@ -259,14 +259,17 @@ class WaitingRoomController extends Controller
 
     public function leaveWaitingRoom(Request $request){
         $user_id = \Auth::user()->id;
+        
 
         $this_user = User::where('id',$user_id)->first();
 
+        event(new PlayerLeftWaitingRoom($this_user));
+        
         $this_user->in_room = 0;
 
         $this_user->save();
 
-        event(new PlayerLeftWaitingRoom($this_user));
+        
 
         return '200';
     }
