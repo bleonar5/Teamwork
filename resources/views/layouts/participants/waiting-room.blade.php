@@ -62,9 +62,10 @@ $( document ).ready(function() {
         //$('#waitingList').append("<li style='text-align:left' id='"+data['user']['id'].toString()+"'>"+data['user']['id']+" : "+data['user']['group_role']+"</li>");
     });
     channel.bind('player-left-room', function(data) {
-      console.log(data['user']['in_room'].toString());
+      var type = data['group_task']['name'] == "Cryptography" ? '1' : '2';
+      console.log(type);
       console.log(room_type);
-      if(room_type === data['user']['in_room'].toString()){
+      if(room_type === type){
         roomTotal -= 1;
         $('#roomTotal').text((roomTotal < 0 ? 0 : roomTotal).toString());
       }
