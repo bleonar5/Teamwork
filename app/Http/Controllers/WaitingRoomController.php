@@ -61,8 +61,11 @@ class WaitingRoomController extends Controller
 
     public function adminPage(Request $request){
         $in_session = User::where('id',1)->first()->in_room;
+        $cgs = User::where('signature_date','!=',null)->orderBy('signature_date','DESC')
+                    ->get();
         return view('layouts.participants.admin-page')
-                    ->with('in_session',$in_session);
+                    ->with('in_session',$in_session)
+                    ->with('credit_getters',$cgs);
     }
 
     public function getWaitingRoom(Request $request){
@@ -96,6 +99,8 @@ class WaitingRoomController extends Controller
         $user_id = \Auth::user()->id;
 
         $this_user = User::where('id',$user_id)->first();
+
+        $this_user->signature_date = \Carbon\Carbon::now();
 
         $this_user->in_room = $task;
         $this_user->save();
