@@ -10,12 +10,16 @@ use Illuminate\Support\Facades\Log;
 class LoginController extends Controller
 {
     public function participantLogin() {
-      return view('layouts.participants.participant-login');
+      $in_session = User::where('id',1)->first()->in_room;
+      return view('layouts.participants.participant-login')
+              ->with('in_session',$in_session);
     }
 
     public function participantPackageLogin($package) {
+      $in_session = User::where('id',1)->first()->in_room;
 
       return view('layouts.participants.participant-login')
+             ->with('in_session',$in_session)
              ->with('package', $package);
     }
 
@@ -114,8 +118,13 @@ class LoginController extends Controller
          Log::debug('Lets go');
        }
       }
-      else
-        \Teamwork\GroupTask::initializeCryptoWaitingRoomTasks($group->id, $randomize = false);
+      else{
+          $sig = \Teamwork\Response::where('user_id',\Auth::user()->id)->where('prompt','signature')->get();
+          if(count($sig) > 0)
+            \Teamwork\GroupTask::initializeCryptoPilotNoConsentTasks(\Auth::user()->group_id, $randomize = false);
+          else
+            \Teamwork\GroupTask::initializeCryptoPilotTasks(\Auth::user()->group_id, $randomize = false);
+        }
 
       return redirect('/get-group-task');
     }

@@ -159,25 +159,58 @@ class Intro {
 
     'crypto_pilot_guide' => [[
                   'type' => 'header',
-                  'content' => 'What to expect in this session'
+                  'content' => 'What to expect in this session (1/2)'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'After this page, you will be sent to a "waiting room", where you will wait for your two teammates to arrive. Once everyone has arrived, you will be redirected to the main study, where (after a few seconds of loading time), you will be able to see your teammates\' video feeds at the right of the screen. 
-                  '
+                  'content' => 'Welcome! You are about to join a video study with <strong>2 other team members.</strong>'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'You won\'t be able to see your own video, so make sure to say "hi" to your teammates and confirm that they can hear/see you. If you have any issues with being seen or heard, make sure to check the "Device Instructions" button.'
+                  'content' => 'If you are sent to the "Waiting Room", sit tight for a minute or two, and you will be sent to your group. Once matched with your group:'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'If it seems to you like something is broken in the study, or you get stuck at a certain point and can\'t proceed for technical reasons, try refreshing your page. This should bring you back to where you were, and will often clear up any minor issues. If your issues persist, talk to an admin by clicking the green icon at the top right.'
+                  'content' => '<img src="/img/ins_1.png" />'
                 ],
                 [
                   'type' => 'paragraph',
                   'content' => '<div class="text-center">
                           <a href="/end-group-task" role="button" class="btn btn-lg btn-primary">Next</a>
+                        <div>'
+                ]
+                
+      ],
+
+    'crypto_pilot_guide2' => [[
+                  'type' => 'header',
+                  'content' => 'What to expect in this session (2/2)'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'Please wait <strong>up to 5 minutes</strong> for your team members to join. Introduce yourself once they join. They should be able to see and hear you.'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => '<strong>Technical Difficulties</strong>? Refresh your screen and/or review “Device Instructions” (on the main study page).'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'Click the green chat bubble at the top right of your screen to speak with the Harvard Research Team if needed at any time.'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'This session will last approximately 25 minutes total. '
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'Please click “I agree” to continue.'
+                ],
+                
+                [
+                  'type' => 'paragraph',
+                  'content' => '<div class="text-center">
+                          <a href="/end-group-task" role="button" class="btn btn-lg btn-primary">I agree</a>
                         <div>'
                 ]
       ],

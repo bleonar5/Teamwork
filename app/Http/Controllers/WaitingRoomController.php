@@ -52,6 +52,19 @@ class WaitingRoomController extends Controller
         return '200';
     }
 
+    public function toggleSession(Request $request){
+        $in_session = User::where('id',1)->first();
+        $in_session->in_room = !$in_session->in_room;
+        $in_session->save();
+        return '200';
+    }
+
+    public function adminPage(Request $request){
+        $in_session = User::where('id',1)->first()->in_room;
+        return view('layouts.participants.admin-page')
+                    ->with('in_session',$in_session);
+    }
+
     public function getWaitingRoom(Request $request){
 
         $group_task = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
