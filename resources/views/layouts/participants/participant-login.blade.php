@@ -61,7 +61,7 @@ $( document ).ready(function() {
       <div class="col-md-10 p-4">
         <h3 style='text-align:center'>The study is <strong>not currently open.</strong></h3>
         <h3 style='text-align:center'>The study opens 5 minutes before the scheduled time of the study, and closes 5 minutes after.</h3>
-        <h3 style='text-align:center'>The study relies on group work, so if you miss this window, you cannot participate in the session. Please sign up for another session.</h3>
+        <h3 style='text-align:center'>The study relies on group work, so if you miss this window, you cannot participate in the session. To participate, please wait for the next session to become available on Prolific.</h3>
         <h3 style='text-align:center'>Note: study times are listed in <strong>US Eastern Time.</strong></h3>
       </div>
     </div>
