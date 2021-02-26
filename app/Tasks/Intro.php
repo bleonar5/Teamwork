@@ -167,7 +167,11 @@ class Intro {
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'If you are sent to the "Waiting Room", sit tight for a minute or two, and you will be sent to your group. Once matched with your group:'
+                  'content' => '<u>Once your group session begins, you should be able to <strong>see</strong> and <strong>hear</strong> 2 other people.</u>'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => '<u>Before you click next:</u>'
                 ],
                 [
                   'type' => 'paragraph',
@@ -188,7 +192,7 @@ class Intro {
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'Please wait <strong>up to 5 minutes</strong> for your team members to join. Introduce yourself once they join. They should be able to see and hear you.'
+                  'content' => 'You may briefly go to a "waiting room". <strong>Please wait up to 5 minutes</strong> for your team members to join. Introduce yourself once they join. They should be able to see and hear you.'
                 ],
                 [
                   'type' => 'paragraph',
@@ -200,7 +204,11 @@ class Intro {
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'This session will last approximately 25 minutes total. '
+                  'content' => '<img src="/img/chat.png" />'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'This session will last approximately 25 minutes total. (including any time spent in the waiting room.'
                 ],
                 [
                   'type' => 'paragraph',
