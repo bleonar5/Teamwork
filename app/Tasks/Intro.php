@@ -192,15 +192,15 @@ class Intro {
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'You may briefly go to a "waiting room". <strong>Please wait up to 5 minutes</strong> for your team members to join. Introduce yourself once they join. They should be able to see and hear you.'
+                  'content' => 'You may briefly go to a "waiting room". <strong>Please wait up to 5 minutes</strong> for your team members to join.'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => '<strong>Technical Difficulties</strong>? Refresh your screen and/or review “Device Instructions” (on the main study page).'
+                  'content' => '<strong>Technical Difficulties?</strong>.'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'Click the green chat bubble at the top right of your screen to speak with the Harvard Research Team if needed at any time.'
+                  'content' => 'Click the green chat bubble at the top right of your screen to speak with the Harvard Research Team'
                 ],
                 [
                   'type' => 'paragraph',
@@ -208,7 +208,7 @@ class Intro {
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'This session will last approximately 25 minutes total. (including any time spent in the waiting room.'
+                  'content' => 'This session will last approximately 25 minutes total (including any time spent in the waiting room).'
                 ],
                 [
                   'type' => 'paragraph',
