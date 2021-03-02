@@ -738,7 +738,7 @@ class IndividualTaskController extends Controller
         $r->save();
       }
 
-      return redirect('/psi-iri-end');
+      return redirect('/get-individual-task');
     }
 
     public function psiIriEnd(Request $request) {
@@ -764,7 +764,7 @@ class IndividualTaskController extends Controller
         $r->save();
       }
 
-      return redirect('/leadership-end');
+      return redirect('/get-individual-task');
     }
 
     public function leadershipEnd(Request $request) {
@@ -832,7 +832,7 @@ class IndividualTaskController extends Controller
         $r->save();
       }
 
-      return redirect('/big-five-end');
+      return redirect('/get-individual-task');
     }
 
     public function bigFiveEnd(Request $request) {

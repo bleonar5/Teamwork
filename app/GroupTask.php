@@ -173,7 +173,6 @@ class GroupTask extends Model
     public static function initializeLabIndividualPilotTasks($group_id, $randomize) {
       $taskArray = '[
           {"taskName":"Consent","taskParams":{"url_endpoint":"end-individual-task","hasIndividuals":"true","hasGroup":"false","subjectPool":"hdsl_individual"}},
-          {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"eligibility"}},
           {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"mturk"}},
           {"taskName":"Eyes","taskParams":{"hasIndividuals":"true","hasGroup":"false"}},
           {"taskName":"BigFive","taskParams":{"hasIndividuals":"true","hasGroup":"false","statementOrder":"random"}},

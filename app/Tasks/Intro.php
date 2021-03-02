@@ -167,11 +167,11 @@ class Intro {
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => '<u>Once your group session begins, you should be able to <strong>see</strong> and <strong>hear</strong> 2 other people.</u>'
+                  'content' => 'Once your group session begins, you should be able to <strong>see</strong> and <strong>hear</strong> 2 other people.'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => '<u>Before you click next:</u>'
+                  'content' => 'Before you click next:'
                 ],
                 [
                   'type' => 'paragraph',
@@ -181,6 +181,40 @@ class Intro {
                   'type' => 'paragraph',
                   'content' => '<div class="text-center">
                           <a href="/end-group-task" role="button" class="btn btn-lg btn-primary">Next</a>
+                        <div>'
+                ]
+                
+      ],
+      'selection_page' => [
+                [
+                  'type' => 'paragraph',
+                  'content' => 'Thank you for participating in this pilot study.'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'We intend to run a follow-up experiment.<br />This would pay a total of around <b>100USD</b>, working in groups of 3 people.'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'You would have a choice about your role.<br />You can be a <b>leader</b> or a <b>team member</b>.'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'Highly successful Leaders earn the most of anyone.<br />Unsuccessful Leaders earn the least.<br />Team members get the higher guaranteed payment.'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'On average, both roles receive the same payment.'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'There is not a single right answer for everyone, so <b>pick the role that you think suits you best</b>'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => '<div class="text-center">
+                          <a href="/pick-leader" role="button" class="btn btn-lg btn-primary">Leader</a>
+                          <a href="/pick-member" role="button" class="btn btn-lg btn-primary">Leader</a>
                         <div>'
                 ]
                 
@@ -196,15 +230,11 @@ class Intro {
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => '<strong>Technical Difficulties?</strong>.'
+                  'content' => '<strong>Technical Difficulties?</strong>'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'Click the green chat bubble at the top right of your screen to speak with the Harvard Research Team'
-                ],
-                [
-                  'type' => 'paragraph',
-                  'content' => '<img src="/img/chat.png" />'
+                  'content' => 'Click the green chat bubble at the top right of your screen to speak with us.'
                 ],
                 [
                   'type' => 'paragraph',

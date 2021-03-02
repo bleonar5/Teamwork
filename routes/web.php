@@ -37,6 +37,19 @@ Route::get('/toggle-session', [
 	'roles' => ['Researcher'] // Only a logged in user can view this page
 ]);
 
+
+Route::get('/pick-leader', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'IndividualTaskController@pickLeader',
+	'roles' => ['Participant', 'Group'] // Only a logged in user can view this page
+]);
+
+Route::get('/pick-member', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'IndividualTaskController@pickMember',
+	'roles' => ['Participant', 'Group'] // Only a logged in user can view this page
+]);
+
 Route::get('/admin-page', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'WaitingRoomController@adminPage',

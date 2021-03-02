@@ -112,11 +112,12 @@ class WaitingRoomController extends Controller
             return redirect('/task-room');
         }
 
-        $room_users = User::where('in_room',$task)->get();
+        $room_users = User::where('in_room',$task)->where('id','!=',1)->get();
 
 
 
         foreach($room_users as $key => $room_user) {
+
             $diff = $room_user->updated_at->diffInSeconds(\Carbon\Carbon::now());
             if($diff > 30){
                 $room_user->in_room = 0;
