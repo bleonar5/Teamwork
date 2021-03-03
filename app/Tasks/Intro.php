@@ -214,7 +214,24 @@ class Intro {
                   'type' => 'paragraph',
                   'content' => '<div class="text-center">
                           <a href="/pick-leader" role="button" class="btn btn-lg btn-primary">Leader</a>
-                          <a href="/pick-member" role="button" class="btn btn-lg btn-primary">Leader</a>
+                          <a href="/pick-member" role="button" class="btn btn-lg btn-success">Team Member</a>
+                        <div>'
+                ]
+                
+      ],
+      'feedback_page' => [
+                [
+                  'type' => 'sub-header',
+                  'content' => 'If you have any feedback about the tasks, please let us know.'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => '<input type="textarea" id="feedback" name="feedback" />'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => '<div class="text-center">
+                          <button role="button" class="btn btn-lg btn-primary">Next</button>
                         <div>'
                 ]
                 

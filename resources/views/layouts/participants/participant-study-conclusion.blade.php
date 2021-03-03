@@ -2,9 +2,18 @@
 
 
 @section('content')
+<script>
+
+    $( document ).ready(function() {
+
+      $('#code').text('{{ $code }}');
+
+    });
+
+</script>
 <div class="container">
   <div class="row">
-    <div class="col-md-12 text-center">
+    <div class="col-md-12 text-center" style='padding-top:200px'>
 
       @foreach($conclusionContent as $content)
         @if($content['type'] == 'header')
@@ -16,18 +25,6 @@
         @endif
       @endforeach
 
-      @if($code)
-        <h4>Your participation code is:<br>
-          <span class="text-success">{{ $code }}</span>
-        </h4>
-        <h4>
-          Nobody else has this unique code. Please enter the code back in MTurk so
-          that we can verify you completed the tasks and we can pay you.
-        </h4>
-        <h4>
-          This concludes the study. Thanks again!
-        </h4>
-      @endif
 
       @if($score)
         <h4>

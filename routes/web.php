@@ -692,6 +692,10 @@ Route::get('/participant-login', [
 	'uses' => 'LoginController@participantLogin',
 ]);
 
+Route::get('/mturk-login', [
+	'uses' => 'LoginController@mturkLogin',
+]);
+
 Route::get('/prolific-login', [ 
 	'uses' => 'LoginController@postParticipantLogin',
 ]);

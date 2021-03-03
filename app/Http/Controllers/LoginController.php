@@ -14,6 +14,12 @@ class LoginController extends Controller
       return view('layouts.participants.participant-login')
               ->with('in_session',$in_session);
     }
+    public function mturkLogin() {
+      $in_session = User::where('id',1)->first()->in_room;
+      return view('layouts.participants.mturk-login')
+              ->with('in_session',1)
+              ->with('package', 'individual-pilot');;
+    }
 
     public function participantPackageLogin($package) {
       $in_session = User::where('id',1)->first()->in_room;

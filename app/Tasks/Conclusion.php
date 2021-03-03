@@ -15,8 +15,16 @@ class Conclusion {
                 ],
       ],
     'hdsl_individual' => [[
-                  'type' => 'sub-header',
-                  'content' => ''
+                  'type' => 'header',
+                  'content' => "Congratulations! You've finished the pilot."
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => "Your completion code is <span id='code'></span>"
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => "Please return to Mturk and enter this code to receive payment"
                 ]
       ],
 

@@ -14,7 +14,7 @@ $( document ).ready(function() {
     //texts = {0:'Study Open',1:'Study Closed'};
     in_session = !in_session;
     $('#session_toggle').val(in_session);
-    $('#session_toggle').text(in_session ? 'Study Open' : 'Study Closed');
+    $('#session_toggle').text(in_session ? 'Study Is Open' : 'Study IsClosed');
     $.get('/toggle-session',function(data){console.log(data)});
   });
 
@@ -34,9 +34,9 @@ $( document ).ready(function() {
       <div class="col-md-6 p-4">
         <div class="text-center">
               @if($in_session)
-                <button style='background-color:green' class="btn btn-lg btn-primary" value="0" id="session_toggle">Study Open</button>
+                <button style='background-color:green' class="btn btn-lg btn-primary" value="0" id="session_toggle">Study Is Open</button>
               @else
-                <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="session_toggle">Study Closed</button>
+                <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="session_toggle">Study Is Closed</button>
               @endif
             </div>
       </div>

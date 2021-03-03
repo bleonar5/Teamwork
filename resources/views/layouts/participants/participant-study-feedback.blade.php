@@ -5,16 +5,12 @@
 <div class="container">
   <div class="row vertical-center">
     <div class="col-md-12 text-center">
-      <h4 class="mb-lg-4">
-        You have completed all the tasks. Thank you for participating!
-      </h4>
       <form name="feedback-form" action="/study-feedback" method="post">
         {{ csrf_field() }}
         <div class="form-group">
           <label for="feedback">
             <h4>
-              If you have any feedback about the tasks, or experienced any difficulties,
-              please note them here.
+              If you have any feedback about the tasks, please let us know.
             </h4>
           </label>
           <textarea class="form-control" name="feedback" rows="3"></textarea>

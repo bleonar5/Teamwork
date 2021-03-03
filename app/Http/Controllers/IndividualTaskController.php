@@ -11,6 +11,17 @@ use \Teamwork\User;
 
 class IndividualTaskController extends Controller
 {
+  public function uniqidReal($lenght = 13) {
+      // uniqid gives 13 chars, but you could adjust it to your needs.
+      if (function_exists("random_bytes")) {
+          $bytes = random_bytes(ceil($lenght / 2));
+      } elseif (function_exists("openssl_random_pseudo_bytes")) {
+          $bytes = openssl_random_pseudo_bytes(ceil($lenght / 2));
+      } else {
+          throw new Exception("no cryptographically secure random function available");
+      }
+      return substr(bin2hex($bytes), 0, $lenght);
+  }
     public function getTask(Request $request) {
 
       $groupTasksAll = \Teamwork\GroupTask::where('group_id', \Auth::user()->group_id)
@@ -396,6 +407,42 @@ class IndividualTaskController extends Controller
       return redirect('/end-individual-task');
     }
 
+    public function pickLeader(Request $request) {
+      $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+      $r = Response::where('group_tasks_id',$currentTask->id)->
+                     where('user_id',\Auth::user()->id)->
+                     where('prompt','role_select')
+                     ->first();
+      if(!$r){
+        $r = new Response;
+        $r->group_tasks_id = $currentTask->id;
+        $r->user_id = \Auth::user()->id;
+        $r->prompt = 'role_select';
+        $r->response = 'leader';
+        $r->save();
+      }
+
+      return redirect('/end-individual-task');
+    }
+
+    public function pickMember(Request $request) {
+      $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+      $r = Response::where('group_tasks_id',$currentTask->id)->
+                     where('user_id',\Auth::user()->id)->
+                     where('prompt','role_select')
+                     ->first();
+      if(!$r){
+        $r = new Response;
+        $r->group_tasks_id = $currentTask->id;
+        $r->user_id = \Auth::user()->id;
+        $r->prompt = 'role_select';
+        $r->response = 'member';
+        $r->save();
+      }
+
+      return redirect('/end-individual-task');
+    }
+
     public function checkForConfirmationCode(Request $request) {
       $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
       $parameters = unserialize($currentTask->parameters);
@@ -443,8 +490,11 @@ class IndividualTaskController extends Controller
       $conclusionContent = $conclusion->getConclusion($parameters->type);
 
       $user = \Teamwork\User::find(\Auth::user()->id);
-      $finalScore = $this->calculateScore(\Auth::user()->group_id);
-      $user->score = $finalScore;
+      if(!$user->survey_code){
+        $user->survey_code = $this->uniqidReal();
+      }
+      #$finalScore = $this->calculateScore(\Auth::user()->group_id);
+      #$user->score = $finalScore;
       $user->save();
 
       if($parameters->displayScoreGroup == 'true') {
@@ -489,9 +539,10 @@ class IndividualTaskController extends Controller
         file_get_contents($url);
       }
 
+
       return view('layouts.participants.participant-study-conclusion')
              ->with('conclusionContent', $conclusionContent)
-             ->with('code', $code)
+             ->with('code', $user->survey_code)
              ->with('score', false)
              ->with('checkEligibility', $parameters->displayScoreGroup == 'true')
              ->with('eligible', $eligibility)
@@ -499,6 +550,8 @@ class IndividualTaskController extends Controller
              ->with('receiptSonaId', $receiptSonaId)
              ->with('payment', $payment);
     }
+
+   
 
     public function teamRoleIntro(Request $request) {
       $this->recordStartTime($request, 'intro');
@@ -738,7 +791,7 @@ class IndividualTaskController extends Controller
         $r->save();
       }
 
-      return redirect('/get-individual-task');
+      return redirect('/end-individual-task');
     }
 
     public function psiIriEnd(Request $request) {
@@ -764,7 +817,7 @@ class IndividualTaskController extends Controller
         $r->save();
       }
 
-      return redirect('/get-individual-task');
+      return redirect('/end-individual-task');
     }
 
     public function leadershipEnd(Request $request) {
@@ -832,7 +885,7 @@ class IndividualTaskController extends Controller
         $r->save();
       }
 
-      return redirect('/get-individual-task');
+      return redirect('/end-individual-task');
     }
 
     public function bigFiveEnd(Request $request) {

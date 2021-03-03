@@ -63,6 +63,8 @@ class WaitingRoomController extends Controller
         $in_session = User::where('id',1)->first()->in_room;
         $cgs = User::where('signature_date','!=',null)->orderBy('signature_date','DESC')
                     ->get();
+
+
         return view('layouts.participants.admin-page')
                     ->with('in_session',$in_session)
                     ->with('credit_getters',$cgs);
@@ -125,7 +127,7 @@ class WaitingRoomController extends Controller
             }
         }
 
-        $room_users = User::where('in_room',$task)->orderBy('updated_at','ASC')->get();
+        $room_users = User::where('in_room',$task)->where('id','!=',1)->orderBy('updated_at','ASC')->get();
 
         $indices = [0,1,2];
         shuffle($indices);
