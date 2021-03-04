@@ -188,7 +188,7 @@ class Intro {
       'selection_page' => [
                 [
                   'type' => 'paragraph',
-                  'content' => 'Thank you for participating in this pilot study.'
+                  'content' => 'Thank you for participating in this pilot study!'
                 ],
                 [
                   'type' => 'paragraph',
@@ -209,6 +209,10 @@ class Intro {
                 [
                   'type' => 'paragraph',
                   'content' => 'There is not a single right answer for everyone, so <b>pick the role that you think suits you best</b>'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'IF you participated, what role would you choose?'
                 ],
                 [
                   'type' => 'paragraph',

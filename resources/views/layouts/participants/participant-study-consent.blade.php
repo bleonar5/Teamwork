@@ -54,7 +54,7 @@ $( document ).ready(function() {
             the relationship between measures of social skill and fluid intelligence.
           </p>
           <p>
-            <span class="consent-em">WHAT YOU’LL DO</span>You will be asked to solve puzzles, perform memory tasks, and identify people’s emotions based on photographs. <strong>The entire experiment will be completed online.</strong> The are completed individually and take around 70 minutes.
+            <span class="consent-em">WHAT YOU’LL DO</span>: You will be asked to solve puzzles, perform memory tasks, and identify people’s emotions based on photographs. 
           </p>
           <p>
             <span class="consent-em">RISKS</span>: There are no risks
@@ -62,7 +62,7 @@ $( document ).ready(function() {
             computer use, including fatigue and mild stress.
           </p>
           <p>
-            <span class="consent-em">COMPENSATION</span>:Payment will be $15 per person (with a minimum of $10. Payment will depend on performance)
+            <span class="consent-em">COMPENSATION</span>: Average payment will be $15 per person. Payment depends on task performance. Minimum payment is $10.
           </p>
           <p>
             <span class="consent-em">PLEASE NOTE</span>: This study contains a number of checks to make sure participants are finishing the tasks <mark>honestly and completely</mark>.
@@ -74,7 +74,7 @@ $( document ).ready(function() {
               close your browser window. Partial data will not be analyzed.
           </p>
           <p>
-            <span class="consent-em">CONFIDENTIALITY</span>:  All data collected as part of this study will be anonymized (and personal information, such as your email address, will be deleted at the conclusion of the study). Please note that we will be recording and analyzing the video interactions between you and your group. These videos will be permanently deleted at the conclusion of the project.
+            <span class="consent-em">CONFIDENTIALITY</span>:  All data collected as part of this study will be anonymized and used only for academic research purposes.
           </p>
           <p>
             <span class="consent-em">CONTACT INFORMATION</span>: If you have any

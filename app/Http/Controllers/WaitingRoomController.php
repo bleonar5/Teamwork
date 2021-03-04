@@ -59,6 +59,13 @@ class WaitingRoomController extends Controller
         return '200';
     }
 
+    public function submitDate(Request $request){
+        $user = User::where('id',1)->first();
+        $user->signature = $request->date;
+        $user->save();
+        return '200';
+    }
+
     public function adminPage(Request $request){
         $in_session = User::where('id',1)->first()->in_room;
         $cgs = User::where('signature_date','!=',null)->orderBy('signature_date','DESC')

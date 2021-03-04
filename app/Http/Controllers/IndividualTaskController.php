@@ -1518,7 +1518,7 @@ class IndividualTaskController extends Controller
 
       $request->session()->put('currentIndividualTaskResult', $results);
       $request->session()->put('currentIndividualTaskName', 'Eyes Task');
-      return redirect('/individual-task-results');
+      return redirect('/end-individual-task');
     }
 
     public function brainstormingIntro() {

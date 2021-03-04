@@ -60,8 +60,14 @@ $( document ).ready(function() {
     <div class="row justify-content-center vertical-center">
       <div class="col-md-10 p-4">
         <h3 style='text-align:center'>The study is <strong>not currently open.</strong></h3>
-        <h3 style='text-align:center'>The study opens 5 minutes before the scheduled time of the study, and closes 5 minutes after.</h3>
-        <h3 style='text-align:center'>The study relies on group work, so if you miss this window, you cannot participate in the session. To participate, please wait for the next session to become available on Prolific.</h3>
+        <h3 style='text-align:center'>This study will open at 
+        @if(isset($date))
+          {{ str_replace('T',' @ ',$date) }}
+        @else
+          some future date 
+        @endif
+        and will close shortly after it opens. If this date has passed, you may have missed the most recent session. Please wait for the next session to become available.</h3>
+        <h3 style='text-align:center'>When it is time for the study to begin, make sure to refresh the page to check if it has opened.</h3>
         <h3 style='text-align:center'>Note: study times are listed in <strong>US Eastern Time.</strong></h3>
       </div>
     </div>

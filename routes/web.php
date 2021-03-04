@@ -37,6 +37,12 @@ Route::get('/toggle-session', [
 	'roles' => ['Researcher'] // Only a logged in user can view this page
 ]);
 
+Route::post('/submit-date', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@submitDate',
+	'roles' => ['Researcher'] // Only a logged in user can view this page
+]);
+
 
 Route::get('/pick-leader', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified

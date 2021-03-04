@@ -11,8 +11,11 @@ class LoginController extends Controller
 {
     public function participantLogin() {
       $in_session = User::where('id',1)->first()->in_room;
+      $date = User::where('id',1)->first()->signature;
+      Log::debug($date);
       return view('layouts.participants.participant-login')
-              ->with('in_session',$in_session);
+              ->with('in_session',$in_session)
+              ->with('date',$date);
     }
     public function mturkLogin() {
       $in_session = User::where('id',1)->first()->in_room;
@@ -23,10 +26,11 @@ class LoginController extends Controller
 
     public function participantPackageLogin($package) {
       $in_session = User::where('id',1)->first()->in_room;
-
+      $date = User::where('id',1)->first()->signature;
       return view('layouts.participants.participant-login')
              ->with('in_session',$in_session)
-             ->with('package', $package);
+             ->with('package', $package)
+             ->with('date',$date);
     }
 
     public function postParticipantLogin(Request $request) {
