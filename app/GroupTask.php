@@ -123,6 +123,7 @@ class GroupTask extends Model
     public static function initializeCryptoPilotTasks($group_id, $randomize) {
       $taskArray = '[
         {"taskName":"Consent","taskParams":{"url_endpoint":"end-group-task","hasIndividuals":"false","hasGroup":"true","subjectPool":"hdsl_individual"}},
+        {"taskName":"Intro","taskParams":{"hasIndividuals":"false","hasGroup":"true","type":"adblock"}},
         {"taskName":"DeviceCheck","taskParams":{"hasIndividuals":"false","hasGroup":"true","type":"eligibility"}},
         {"taskName":"Intro","taskParams":{"hasIndividuals":"false","hasGroup":"true","type":"crypto_pilot_guide"}},
         {"taskName":"Intro","taskParams":{"hasIndividuals":"false","hasGroup":"true","type":"crypto_pilot_guide2"}},
@@ -173,7 +174,6 @@ class GroupTask extends Model
     public static function initializeLabIndividualPilotTasks($group_id, $randomize) {
       $taskArray = '[
           {"taskName":"Consent","taskParams":{"url_endpoint":"end-individual-task","hasIndividuals":"true","hasGroup":"false","subjectPool":"mturk"}},
-          {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"adblock"}},
           {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"mturk"}},
           {"taskName":"Eyes","taskParams":{"hasIndividuals":"true","hasGroup":"false"}},
           {"taskName":"BigFive","taskParams":{"hasIndividuals":"true","hasGroup":"false","statementOrder":"random"}},
