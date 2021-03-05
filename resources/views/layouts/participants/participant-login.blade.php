@@ -19,6 +19,14 @@ $( document ).ready(function() {
     } else {
         alert('We have detected that you are using adblocker. Please disable adblocker on our site, or the study may not work properly');
     }
+  Pusher.logToConsole = true;
+  var pusher = new Pusher('{{ config('app.PUSHER_APP_KEY') }}', {
+      cluster: 'us2'
+    });
+  var channel = pusher.subscribe('my-channel');
+  channel.bind('study-opened', function(data) {
+      window.location.reload(true); 
+    });
 });
 
 </script>

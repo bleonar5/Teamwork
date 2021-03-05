@@ -8,6 +8,8 @@ use Teamwork\Group;
 use Teamwork\Events\SendToTask;
 use Teamwork\Events\PlayerJoinedWaitingRoom;
 use Teamwork\Events\PlayerLeftWaitingRoom;
+use Teamwork\Events\StudyOpened;
+use Teamwork\Events\StudyClosed;
 //use Teamwork\Events\SendToTask;
 use Illuminate\Support\Facades\Log;
 
@@ -56,7 +58,17 @@ class WaitingRoomController extends Controller
         $in_session = User::where('id',1)->first();
         $in_session->in_room = !$in_session->in_room;
         $in_session->save();
+        if($in_session->in_room){
+            event(new StudyOpened($in_session));
+        }
+        else{
+            event(new StudyClosed($in_session));
+        }
         return '200';
+    }
+
+    public function studyClosed(Request $request){
+        return view('layouts.participants.study-closed');
     }
 
     public function submitDate(Request $request){

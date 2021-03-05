@@ -62,6 +62,9 @@ $( document ).ready(function() {
 
         //$('#waitingList').append("<li style='text-align:left' id='"+data['user']['id'].toString()+"'>"+data['user']['id']+" : "+data['user']['group_role']+"</li>");
     });
+    channel.bind('study-closed', function(data) {
+      window.location.href = '/study-closed';
+    });
     channel.bind('player-left-room', function(data) {
       var type = data['group_task']['name'] == "Cryptography" ? '1' : '2';
       console.log(type);
