@@ -689,7 +689,7 @@ class IndividualTaskController extends Controller
       //$currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
       $parameters = unserialize($currentTask->parameters);
       //Log::debug($parameters);
-      $statements = (new \Teamwork\Tasks\PsiIri)->getStatements($parameters->statementOrder);
+      $statements = (new \Teamwork\Tasks\Leadership)->getStatements($parameters->statementOrder);
 
       // Record the start time for this task
       $this->recordStartTime($request, 'task');
@@ -776,7 +776,7 @@ class IndividualTaskController extends Controller
       $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
       $individualTaskId = $request->session()->get('currentIndividualTask');
       $parameters = unserialize($currentTask->parameters);
-      $statements = (new \Teamwork\Tasks\BigFive)->getStatements('ordered');
+      $statements = (new \Teamwork\Tasks\PsiIri)->getStatements('ordered');
 
       // Record the end time for this task
       $this->recordEndTime($request, 'task');
@@ -802,7 +802,7 @@ class IndividualTaskController extends Controller
       $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
       $individualTaskId = $request->session()->get('currentIndividualTask');
       $parameters = unserialize($currentTask->parameters);
-      $statements = (new \Teamwork\Tasks\BigFive)->getStatements('ordered');
+      $statements = (new \Teamwork\Tasks\Leadership)->getStatements('ordered');
 
       // Record the end time for this task
       $this->recordEndTime($request, 'task');
@@ -1671,7 +1671,7 @@ class IndividualTaskController extends Controller
       $results = 'You have completed the Shapes Task.';
       $request->session()->put('currentIndividualTaskResult', $results);
       $request->session()->put('currentIndividualTaskName', 'Shapes Task');
-      return redirect('/individual-task-results');
+      return redirect('/end-individual-task');
     }
 
     public function getProgress() {
