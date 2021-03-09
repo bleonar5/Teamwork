@@ -80,13 +80,103 @@ class WaitingRoomController extends Controller
 
     public function adminPage(Request $request){
         $in_session = User::where('id',1)->first()->in_room;
-        $cgs = User::where('signature_date','!=',null)->orderBy('signature_date','DESC')
+        $cgs = User::where('signature_date','!=',null)->where('score','!=',1)->orderBy('signature_date','DESC')
                     ->get();
 
 
         return view('layouts.participants.admin-page')
                     ->with('in_session',$in_session)
                     ->with('credit_getters',$cgs);
+    }
+
+    public function assignGroups(Request $request){
+        while(true){
+            $task = 1;
+            $task_name = "Cryptography";
+            $in_room = User::where('in_room',1)->where('id','!=',1)->get()->shuffle();
+            #$in_room = (array) $in_room;
+            Log::debug($in_room);
+            #shuffle($indices);
+            #shuffle($in_room);
+            if(count($in_room) >= 3){
+                $leader = $in_room[0];
+                $leader->group_role = 'leader';
+                $follower1 = $in_room[1];
+                $follower1->group_role = 'follower1';
+                $follower2 = $in_room[2];
+                $follower2->group_role = 'follower2';
+
+                $group = new Group;
+                $group->save();
+
+                $leader->group_id = $group->id;
+                $follower1->group_id = $group->id;
+                $follower2->group_id = $group->id;
+
+                foreach([$leader,$follower1,$follower2] as $user){
+                    try{
+                        \DB::table('group_user')
+                           ->insert(['user_id' => $user->id,
+                                     'group_id' => $group->id,
+                                     'created_at' => date("Y-m-d H:i:s"),
+                                     'updated_at' => date("Y-m-d H:i:s")]);
+                    }
+
+                    catch(\Exception $e){
+                        // Will throw an exception if the group ID and user ID are duplicates. Just ignore
+                    }
+                    if($user->task_id == 0)
+                        $user->task_id = rand(1,16);
+                    else
+                        $user->task_id = (($user->task_id + 1) % 16) + 1;
+
+                }
+
+                if($task == 1){
+                    \Teamwork\GroupTask::initializeCryptoTasks($group->id,$randomize=false);
+                }
+                else{
+                    \Teamwork\GroupTask::initializeMemoryTasks($group->id,$randomize=false);
+                }
+
+                $group_task = \Teamwork\GroupTask::where('group_id',$group->id)->where('name',$task_name)->orderBy('order','ASC')->first();
+                $group_task->task_id = $leader->task_id;
+                $group_task->save();
+                $leader->in_room = 0;
+                $follower1->in_room = 0;
+                $follower2->in_room = 0;
+                $leader->save();
+                $follower1->save();
+                $follower2->save();
+
+                event(new SendToTask($leader));
+                event(new SendToTask($follower1));
+                event(new SendToTask($follower2));
+
+
+                
+
+
+
+            }
+            else{
+                return '200';
+            }
+
+        }
+
+
+
+    }
+
+    public function giveCredit(Request $request){
+        Log::debug($request->creditors);
+        foreach($request->creditors as $key => $creditor){
+            $creditor = User::find((int) $creditor);
+            $creditor->score = 1;
+            $creditor->save();
+        }
+        return '200';
     }
 
     public function getWaitingRoom(Request $request){
@@ -147,7 +237,7 @@ class WaitingRoomController extends Controller
         }
 
         $room_users = User::where('in_room',$task)->where('id','!=',1)->orderBy('updated_at','ASC')->get();
-
+        /*
         $indices = [0,1,2];
         shuffle($indices);
         $assignments = ['leader','follower1','follower2'];
@@ -202,6 +292,7 @@ class WaitingRoomController extends Controller
             
             return redirect('/task-room?clear=true');
         }
+        */
 
         $this_group = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name',$task_name)->orderBy('created_at','DESC')->first();
         if($this_group){

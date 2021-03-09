@@ -18,6 +18,41 @@ $( document ).ready(function() {
     $.get('/toggle-session',function(data){console.log(data)});
   });
 
+  $('#assign').on('click',function(event){
+    $.get('/assign-groups',function(data){console.log(data)});
+  });
+
+  $('#check_all').on('click',function(event){
+    if ($(this).is(':checked')){
+      $('input[type=checkbox]').each(function(data){
+        $(this).prop('checked',true);
+      });
+    }
+    else{
+      $('input[type=checkbox]').each(function(data){
+        $(this).prop('checked',false);
+      });
+    }
+  });
+
+  $('#credit').on('click',function(event){
+    var creditors = [];
+    $('input[type=checkbox][name=participant_id]').each(function(data){
+      creditors.push($(this).attr('value'));
+
+    });
+    console.log(creditors);
+    $.ajax({
+      type: "POST",
+      
+      url: '/give-credit',
+      data:{'creditors':creditors,_token: "{{ csrf_token() }}"},
+      success: function(data){
+        console.log(data);
+      }
+    });
+  })
+
   $('#set_date').on('click',function(event){
     $.ajax({
       type: "POST",
@@ -53,17 +88,37 @@ $( document ).ready(function() {
               <input type='datetime-local' id='date' name='date' />
               <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="set_date">Set Date</button>
             </div>
+         <div class="text-center">
+              <h3># in waiting room: <span id='wait_num'>{{ count(\Teamwork\User::where('in_room',1)->where('id','!=',1)->get()) }}</span></h3>
+              <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="assign">Assign groups</button>
+            </div>
       </div>
       <div class="col-md-6 p-4">
         <div class="text-center">
               <h3>Credit Getters</h3>
-              <ul>
+              <table>
+                <tr>
+                  <td>
+                    <input type='checkbox' id='check_all' />
+                  </td>
+                  <td colspan='2' style='float:left;padding-left:15px'>
+                    <b>Check All</b>
+                  </td>
+                </tr>
                 @foreach($credit_getters as $key => $cg)
-                  <li>
-                    {{ $cg->participant_id }} : {{ $cg->signature_date }}
-                  </li>
+                  <tr>
+                    <td>
+                      <input type='checkbox' name='participant_id' value='{{ $cg->id }}' />
+                    </td>
+                    <td>
+                      {{ $cg->participant_id }}
+                    </td>
+                    <td>{{ $cg->signature_date }}
+                    </td>
+                  </tr>
                 @endforeach
-              </ul>
+              </table>
+              <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="credit">Give Credit</button>
             </div>
       </div>
     </div>

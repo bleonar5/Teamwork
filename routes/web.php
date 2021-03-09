@@ -25,6 +25,12 @@ Route::get('/get-group-task', [
 	'roles' => ['Participant', 'Group'] // Only a logged in user can view this page
 ]);
 
+Route::get('/assign-groups', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@assignGroups',
+	'roles' => ['Researcher'] // Only a logged in user can view this page
+]);
+
 Route::get('/check-task', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'GroupTaskController@checkTask',
@@ -688,7 +694,13 @@ Route::post('/leave-room', [
 	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
 ]);
 
-Route::post('/still-here', [
+Route::post('/give-credit', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@giveCredit',
+	'roles' => ['Researcher'] // Only a logged in user can view this page
+]);
+
+Route::get('/still-here', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'WaitingRoomController@stillHere',
 	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
