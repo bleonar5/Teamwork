@@ -57,6 +57,15 @@ class AdminController extends Controller
       $collection = collect($responses);
       $filedate = date('Y-m-d');
 
+      $csv = \League\Csv\Writer::createFromFileObject(new \SplTempFileObject);
+      $csv->insertOne(array_keys($responses[0]->getAttributes()));
+
+      foreach($responses as $key => $r){
+        $csv->insertOne($r->toArray());
+      }
+      $csv->output('people.csv');
+      return '200';
+
       return Excel::create('TaskData_'.$filedate, function($excel) use($collection){
 
         $excel->sheet('TaskResponses', function($sheet) use($collection){
@@ -204,6 +213,38 @@ class AdminController extends Controller
       ini_set('max_execution_time', 300); //300 seconds = 5 minutes
       ini_set('memory_limit', '1024M');
 
+      $headers = [
+                'Content-type' => 'text/tsv',
+                'Content-Disposition' => 'attachment; filename=file' . date('Y-m-d:H-i-s') . '.tsv',
+                'Pragma' => 'no-cache',
+                'Expires' => '0'
+            ];
+
+      $data = $responseData;    
+      $callback = function () use ($responseData) {
+                $fileHandle = fopen('php://output', 'w');
+                fputcsv($fileHandle,array('user', 'uniqueId', 'eligible', 'score', 'task', 'introTime', 'taskTime','prompt', 'response', 'correct', 'points', 'time'),"\t");
+                foreach ($responseData as $row) {
+                    fputcsv($fileHandle, $row, "\t");
+                }
+                fclose($fileHandle);
+            };
+
+      return response()->stream($callback, 200, $headers);
+      fclose($out);
+      return '200';
+
+      $csv = \League\Csv\Writer::createFromFileObject(new \SplTempFileObject);
+      $csv->insertOne(array_keys($responseData[0]->getAttributes()));
+
+      foreach($responseData as $key => $r){
+        $csv->insertOne($r->toArray());
+      }
+      $csv->output('people.csv');
+      return '200';
+
+      return $responseData;
+
       Excel::create('individual_responses_'.$filedate, function($excel) use ($collection) {
           $excel->sheet('individual_responses', function($sheet) use($collection) {
               $sheet->appendRow(array(
@@ -279,6 +320,25 @@ class AdminController extends Controller
       // Temporarily set exectution time and memory, cuz these files are large, yo
       ini_set('max_execution_time', 300); //300 seconds = 5 minutes
       ini_set('memory_limit', '1024M');
+
+      $headers = [
+                'Content-type' => 'text/tsv',
+                'Content-Disposition' => 'attachment; filename=file' . date('Y-m-d:H-i-s') . '.tsv',
+                'Pragma' => 'no-cache',
+                'Expires' => '0'
+            ];
+
+      $data = $responseData;    
+      $callback = function () use ($responseData) {
+                $fileHandle = fopen('php://output', 'w');
+                fputcsv($fileHandle,array('user', 'uniqueId', 'eligible', 'score', 'task', 'introTime', 'taskTime','prompt', 'response', 'correct', 'points', 'time'),"\t");
+                foreach ($responseData as $row) {
+                    fputcsv($fileHandle, $row, "\t");
+                }
+                fclose($fileHandle);
+            };
+
+      return response()->stream($callback, 200, $headers);
 
       Excel::create('group_responses_'.$filedate, function($excel) use ($collection) {
           $excel->sheet('group_responses', function($sheet) use($collection) {
