@@ -89,7 +89,7 @@ $( document ).ready(function() {
 
     var itv = setInterval(function() {
       console.log('GOING OFF');
-      $.post('/still-here', {
+      $.get('/still-here', {
         _token: "{{ csrf_token() }}"
       });
     },10000);
