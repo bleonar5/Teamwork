@@ -191,7 +191,7 @@ class WaitingRoomController extends Controller
                 return redirect('/task-room');
             }
             else{
-                return redirect('/get-group-task');
+                return redirect('/get-individual-task');
             }
 
         }
