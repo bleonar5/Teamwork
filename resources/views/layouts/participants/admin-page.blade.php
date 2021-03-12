@@ -86,6 +86,20 @@ $( document ).ready(function() {
         roomTotal -= 1;
         $('#wait_num').text((roomTotal < 0 ? 0 : roomTotal).toString());
       });
+    channel.bind('study-closed', function(data) {
+        if(in_session){
+          in_session = !in_session;
+          $('#session_toggle').val(in_session);
+          $('#session_toggle').text(in_session ? 'Study Is Open' : 'Study Is Closed');
+        }
+      });
+    channel.bind('study-opened', function(data) {
+        if(!in_session){
+          in_session = !in_session;
+          $('#session_toggle').val(in_session);
+          $('#session_toggle').text(in_session ? 'Study Is Open' : 'Study Is Closed');
+        }
+      });
 
 });
 
