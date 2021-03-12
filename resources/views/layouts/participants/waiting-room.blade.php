@@ -103,7 +103,7 @@ $( document ).ready(function() {
     <div class="col-md-12 text-center">
       <h4> You have entered the Skills Lab waiting room</h4>
       <div class=".col-sm-4 text-center">
-        <h3>There are <span id='roomTotal'>{{ count($users) }}</span> participants in the room.</h3>
+        <h3>You will be matched with your teammates and sent to the group task shortly</h3>
       </div>
     </div>
   </div>

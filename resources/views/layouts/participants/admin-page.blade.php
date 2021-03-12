@@ -7,6 +7,7 @@
 <script>
 
 var in_session = {{ $in_session }};
+var roomTotal = parseInt("{{ count(\Teamwork\User::where('in_room',1)->where('id','!=',1)->get()) }}");
 $( document ).ready(function() {
 
   $('#session_toggle').on('click',function(e) {
@@ -65,6 +66,27 @@ $( document ).ready(function() {
       }
     });
   });
+
+  Pusher.logToConsole = true;
+  console.log("{{ config('app.PUSHER_APP_KEY') }}");
+  //console.log('tourd');
+
+    var pusher = new Pusher("{{ config('app.PUSHER_APP_KEY') }}", {
+      cluster: 'us2'
+    });
+
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('player-joined-room', function(data) {
+      //alert(JSON.stringify(data));
+          roomTotal += 1;
+          $('#wait_num').text((roomTotal < 0 ? 0 : roomTotal).toString());
+      });
+
+    channel.bind('player-left-room', function(data) {
+        roomTotal -= 1;
+        $('#wait_num').text((roomTotal < 0 ? 0 : roomTotal).toString());
+      });
+
 });
 
 </script>
