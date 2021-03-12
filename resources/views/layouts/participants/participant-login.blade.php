@@ -27,6 +27,9 @@ $( document ).ready(function() {
   channel.bind('study-opened', function(data) {
       window.location.reload(true); 
     });
+  channel.bind('study-closed', function(data) {
+      window.location.reload(true); 
+    });
 });
 
 </script>
