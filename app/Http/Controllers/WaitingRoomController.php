@@ -5,6 +5,7 @@ namespace Teamwork\Http\Controllers;
 use Illuminate\Http\Request;
 use Teamwork\User;
 use Teamwork\Group;
+use Teamwork\GroupTask;
 use Teamwork\Events\SendToTask;
 use Teamwork\Events\PlayerJoinedWaitingRoom;
 use Teamwork\Events\PlayerLeftWaitingRoom;
@@ -84,9 +85,24 @@ class WaitingRoomController extends Controller
                     ->get();
 
 
+        $waitingRoomMembers = User::where('in_room',1)->where('id','!=',1)->get();
+
+        $activeGroupTasks = GroupTask::where('started',1)->where('name',"Cryptography")->where('order',1)->get();
+        $groups = [];
+        foreach($activeGroupTasks as $key => $ac_task){
+            $real_task = GroupTask::where('group_id',$ac_task->group_id)->where('name','Cryptography')->where('order',1)->first();
+            if(!$real_task->completed){
+                $responseData[] = $real_task->group_id;
+            }
+        }
+        Log::debug($groups);
+
+
+
         return view('layouts.participants.admin-page')
                     ->with('in_session',$in_session)
-                    ->with('credit_getters',$cgs);
+                    ->with('credit_getters',$cgs)
+                    ->with('waitingRoomMembers',$waitingRoomMembers);
     }
 
     public function assignGroups(Request $request){
@@ -397,7 +413,7 @@ class WaitingRoomController extends Controller
 
         $this_user = User::where('id',$user_id)->first();
 
-        event(new PlayerLeftWaitingRoom($group_task));
+        event(new PlayerLeftWaitingRoom($group_task,User::find($user_id)));
         
         $this_user->in_room = 0;
 

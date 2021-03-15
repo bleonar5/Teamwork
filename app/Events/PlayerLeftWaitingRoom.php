@@ -3,6 +3,7 @@
 namespace Teamwork\Events;
 
 use Teamwork\GroupTask;
+use Teamwork\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -15,15 +16,17 @@ class playerLeftWaitingRoom implements ShouldBroadcast
     use SerializesModels;
 
     public $group_task;
+    public $user;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(GroupTask $group_task)
+    public function __construct(GroupTask $group_task,User $user)
     {
         $this->group_task = $group_task;
+        $this->user = $user;
     }
 
     /**

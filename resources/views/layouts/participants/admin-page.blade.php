@@ -80,11 +80,21 @@ $( document ).ready(function() {
       //alert(JSON.stringify(data));
           roomTotal += 1;
           $('#wait_num').text((roomTotal < 0 ? 0 : roomTotal).toString());
+          //$('#waiting-room-members').append(new Option(data['user']['participant_id'], data['user']['id'],id=data['user']['participant_id']));
+          $('#waiting-room-members').append($('<option>', {
+              value: data['user']['id'],
+              text: data['user']['participant_id'],
+              id:data['user']['participant_id']
+          }));
+
+
       });
 
     channel.bind('player-left-room', function(data) {
         roomTotal -= 1;
+        console.log(data);
         $('#wait_num').text((roomTotal < 0 ? 0 : roomTotal).toString());
+        $('#'+data['user']['participant_id']).remove();
       });
     channel.bind('study-closed', function(data) {
         if(in_session){
@@ -111,25 +121,45 @@ $( document ).ready(function() {
       </div>
   </div>
     <div class="row justify-content-center vertical-center">
-      <div class="col-md-6 p-4">
+      <div class="col-md-3 p-4">
+
         <div class="text-center">
+          <h2>Study Controls:</h3>
               @if($in_session)
                 <button style='background-color:green' class="btn btn-lg btn-primary" value="0" id="session_toggle">Study Is Open</button>
               @else
                 <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="session_toggle">Study Is Closed</button>
               @endif
             </div>
+            <hr />
         <div class="text-center">
               <h3>Set next study date:</h3>
               <input type='datetime-local' id='date' name='date' />
+              <p></p>
               <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="set_date">Set Date</button>
             </div>
-         <div class="text-center">
-              <h3># in waiting room: <span id='wait_num'>{{ count(\Teamwork\User::where('in_room',1)->where('id','!=',1)->get()) }}</span></h3>
+            <hr / >
+        <div class="text-center">
               <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="assign">Assign groups</button>
             </div>
+
+         
       </div>
-      <div class="col-md-6 p-4">
+      <div class='col-md-6'>
+        <div class='text-center'>
+          <h2> Study Info</h2>
+          <hr />
+              <h3>Waiting Room members: (<span id='wait_num'>{{ count($waitingRoomMembers) }}</span>)</h3>
+              <select style='max-height:200px;width:75%' multiple id='waiting-room-members'>
+              @foreach($waitingRoomMembers as $key => $w_mem)
+                <option value='{{ $w_mem->id }}' id='{{ $w_mem->participant_id }}'>
+                  {{ $w_mem->participant_id }}
+                </option>
+              @endforeach
+              </select>
+        </div>
+      </div>
+      <div class="col-md-3">
         <div class="text-center">
               <h3>Credit Getters</h3>
               <table>
