@@ -37,7 +37,7 @@ $( document ).ready(function() {
       });
     }
   });
-  
+  /*
   $('#credit').on('click',function(event){
     $.ajax({
       type: "GET",
@@ -49,7 +49,7 @@ $( document ).ready(function() {
         data.forEach(datum => console.log(datum));
       }
     });
-  });
+  });*/
 
   $('#set_date').on('click',function(event){
     $.ajax({
