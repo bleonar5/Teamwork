@@ -102,7 +102,7 @@ class WaitingRoomController extends Controller
 
         $groupMembers = User::whereIn('group_id',$groups)->get()->groupBy('group_id');
 
-        $credit_getters = User::where('id','!=',1)->whereNotNull('signature_date')->get();
+        $credit_getters = User::where('id','!=',1)->whereNotNull('signature_date')->where('created_at','>',\Carbon\Carbon::now()->startofDay())->where('created_at','<',\Carbon\Carbon::now()->endOfDay())->get();
 
 
 
@@ -110,7 +110,8 @@ class WaitingRoomController extends Controller
                     ->with('in_session',$in_session)
                     ->with('credit_getters',$cgs)
                     ->with('waitingRoomMembers',$waitingRoomMembers)
-                    ->with('groupMembers',$groupMembers);
+                    ->with('groupMembers',$groupMembers)
+                    ->with('creditGetters',$credit_getters);
     }
 
     public function assignGroups(Request $request){

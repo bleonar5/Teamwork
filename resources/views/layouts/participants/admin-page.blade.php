@@ -37,7 +37,7 @@ $( document ).ready(function() {
       });
     }
   });
-  /*
+  
   $('#credit').on('click',function(event){
     $.ajax({
       type: "GET",
@@ -46,12 +46,10 @@ $( document ).ready(function() {
       data:{date_start:$('#date_start')}
       success: function(data){
         console.log(data);
-        data.forEach(datum => console.log(datum);
-
-        });
+        data.forEach(datum => console.log(datum));
       }
     });
-  })*/
+  });
 
   $('#set_date').on('click',function(event){
     $.ajax({
@@ -188,6 +186,11 @@ $( document ).ready(function() {
               <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="credit">Get from range</button>
               <p></p>
               <ul id='credit_getters'>
+                @foreach($creditGetters as $key => $cg)
+                  <li>
+                    {{ $cg->participant_id }}
+                  </li>
+                @endforeach
               </ul>
             </div>
       </div>
