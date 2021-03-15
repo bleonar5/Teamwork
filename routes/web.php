@@ -706,6 +706,12 @@ Route::get('/still-here', [
 	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
 ]);
 
+Route::get('/get-getters', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@getGetters',
+	'roles' => ['Researcher'] // Only a logged in user can view this page
+]);
+
 Route::get('/task-room', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'TaskRoomController@taskRoom',

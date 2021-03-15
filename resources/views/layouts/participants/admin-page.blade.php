@@ -9,6 +9,7 @@
 var in_session = {{ $in_session }};
 var roomTotal = parseInt("{{ count(\Teamwork\User::where('in_room',1)->where('id','!=',1)->get()) }}");
 $( document ).ready(function() {
+  console.log('{{ $groupMembers }}')
 
   $('#session_toggle').on('click',function(e) {
     //colors = {0:'red !important',1:'green !important'};
@@ -21,6 +22,7 @@ $( document ).ready(function() {
 
   $('#assign').on('click',function(event){
     $.get('/assign-groups',function(data){console.log(data)});
+    window.location.reload();
   });
 
   $('#check_all').on('click',function(event){
@@ -37,19 +39,15 @@ $( document ).ready(function() {
   });
 
   $('#credit').on('click',function(event){
-    var creditors = [];
-    $('input[type=checkbox][name=participant_id]').each(function(data){
-      creditors.push($(this).attr('value'));
-
-    });
-    console.log(creditors);
     $.ajax({
-      type: "POST",
+      type: "GET",
       
-      url: '/give-credit',
-      data:{'creditors':creditors,_token: "{{ csrf_token() }}"},
+      url: '/get-getters',
       success: function(data){
         console.log(data);
+        data.forEach(datum => console.log(datum);
+
+        });
       }
     });
   })
@@ -158,33 +156,38 @@ $( document ).ready(function() {
               @endforeach
               </select>
         </div>
+        <hr />
+        <div class='text-center'>
+              <h3>Group Members</h3>
+              <hr />
+              
+              @foreach($groupMembers as $group_id => $group)
+                <h4> Group {{ $group_id }}</h4>
+                <select style='max-height:200px;width:75%' multiple id='group-members-{{ $group_id }}'>
+                  @foreach($group as $key => $member)
+                    <option value='{{ $member->id }}' id='{{ $member->participant_id }}'>
+                      {{ $member->participant_id }}
+                    </option>
+                  @endforeach
+                </select>
+              @endforeach
+              
+        </div>
       </div>
       <div class="col-md-3">
         <div class="text-center">
               <h3>Credit Getters</h3>
-              <table>
-                <tr>
-                  <td>
-                    <input type='checkbox' id='check_all' />
-                  </td>
-                  <td colspan='2' style='float:left;padding-left:15px'>
-                    <b>Check All</b>
-                  </td>
-                </tr>
-                @foreach($credit_getters as $key => $cg)
-                  <tr>
-                    <td>
-                      <input type='checkbox' name='participant_id' value='{{ $cg->id }}' />
-                    </td>
-                    <td>
-                      {{ $cg->participant_id }}
-                    </td>
-                    <td>{{ $cg->signature_date }}
-                    </td>
-                  </tr>
-                @endforeach
-              </table>
-              <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="credit">Give Credit</button>
+              <hr />
+              <h4>Start of date range:</h4>
+              <input type='datetime-local' id='date_start' name='date_start' />
+              <p></p>
+              <h4>End of date range:</h4>
+              <input type='datetime-local' id='date_end' name='date_end' />
+              <p></p>
+              <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="credit">Get from range</button>
+              <p></p>
+              <ul id='credit_getters'>
+              </ul>
             </div>
       </div>
     </div>

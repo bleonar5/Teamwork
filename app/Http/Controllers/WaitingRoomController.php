@@ -87,22 +87,30 @@ class WaitingRoomController extends Controller
 
         $waitingRoomMembers = User::where('in_room',1)->where('id','!=',1)->get();
 
-        $activeGroupTasks = GroupTask::where('started',1)->where('name',"Cryptography")->where('order',1)->get();
+        $activeGroupTasks = GroupTask::where('started',1)->where('name',"Cryptography")->where('order',1)->where('created_at','>',\Carbon\Carbon::now()->startOfDay())->get();
         $groups = [];
         foreach($activeGroupTasks as $key => $ac_task){
-            $real_task = GroupTask::where('group_id',$ac_task->group_id)->where('name','Cryptography')->where('order',1)->first();
+            $real_task = GroupTask::where('group_id',$ac_task->group_id)->where('name','Cryptography')->where('order',2)->first();
+            Log::debug($real_task);
+
             if(!$real_task->completed){
-                $responseData[] = $real_task->group_id;
+                Log::debug('happened');
+                $groups[] = $real_task->group_id;
             }
         }
-        Log::debug($groups);
+        //Log::debug($groups);
+
+        $groupMembers = User::whereIn('group_id',$groups)->get()->groupBy('group_id');
+
+        $credit_getters = User::where('id','!=',1)->whereNotNull('signature_date')->get();
 
 
 
         return view('layouts.participants.admin-page')
                     ->with('in_session',$in_session)
                     ->with('credit_getters',$cgs)
-                    ->with('waitingRoomMembers',$waitingRoomMembers);
+                    ->with('waitingRoomMembers',$waitingRoomMembers)
+                    ->with('groupMembers',$groupMembers);
     }
 
     public function assignGroups(Request $request){
