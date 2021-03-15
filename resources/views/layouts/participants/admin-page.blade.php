@@ -37,12 +37,13 @@ $( document ).ready(function() {
       });
     }
   });
-
+  /*
   $('#credit').on('click',function(event){
     $.ajax({
       type: "GET",
       
       url: '/get-getters',
+      data:{date_start:$('#date_start')}
       success: function(data){
         console.log(data);
         data.forEach(datum => console.log(datum);
@@ -50,7 +51,7 @@ $( document ).ready(function() {
         });
       }
     });
-  })
+  })*/
 
   $('#set_date').on('click',function(event){
     $.ajax({
