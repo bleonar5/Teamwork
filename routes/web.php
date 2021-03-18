@@ -25,8 +25,7 @@ Route::get('/get-group-task', [
 	'roles' => ['Participant', 'Group'] // Only a logged in user can view this page
 ]);
 
-Route::get('/browser-error', [
-	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+Route::get('/browser-error', [ // A 'roles' middleware must be specified
 	'uses' => 'WaitingRoomController@browserError' // Only a logged in user can view this page
 ]);
 
