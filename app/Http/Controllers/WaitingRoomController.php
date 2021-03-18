@@ -55,6 +55,10 @@ class WaitingRoomController extends Controller
         return '200';
     }
 
+    public function browserError(Request $request){
+        return view('layouts.participants.browser-error');
+    }
+
     public function toggleSession(Request $request){
         $in_session = User::where('id',1)->first();
         $in_session->in_room = !$in_session->in_room;
@@ -192,6 +196,17 @@ class WaitingRoomController extends Controller
 
 
 
+    }
+
+    public function getGetters(Request $request){
+
+        $getters = User::where('id','!=',1)->whereNotNull('signature_date')->where('created_at','>',\Carbon\Carbon::parse($request->date_start))->where('created_at','<',\Carbon\Carbon::parse($request->date_end))->get();
+        Log::debug($getters);
+        Log::debug(\Carbon\Carbon::parse($request->date_start));
+        Log::debug($request->date_start);
+        Log::debug(\Carbon\Carbon::parse($request->date_end));
+        Log::debug($request->date_end);
+        return json_encode($getters);
     }
 
     public function giveCredit(Request $request){
@@ -417,6 +432,8 @@ class WaitingRoomController extends Controller
         $user_id = \Auth::user()->id;
         
         $group_name = $request->room_type == '1' ? "Cryptography" : "Memory";
+
+        Log::debug($group_name);
         
         $group_task = \Teamwork\GroupTask::where('name',$group_name)->first();
 

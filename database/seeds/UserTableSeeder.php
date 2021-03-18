@@ -14,9 +14,9 @@ class UserTableSeeder extends Seeder
       $role_researcher  = Teamwork\Role::where('name', 'researcher')->first();
 
       $researcher = new Teamwork\User();
-      $researcher->name = 'Rosa Researcher';
-      $researcher->email = 'test@test.com';
-      $researcher->password = bcrypt('hdsl124MA');
+      $researcher->name = 'SkillsLabAdmin';
+      $researcher->email = 'skillslab@hks.harvard.edu';
+      $researcher->password = bcrypt('skillslab');
       $researcher->role_id = 2;
       $researcher->participant_id = 0;
       $researcher->group_id = 1;

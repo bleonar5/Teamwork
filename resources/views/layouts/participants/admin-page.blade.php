@@ -6,6 +6,10 @@
 
 <script>
 
+function convertTZ(date) {
+    return new Date((typeof date === "string" ? new Date(date) : date).toISOString());   
+}
+
 var in_session = {{ $in_session }};
 var roomTotal = parseInt("{{ count(\Teamwork\User::where('in_room',1)->where('id','!=',1)->get()) }}");
 $( document ).ready(function() {
@@ -21,8 +25,8 @@ $( document ).ready(function() {
   });
 
   $('#assign').on('click',function(event){
-    $.get('/assign-groups',function(data){console.log(data)});
-    window.location.reload();
+    $.get('/assign-groups',function(data){setTimeout(function(){window.location.reload();},5000)});
+    
   });
 
   $('#check_all').on('click',function(event){
@@ -37,19 +41,26 @@ $( document ).ready(function() {
       });
     }
   });
-  /*
+  
   $('#credit').on('click',function(event){
+    var date_start = $('#date_start').val();
+    var date_end = $('#date_end').val();
     $.ajax({
       type: "GET",
       
       url: '/get-getters',
-      data:{date_start:$('#date_start')}
+      data:{_token:'{{ csrf_token() }}',date_start:convertTZ(date_start).toString().slice(0,33),date_end:convertTZ(date_end).toString().slice(0,33)},
       success: function(data){
+        $('#credit_getters').empty();
         console.log(data);
-        data.forEach(datum => console.log(datum));
+        [...JSON.parse(data)].forEach(datum => $('#credit_getters').append($('<option>', {
+              value: datum['id'],
+              text: datum['participant_id'],
+              id: datum['participant_id']
+          })));
       }
     });
-  });*/
+  });
 
   $('#set_date').on('click',function(event){
     $.ajax({
