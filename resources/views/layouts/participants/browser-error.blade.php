@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.login-master')
 
 @section('content')
 <script>
