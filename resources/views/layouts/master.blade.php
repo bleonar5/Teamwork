@@ -30,6 +30,16 @@ Tawk_API.onLoad = function() {
 
   };
 }
+var isFirefox = typeof InstallTrigger !== 'undefined';
+
+// Safari 3.0+ "[object HTMLElementConstructor]" 
+var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && window['safari'].pushNotification));
+
+$( document ).ready(function() {
+  if (isFirefox || isSafari){
+    window.location.href = '/browser-error'
+  }
+});
 
 </script>
 <!--End of Tawk.to Script-->
