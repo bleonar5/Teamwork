@@ -35,6 +35,24 @@ Route::get('/assign-groups', [
 	'roles' => ['Researcher'] // Only a logged in user can view this page
 ]);
 
+Route::get('/end-subsession', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@endSubsession',
+	'roles' => ['Researcher'] // Only a logged in user can view this page
+]);
+
+Route::get('/force-refresh', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@forceRefresh',
+	'roles' => ['Researcher'] // Only a logged in user can view this page
+]);
+
+Route::post('/begin-session', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@beginSession',
+	'roles' => ['Researcher'] // Only a logged in user can view this page
+]);
+
 Route::get('/check-task', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'GroupTaskController@checkTask',
@@ -669,6 +687,12 @@ Route::post('/cryptography-individual-end', [
 ]);
 
 Route::post('/cryptography-end', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'GroupTaskController@endCryptographyTask',
+	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
+]);
+
+Route::post('/complete-and-waiting-room', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'GroupTaskController@endCryptographyTask',
 	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page

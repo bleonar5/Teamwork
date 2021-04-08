@@ -7,6 +7,8 @@ use Teamwork\User;
 use Teamwork\Group;
 use Teamwork\GroupTask;
 use Teamwork\Events\SendToTask;
+use Teamwork\Events\EndSubsession;
+use Teamwork\Events\ForceRefresh;
 use Teamwork\Events\PlayerJoinedWaitingRoom;
 use Teamwork\Events\PlayerLeftWaitingRoom;
 use Teamwork\Events\StudyOpened;
@@ -72,6 +74,36 @@ class WaitingRoomController extends Controller
         return '200';
     }
 
+    public function forceRefresh(Request $request){
+        $openTasks = GroupTask::where('started',1)->where('completed',0)->get();
+        foreach($openTasks as $key => $openTask){
+            Log::debug($openTask);
+            event(new ForceRefresh($openTask));
+        }
+        return '200';
+    }
+
+    public function beginSession(Request $request){
+        $user = User::where('id',1)->first();
+        $user->current_session = 1;
+        $user->max_sessions = $request->num_sessions;
+        $user->save();
+        $now = \Carbon\Carbon::now();
+        $time = \Teamwork\Time::create(['user_id' => \Auth::user()->id,
+                                'type' => 'session']);
+        $time->recordStartTime();
+        return '200';
+
+
+    }
+
+    public function endSubsession(Request $request){
+        #$openTasks = GroupTask::where('started',1)->where('completed',0)->get();
+        event(new EndSubsession(User::where('id',1)->first()));
+        return '200';
+        
+    }
+
     public function studyClosed(Request $request){
         return view('layouts.participants.study-closed');
     }
@@ -108,17 +140,47 @@ class WaitingRoomController extends Controller
 
         $credit_getters = User::where('id','!=',1)->whereNotNull('signature_date')->where('created_at','>',\Carbon\Carbon::now()->startofDay())->where('created_at','<',\Carbon\Carbon::now()->endOfDay())->get();
 
+        $admin = User::where('id',1)->first();
+        $time_remaining = null;
+        if($admin->current_session){
+            $session_start = \Teamwork\Time::orderBy('created_at','desc')->first();
+
+            $time_elapsed = $session_start->created_at->diffInSeconds(\Carbon\Carbon::now());
+       
+            $session_length = 45;
+
+            $time_remaining = $session_length * $admin->current_session - $time_elapsed;
+
+            while($time_remaining < 0){
+                $admin->current_session += 1;
+                if ($admin->current_session > $admin->max_sessions){
+                    $admin->current_session = null;
+                    $admin->max_sessions = null;
+                    $admin->save();
+                    $time_remaining = null;
+                    break;
+                }
+                 $time_remaining = $session_length * $admin->current_session - $time_elapsed;
+            }
+            $admin->save();
+
+        }
+        
+
 
 
         return view('layouts.participants.admin-page')
+                    ->with('user',$admin)
                     ->with('in_session',$in_session)
                     ->with('credit_getters',$cgs)
                     ->with('waitingRoomMembers',$waitingRoomMembers)
                     ->with('groupMembers',$groupMembers)
-                    ->with('creditGetters',$credit_getters);
+                    ->with('creditGetters',$credit_getters)
+                    ->with('time_remaining',$time_remaining);
     }
 
     public function assignGroups(Request $request){
+        $admin = User::where('id',1)->first();
         while(true){
             $task = 1;
             $task_name = "Cryptography";
@@ -162,7 +224,7 @@ class WaitingRoomController extends Controller
                 }
 
                 if($task == 1){
-                    \Teamwork\GroupTask::initializeCryptoTasks($group->id,$randomize=false);
+                    \Teamwork\GroupTask::initializeCryptoTasks($group->id,$randomize=false,$final=$admin->current_session == $admin->max_sessions);
                 }
                 else{
                     \Teamwork\GroupTask::initializeMemoryTasks($group->id,$randomize=false);
@@ -222,6 +284,7 @@ class WaitingRoomController extends Controller
     public function getWaitingRoom(Request $request){
 
         $group_task = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+        Log::debug($group_task);
         if($group_task->name != "WaitingRoom"){
             if($group_task->name === 'Cryptography'){
                 return redirect('/task-room');
@@ -334,11 +397,11 @@ class WaitingRoomController extends Controller
         }
         */
 
-        $this_group = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name',$task_name)->orderBy('created_at','DESC')->first();
-        if($this_group){
-            if($this_group->started && $group_task->completed == 0)
-                return redirect('/task-room');
-        }
+        #$this_group = \Teamwork\GroupTask::where('group_id',$this_user->group_id)->where('name',$task_name)->orderBy('created_at','DESC')->first();
+        #if($this_group){
+        #    if($this_group->started && $group_task->completed == 0)
+        #        return redirect('/task-room');
+        #}
         
 
         event(new PlayerJoinedWaitingRoom($this_user));

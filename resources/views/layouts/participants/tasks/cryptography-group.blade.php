@@ -277,6 +277,29 @@ $( document ).ready(function() {
       window.location.href='/participant-login';
     });
 
+    channel.bind('end-subsession', function(data){
+      alert('The next round is beginning soon. You will be sent to the waiting room to be matched with a new team.')
+      setTimeout(function(){
+          $('#cryptography-end-form').submit();
+          
+      },5000)
+    });
+
+    channel.bind('force-refresh', function(data) {
+      //console.log('YEAHH');
+      if(data['group_task']['group_id'].toString() === '{{ $user->group_id }}'){
+        alert('In a few seconds, your page will refresh. Your progress in the task will be preserved.');
+        setTimeout(function(){
+            window.location.reload();
+        },5000);
+      }
+        
+        
+
+
+        //$('#waitingList').append("<li style='text-align:left' id='"+data['user']['id'].toString()+"'>"+data['user']['id']+" : "+data['user']['group_role']+"</li>");
+    });
+
   $("#ok-time-up").on('click', function(event) {
     localStorage.clear();
     $("#task-result").val(0);

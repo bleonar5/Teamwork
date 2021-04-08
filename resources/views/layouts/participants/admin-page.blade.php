@@ -12,8 +12,23 @@ function convertTZ(date) {
 
 var in_session = {{ $in_session }};
 var roomTotal = parseInt("{{ count(\Teamwork\User::where('in_room',1)->where('id','!=',1)->get()) }}");
+var time_remaining = null;
 $( document ).ready(function() {
-  console.log('{{ $groupMembers }}')
+  console.log('{{ $groupMembers }}');
+  //console.log('{{ $time_remaining }}');
+  if('{{ $time_remaining }}' != ''){
+      time_remaining = parseInt('{{ $time_remaining }}');
+      setInterval(function(){
+          time_remaining -= 1;
+          if(time_remaining == 0){
+            $.get('/end-subsession',function(data){
+              window.location.reload();
+            });
+          }
+          $('#session_timer').text(time_remaining > 0 ? time_remaining : 0);
+      },1000);
+
+  }
 
   $('#session_toggle').on('click',function(e) {
     //colors = {0:'red !important',1:'green !important'};
@@ -27,6 +42,22 @@ $( document ).ready(function() {
   $('#assign').on('click',function(event){
     $.get('/assign-groups',function(data){setTimeout(function(){window.location.reload();},5000)});
     
+  });
+
+  $('#force').on('click',function(e){
+    $.get('/force-refresh');
+  });
+
+  $('#begin').on('click',function(e){
+    $.ajax({
+      type: "POST",
+      
+      url: '/begin-session',
+      data:{num_sessions:$('#num_sessions').val(),_token: "{{ csrf_token() }}"},
+      success: function(data){
+        $('#assign').click();
+      }
+    });
   });
 
   $('#check_all').on('click',function(event){
@@ -75,6 +106,8 @@ $( document ).ready(function() {
     });
   });
 
+
+
   Pusher.logToConsole = true;
   console.log("{{ config('app.PUSHER_APP_KEY') }}");
   //console.log('tourd');
@@ -89,11 +122,15 @@ $( document ).ready(function() {
           roomTotal += 1;
           $('#wait_num').text((roomTotal < 0 ? 0 : roomTotal).toString());
           //$('#waiting-room-members').append(new Option(data['user']['participant_id'], data['user']['id'],id=data['user']['participant_id']));
-          $('#waiting-room-members').append($('<option>', {
-              value: data['user']['id'],
-              text: data['user']['participant_id'],
-              id:data['user']['participant_id']
-          }));
+          //consol
+          if(!$('#'+data['user']['participant_id']).length){
+              $('#waiting-room-members').append($('<option>', {
+                  value: data['user']['id'],
+                  text: data['user']['participant_id'],
+                  id:data['user']['participant_id']
+              }));
+          }
+          
 
 
       });
@@ -148,7 +185,24 @@ $( document ).ready(function() {
             </div>
             <hr / >
         <div class="text-center">
-              <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="assign">Assign groups</button>
+              <button style='background-color:green' class="btn btn-lg btn-primary" value="1" id="begin">Begin Session</button><p></p>
+              <h5># of sub-sessions</h5>
+              <select id='num_sessions'>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+              </select>
+              @if($user->current_session)
+                  <h4>Current session: {{ $user->current_session }}/{{ $user->max_sessions }}</h4>
+                  <h4>Time until next session: <span id='session_timer'>{{ $time_remaining }}</span></h4>
+              @endif
+            </div>
+        <hr />
+        <div class="text-center">
+              <button style='background-color:green' class="btn btn-lg btn-primary" value="1" id="begin">Begin Session</button><p></p>
+              <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="assign">Assign groups</button><p></p>
+              <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="force">Force Refresh</button>
             </div>
 
          

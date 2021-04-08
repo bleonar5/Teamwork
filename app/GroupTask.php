@@ -129,6 +129,8 @@ class GroupTask extends Model
         {"taskName":"Intro","taskParams":{"hasIndividuals":"false","hasGroup":"true","type":"crypto_pilot_guide2"}},
         {"taskName":"WaitingRoom","taskParams":{"hasIndividuals":"false","hasGroup":"true","task":"1"}}
         ]';
+      
+      
       return Self::initializeTasks($group_id, $taskArray, $randomize);
     }
 
@@ -139,12 +141,22 @@ class GroupTask extends Model
       return Self::initializeTasks($group_id, $taskArray, $randomize);
     }
 
-    public static function initializeCryptoTasks($group_id, $randomize) {
-      $taskArray = '[
+    public static function initializeCryptoTasks($group_id, $randomize,$final) {
+      if($final){
+        $taskArray = '[
         {"taskName":"Cryptography","taskParams":{"hasIndividuals":"false","intro":"group_1","hasGroup":"true","mapping":"random","maxResponses":"10","type":"intro"}},
         {"taskName":"Cryptography","taskParams":{"hasIndividuals":"false","intro":"group_1","hasGroup":"true","mapping":"random","maxResponses":"10","type":"task"}},
         {"taskName":"Conclusion","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"mturk","hasCode":"false","displayScoreGroup":"false", "digitalReceipt":"false", "sonaId": "547", "payment": "30", "feedback":"true", "feedbackLinkType":"qualtrics"}}
         ]';
+      }
+      else{
+        $taskArray = '[
+        {"taskName":"Cryptography","taskParams":{"hasIndividuals":"false","intro":"group_1","hasGroup":"true","mapping":"random","maxResponses":"10","type":"intro"}},
+        {"taskName":"Cryptography","taskParams":{"hasIndividuals":"false","intro":"group_1","hasGroup":"true","mapping":"random","maxResponses":"10","type":"task"}},
+        {"taskName":"WaitingRoom","taskParams":{"hasIndividuals":"false","hasGroup":"true","task":"1"}}
+        ]';
+      }
+      
       return Self::initializeTasks($group_id, $taskArray, $randomize);
     }
 
