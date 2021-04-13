@@ -2,7 +2,7 @@
 
 @section('js')
   <script src="{{ URL::asset('js/timer.js') }}"></script>
-  <script src="{{ URL::asset('js/room.js') }}"></script>
+  <script src="{{ URL::asset('js/room.js?v=001') }}"></script>
   <script src="https://cdn.agora.io/sdk/release/AgoraRTCSDK-3.2.1.js"></script>
   <meta name="csrf-token" content="{{ csrf_token() }}">
 @stop
@@ -206,6 +206,16 @@ $( document ).ready(function() {
     </div>
     <div class="col-sm-4 text-center">
       <h4> Your Team: </h4>
+      <hr/>
+      <h5> Your role: 
+          @if($user->group_role == 'follower1')
+              Equations
+          @elseif($user->group_role == 'follower2')
+              Hypotheses
+          @else
+              Leader
+          @endif
+      </h5>
       <div class="agora-theme" border='solid black 1px'>
         <div class="video-grid" id="video">
         </div>

@@ -29,8 +29,11 @@ function Toastify (options) {
         jQuery("<div/>", {
           id: "remote_video_panel_" + id,
           class: "video-view",
-      style: "position: relative;width: 100%;height: 100%;"
+      style: "position: relative;width: 100%;height: 80%;"
         }).appendTo("#video");
+        jQuery("<h6/>", {
+          id: "group_role_"+ id
+        }).appendTo("#remote_video_panel_" + id);
      
 
         jQuery("<div/>", {
@@ -50,6 +53,17 @@ function Toastify (options) {
           class: "autoplay-fallback hide",
       style:"display: none !important;display: flex;align-items: center;justify-content: center;position: absolute;width: 100%;height: 100%;top: 0;display: block;cursor: pointer;"
         }).appendTo("#remote_video_panel_" + id);
+        
+        jQuery.get('/get-group-role',{
+          id:id
+        },function(data){
+          console.log(data);
+          if(data == 'follower1')
+            data = 'Equations';
+          if(data == 'follower2')
+            data = 'Hypotheses';
+          jQuery('#group_role_'+id).text(data);
+        })
       }
     }
     function removeView (id) {

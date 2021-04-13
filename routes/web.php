@@ -25,6 +25,12 @@ Route::get('/get-group-task', [
 	'roles' => ['Participant', 'Group'] // Only a logged in user can view this page
 ]);
 
+Route::get('/get-group-role', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@getRole',
+	'roles' => ['Participant', 'Group'] // Only a logged in user can view this page
+]);
+
 Route::get('/end-intro', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'GroupTaskController@endIntro',

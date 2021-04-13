@@ -97,6 +97,11 @@ class WaitingRoomController extends Controller
 
     }
 
+    public function getRole(Request $request){
+        $user = User::where('id',$request->id)->first();
+        return $user->group_role;
+    }
+
     public function endSubsession(Request $request){
         #$openTasks = GroupTask::where('started',1)->where('completed',0)->get();
         event(new EndSubsession(User::where('id',1)->first()));
@@ -147,7 +152,7 @@ class WaitingRoomController extends Controller
 
             $time_elapsed = $session_start->created_at->diffInSeconds(\Carbon\Carbon::now());
        
-            $session_length = 60;
+            $session_length = 120;
 
             $time_remaining = $session_length * $admin->current_session - $time_elapsed;
             $total_time = $session_length * $admin->max_sessions;
@@ -338,7 +343,7 @@ class WaitingRoomController extends Controller
 
             $time_elapsed = $session_start->created_at->diffInSeconds(\Carbon\Carbon::now());
        
-            $session_length = 60;
+            $session_length = 120;
 
             $time_remaining = $session_length * $admin->current_session - $time_elapsed;
 

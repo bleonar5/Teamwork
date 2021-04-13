@@ -21,7 +21,7 @@ class TaskRoomController extends Controller
 
             $time_elapsed = $session_start->created_at->diffInSeconds(\Carbon\Carbon::now());
        
-            $session_length = 60;
+            $session_length = 120;
 
             $time_remaining = $session_length * $admin->current_session - $time_elapsed - 30;
 

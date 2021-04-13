@@ -29,9 +29,11 @@ $( document ).ready(function() {
               //window.location.reload();
             });
           }
-          if(time_remaining == 0 && '{{ $user->current_session }}' != '{{ $user->max_sessions }}'){
-            console.log('click');
-            $('#assign').click();
+          if(time_remaining == 0 ){
+            if('{{ $user->current_session }}' != '{{ $user->max_sessions }}')
+                $('#assign').click();
+            else
+                window.location.reload();
           }
           $('#session_timer').text(time_remaining > 0 ? time_remaining : 0);
       },1000);
