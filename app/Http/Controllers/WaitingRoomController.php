@@ -197,6 +197,90 @@ class WaitingRoomController extends Controller
         $admin->current_session += 1;
         $admin->save();
         
+        
+        while(true){
+            $task = 1;
+            $task_name = "Cryptography";
+            $in_room = User::where('in_room',1)->where('id','!=',1)->get()->shuffle();
+            #$in_room = (array) $in_room;
+            Log::debug($in_room);
+            #shuffle($indices);
+            #shuffle($in_room);
+            if(count($in_room) >= 3){
+                $leader = $in_room[0];
+                $leader->group_role = 'leader';
+                $follower1 = $in_room[1];
+                $follower1->group_role = 'follower1';
+                $follower2 = $in_room[2];
+                $follower2->group_role = 'follower2';
+
+                $group = new Group;
+                $group->save();
+
+                $leader->group_id = $group->id;
+                $follower1->group_id = $group->id;
+                $follower2->group_id = $group->id;
+
+                foreach([$leader,$follower1,$follower2] as $user){
+                    try{
+                        \DB::table('group_user')
+                           ->insert(['user_id' => $user->id,
+                                     'group_id' => $group->id,
+                                     'created_at' => date("Y-m-d H:i:s"),
+                                     'updated_at' => date("Y-m-d H:i:s")]);
+                    }
+
+                    catch(\Exception $e){
+                        // Will throw an exception if the group ID and user ID are duplicates. Just ignore
+                    }
+                    if($user->task_id == 0)
+                        $user->task_id = rand(1,16);
+                    else
+                        $user->task_id = (($user->task_id + 1) % 16) + 1;
+
+                }
+
+                if($task == 1){
+                    \Teamwork\GroupTask::initializeCryptoTasks($group->id,$randomize=false,$final=$admin->current_session == $admin->max_sessions);
+                }
+                else{
+                    \Teamwork\GroupTask::initializeMemoryTasks($group->id,$randomize=false);
+                }
+
+                $group_task = \Teamwork\GroupTask::where('group_id',$group->id)->where('name',$task_name)->orderBy('order','ASC')->first();
+                $group_task->task_id = $leader->task_id;
+                $group_task->save();
+                $leader->in_room = 0;
+                $follower1->in_room = 0;
+                $follower2->in_room = 0;
+                $leader->save();
+                $follower1->save();
+                $follower2->save();
+
+                event(new SendToTask($leader));
+                event(new SendToTask($follower1));
+                event(new SendToTask($follower2));
+
+
+                
+
+
+
+            }
+            else{
+                return '200';
+            }
+
+        }
+
+
+
+    }
+
+    public function reassign(Request $request){
+        $admin = User::where('id',1)->first();
+        
+        
         while(true){
             $task = 1;
             $task_name = "Cryptography";

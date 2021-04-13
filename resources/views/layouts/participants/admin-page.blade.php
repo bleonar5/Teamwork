@@ -31,7 +31,7 @@ $( document ).ready(function() {
           }
           if(time_remaining == 0 ){
             if('{{ $user->current_session }}' != '{{ $user->max_sessions }}')
-                $('#assign').click();
+                $.get('/assign-groups',function(data){setTimeout(function(){window.location.reload();},5000)});
             else
                 window.location.reload();
           }
@@ -50,7 +50,7 @@ $( document ).ready(function() {
   });
 
   $('#assign').on('click',function(event){
-    $.get('/assign-groups',function(data){setTimeout(function(){window.location.reload();},5000)});
+    $.get('/reassign',function(data){setTimeout(function(){window.location.reload();},5000)});
     
   });
 
@@ -65,7 +65,7 @@ $( document ).ready(function() {
       url: '/begin-session',
       data:{num_sessions:$('#num_sessions').val(),_token: "{{ csrf_token() }}"},
       success: function(data){
-        $('#assign').click();
+        $.get('/assign-groups',function(data){setTimeout(function(){window.location.reload();},5000)});
       }
     });
   });

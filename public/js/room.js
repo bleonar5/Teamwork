@@ -62,6 +62,8 @@ function Toastify (options) {
             data = 'Equations';
           if(data == 'follower2')
             data = 'Hypotheses';
+          if(data == 'leader')
+            data = 'Leader';
           jQuery('#group_role_'+id).text(data);
         })
       }
