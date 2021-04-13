@@ -14,16 +14,24 @@ var in_session = {{ $in_session }};
 var roomTotal = parseInt("{{ count(\Teamwork\User::where('in_room',1)->where('id','!=',1)->get()) }}");
 var time_remaining = null;
 $( document ).ready(function() {
+  if(localStorage.getItem('num_sessions')){
+    $('#num_sessions').val(localStorage.getItem('num_sessions'))
+  }
   console.log('{{ $groupMembers }}');
   //console.log('{{ $time_remaining }}');
   if('{{ $time_remaining }}' != ''){
       time_remaining = parseInt('{{ $time_remaining }}');
       setInterval(function(){
+        console.log(time_remaining);
           time_remaining -= 1;
-          if(time_remaining == 0){
+          if(time_remaining == 30){
             $.get('/end-subsession',function(data){
-              window.location.reload();
+              //window.location.reload();
             });
+          }
+          if(time_remaining == 0 && '{{ $user->current_session }}' != '{{ $user->max_sessions }}'){
+            console.log('click');
+            $('#assign').click();
           }
           $('#session_timer').text(time_remaining > 0 ? time_remaining : 0);
       },1000);
@@ -58,6 +66,10 @@ $( document ).ready(function() {
         $('#assign').click();
       }
     });
+  });
+
+  $('#num_sessions').on('click',function(event){
+    localStorage.setItem('num_sessions',$(this).val());
   });
 
   $('#check_all').on('click',function(event){
@@ -123,11 +135,11 @@ $( document ).ready(function() {
           $('#wait_num').text((roomTotal < 0 ? 0 : roomTotal).toString());
           //$('#waiting-room-members').append(new Option(data['user']['participant_id'], data['user']['id'],id=data['user']['participant_id']));
           //consol
-          if(!$('#'+data['user']['participant_id']).length){
+          if(!$('#'+data['user']['participant_id']+'_waiting').length){
               $('#waiting-room-members').append($('<option>', {
                   value: data['user']['id'],
                   text: data['user']['participant_id'],
-                  id:data['user']['participant_id']
+                  id:data['user']['participant_id']+'_waiting'
               }));
           }
           
@@ -139,7 +151,7 @@ $( document ).ready(function() {
         roomTotal -= 1;
         console.log(data);
         $('#wait_num').text((roomTotal < 0 ? 0 : roomTotal).toString());
-        $('#'+data['user']['participant_id']).remove();
+        $('#'+data['user']['participant_id']+'_waiting').remove();
       });
     channel.bind('study-closed', function(data) {
         if(in_session){
@@ -200,7 +212,6 @@ $( document ).ready(function() {
             </div>
         <hr />
         <div class="text-center">
-              <button style='background-color:green' class="btn btn-lg btn-primary" value="1" id="begin">Begin Session</button><p></p>
               <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="assign">Assign groups</button><p></p>
               <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="force">Force Refresh</button>
             </div>
@@ -214,7 +225,7 @@ $( document ).ready(function() {
               <h3>Waiting Room members: (<span id='wait_num'>{{ count($waitingRoomMembers) }}</span>)</h3>
               <select style='max-height:200px;width:75%' multiple id='waiting-room-members'>
               @foreach($waitingRoomMembers as $key => $w_mem)
-                <option value='{{ $w_mem->id }}' id='{{ $w_mem->participant_id }}'>
+                <option value='{{ $w_mem->id }}' id='{{ $w_mem->participant_id }}_waiting'>
                   {{ $w_mem->participant_id }}
                 </option>
               @endforeach

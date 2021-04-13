@@ -887,6 +887,45 @@ class GroupTaskController extends Controller
       else return redirect('/end-group-task');
     }
 
+    public function endIntro(Request $request) {
+      $tasks = GroupTask::where('group_id',\Auth::user()->group_id)->where('name','Cryptography')->get();
+      $task = GroupTask::find($request->session()->get('currentGroupTask'));
+      foreach($tasks as $key => $t){
+        $t->points = 0;
+        $t->started = 1;
+        $t->completed = 1;
+        $t->save();
+      }
+      //$parameters = unserialize($task->parameters);
+      //$isReporter = $this->isReporter(\Auth::user()->id, \Auth::user()->group_id);
+      // If this participant isn't the reporter, we'll save an empty response
+      // so that the group can continue when the reporter has finished
+
+      /*if(!$isReporter){
+        $r = new Response;
+        $r->group_tasks_id = $task->id;
+        $r->user_id = \Auth::user()->id;
+        $r->prompt = 'Not reporter';
+        $r->response = 'n/a';
+        $r->save();
+        return redirect('/end-group-task');
+      }*/
+
+      //$this->recordEndTime($request, 'task');
+      //$task->points = $request->task_result;
+      //$task->completed = true;
+      //$task->save();
+
+      // Record the end time for this task
+      //$time = Time::where('user_id', '=', \Auth::user()->id)
+        //          ->where('group_tasks_id', '=', $task->id)
+          //        ->first();
+      //$time->recordEndTime();
+      //$request->session()->put('waitingMsg', 'Please wait for the experiment to continue...');
+      //if(!$parameters->hasGroup) return redirect('/end-individual-task');
+      return redirect('/get-group-task');
+    }
+
     public function shapesGroupIntro(Request $request) {
       $this->recordStartTime($request, 'intro');
       // Determine is this user is the reporter for the group

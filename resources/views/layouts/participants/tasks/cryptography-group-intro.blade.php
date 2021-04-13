@@ -32,6 +32,15 @@ $( document ).ready(function() {
 
     var channel = pusher.subscribe('task-channel');
 
+    channel.bind('end-subsession', function(data){
+      //alert('The next round is beginning soon. You will be sent to the waiting room to be matched with a new team.')
+      //setTimeout(function(){
+      //    $('#cryptography-end-form').submit();
+      //    
+      //},5000)
+      window.location.href='/end-intro';
+    });
+
     channel.bind('force-refresh', function(data) {
       //console.log(data['group_task']['group_id']);
       //console.log('{{ $user->group_id }}');

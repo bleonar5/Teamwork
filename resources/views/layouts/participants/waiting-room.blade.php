@@ -19,8 +19,17 @@ function shuffle(a) {
 }
 
 var room_type;
+var time_remaining = parseInt('{{ $time_remaining }}');
 
 $( document ).ready(function() {
+  
+  var subsession_itv = setInterval(function(){
+    console.log(time_remaining);
+    time_remaining -= 1;
+      $('#time_remaining').text(time_remaining > 0 ? new Date(time_remaining * 1000).toISOString().substr(14, 5) : '00:00');
+          
+  },1000);
+
   localStorage.clear();
   room_type='{{ $task }}'; 
   
@@ -99,6 +108,11 @@ $( document ).ready(function() {
 
 </script>
 <div class="container" >
+  @if($time_remaining)
+    <div>
+      <h5 style='text-align:center;margin: auto;padding-top:10px;'>Next group starts in: <span id='time_remaining'>{{ gmdate('i:s',$time_remaining) }}</span></h3>
+    </div>
+  @endif
   <div class="row vertical-center">
     <div class="col-md-12 text-center">
       <h4> You have entered the Skills Lab waiting room</h4>

@@ -46,9 +46,17 @@
     ];
 var resourceId = '';
 var sid = '';
+var time_remaining = parseInt('{{ $time_remaining }}');
 
 
 $( document ).ready(function() {
+  var subsession_itv = setInterval(function(){
+    console.log(time_remaining);
+    time_remaining -= 1;
+      $('#time_remaining').text(time_remaining > 0 ? new Date(time_remaining * 1000).toISOString().substr(14, 5) : '00:00');
+          
+  },1000);
+
   if('{{ $clear }}' === '1'){
     localStorage.clear();
     var uri = window.location.toString();
@@ -152,6 +160,7 @@ $( document ).ready(function() {
         console.log(data);
         $('#content').html(data);
       });
+  });
   /*if("{{ $task->name }}" === "Cryptography"){
     if ("{{ $task->intro_completed }}" === "1"){
       jQuery.get('/cryptography', function(data){
@@ -181,13 +190,18 @@ $( document ).ready(function() {
     }
   }*/
 
-});
+
 
 </script>
 
 <div class="container">
-  <div class="row vertical-center">
-    <div class='col-sm-8 text-center' id='content'>
+  @if($user->group_role == 'leader')
+    <div>
+      <h5 style='text-align:center;margin: auto;padding-top:10px;'>Task ends in: <span id='time_remaining'>{{ gmdate('i:s',$time_remaining) }}</span></h3>
+    </div>
+  @endif
+  <div class="row vertical-center" style='min-height:95vh'>
+    <div class='col-sm-8 text-center' id='content' >
       
     </div>
     <div class="col-sm-4 text-center">

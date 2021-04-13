@@ -85,7 +85,7 @@ class WaitingRoomController extends Controller
 
     public function beginSession(Request $request){
         $user = User::where('id',1)->first();
-        $user->current_session = 1;
+        $user->current_session = 0;
         $user->max_sessions = $request->num_sessions;
         $user->save();
         $now = \Carbon\Carbon::now();
@@ -143,15 +143,23 @@ class WaitingRoomController extends Controller
         $admin = User::where('id',1)->first();
         $time_remaining = null;
         if($admin->current_session){
-            $session_start = \Teamwork\Time::orderBy('created_at','desc')->first();
+            $session_start = \Teamwork\Time::where('type','session')->orderBy('created_at','desc')->first();
 
             $time_elapsed = $session_start->created_at->diffInSeconds(\Carbon\Carbon::now());
        
-            $session_length = 45;
+            $session_length = 60;
 
             $time_remaining = $session_length * $admin->current_session - $time_elapsed;
+            $total_time = $session_length * $admin->max_sessions;
 
-            while($time_remaining < 0){
+            if($time_elapsed >= $total_time){
+                $admin->current_session = NULL;
+                $admin->max_sessions = NULL;
+                $admin->save();
+
+            }
+
+            /*while($time_remaining < 0){
                 $admin->current_session += 1;
                 if ($admin->current_session > $admin->max_sessions){
                     $admin->current_session = null;
@@ -161,7 +169,7 @@ class WaitingRoomController extends Controller
                     break;
                 }
                  $time_remaining = $session_length * $admin->current_session - $time_elapsed;
-            }
+            }*/
             $admin->save();
 
         }
@@ -181,6 +189,9 @@ class WaitingRoomController extends Controller
 
     public function assignGroups(Request $request){
         $admin = User::where('id',1)->first();
+        $admin->current_session += 1;
+        $admin->save();
+        
         while(true){
             $task = 1;
             $task_name = "Cryptography";
@@ -283,6 +294,8 @@ class WaitingRoomController extends Controller
 
     public function getWaitingRoom(Request $request){
 
+
+
         $group_task = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
         Log::debug($group_task);
         if($group_task->name != "WaitingRoom"){
@@ -319,8 +332,20 @@ class WaitingRoomController extends Controller
         $this_user->in_room = $task;
         $this_user->save();
 
+        $admin = User::where('id',1)->first();
+        if($admin->current_session){
+            $session_start = \Teamwork\Time::where('type','session')->orderBy('created_at','desc')->first();
 
-        
+            $time_elapsed = $session_start->created_at->diffInSeconds(\Carbon\Carbon::now());
+       
+            $session_length = 60;
+
+            $time_remaining = $session_length * $admin->current_session - $time_elapsed;
+
+        }
+        else{
+          $time_remaining = NULL;
+        }
 
         if($group_task->started && $group_task->completed == 0){
             return redirect('/task-room');
@@ -408,7 +433,8 @@ class WaitingRoomController extends Controller
         return view('layouts.participants.waiting-room')
             ->with('users',$room_users)
             ->with('task',$task)
-            ->with('PUSHER_APP_KEY',config('app.PUSHER_APP_KEY'));
+            ->with('PUSHER_APP_KEY',config('app.PUSHER_APP_KEY'))
+            ->with('time_remaining',$time_remaining);
     }
 
     public function getMemoryWaitingRoom(Request $request){
