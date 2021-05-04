@@ -88,8 +88,10 @@ class LoginController extends Controller
       // If this is a newly created group, create some tasks if requested
       if(isset($request->task_package)) {
        if($request->task_package == 'group-memory'){
-         \Teamwork\GroupTask::initializeMemoryWaitingRoomTasks(\Auth::user()->group_id, $randomize = false);
-         return redirect('/get-group-task');
+         \Teamwork\GroupTask::initializeMemoryTasks(\Auth::user()->group_id, $randomize = false);
+         $user->group_role = 'leader';
+         $user->save();
+         return redirect('/task-room');
        }
        elseif($request->task_package == 'group-1'){
          \Teamwork\GroupTask::initializeGroupOneTasks(\Auth::user()->group_id, $randomize = false);
