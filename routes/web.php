@@ -47,6 +47,12 @@ Route::get('/assign-groups', [
 	'roles' => ['Researcher'] // Only a logged in user can view this page
 ]);
 
+Route::get('/clear-room', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@clearRoom',
+	'roles' => ['Researcher'] // Only a logged in user can view this page
+]);
+
 Route::get('/reassign', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'WaitingRoomController@reassign',

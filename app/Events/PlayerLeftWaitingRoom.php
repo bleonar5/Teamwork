@@ -8,25 +8,23 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Queue\SerializesModels;
 
-class playerLeftWaitingRoom implements ShouldBroadcast
+class playerLeftWaitingRoom implements ShouldBroadcastNow
 {
     use SerializesModels;
 
-    public $group_task;
-    public $user;
+    public $participant_id;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(GroupTask $group_task,User $user)
+    public function __construct(String $participant_id)
     {
-        $this->group_task = $group_task;
-        $this->user = $user;
+        $this->participant_id = $participant_id;
     }
 
     /**

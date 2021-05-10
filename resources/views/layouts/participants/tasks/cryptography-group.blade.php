@@ -174,7 +174,7 @@ $( document ).ready(function() {
   $('#rule_1').text(rule_desc[rules[task_id][0] - 1]);
   $('#rule_2').text(rule_desc[rules[task_id][1] - 1])
 
-
+  /*
   initializeTimer(time_remaining, function() {
     $.post('/task-complete', {_token: "{{ csrf_token() }}"});
     $("#crypto-header").hide();
@@ -184,7 +184,7 @@ $( document ).ready(function() {
     setTimeout(function(){
         $('#continue').click();
     },5000);
-  });
+  });*/
 
   setTimeout(function() {
     $("#timer-warning").modal();
@@ -255,15 +255,16 @@ $( document ).ready(function() {
         }
 
     });*/
+    /*
     channel.bind('task-complete', function(data){
-      if (data['user']['group_id'].toString() == '{{ $user->group_id }}'){
+      if (data['user']['id'].toString() == '{{ $user->id }}'){
         localStorage.clear();
         $("#task-result").val(1);
         $("#crypto-header").hide();
         $("#crypto-ui").hide();
         $("#task-end").show();
       }
-    });
+    });*/
     channel.bind('rule-broken', function(data){
       if (data['user']['group_id'].toString() == '{{ $user->group_id }}'){
         $("#rule_broken").modal('toggle');

@@ -10,9 +10,9 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class SendToTask implements ShouldBroadcast
+class SendToTask implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -26,6 +26,7 @@ class SendToTask implements ShouldBroadcast
     public function __construct(User $user)
     {
         $this->user = $user;
+        
     }
 
     /**

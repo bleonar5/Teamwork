@@ -41,14 +41,18 @@ $( document ).ready(function() {
   var token = "{{ csrf_token() }}";
   var modal = "#waiting-for-group";
 
-  window.addEventListener('beforeunload',function(event){
+  /*window.addEventListener('beforeunload',function(event){
     console.log('yes');
+    navigator.sendBeacon('/leave-room',{
+            _token: "{{ csrf_token() }}",
+            room_type:room_type
+          })
     $.post("/leave-room", {
             _token: "{{ csrf_token() }}",
             room_type:room_type
           } );
     return '200';
-  });
+  });*/
 
   Pusher.logToConsole = true;
   console.log('{{ $PUSHER_APP_KEY }}');
@@ -75,7 +79,7 @@ $( document ).ready(function() {
       window.location.href = '/study-closed';
     });
     channel.bind('player-left-room', function(data) {
-      var type = data['group_task']['name'] == "Cryptography" ? '1' : '2';
+      var type = '1';//data['group_task']['name'] == "Cryptography" ? '1' : '2';
       console.log(type);
       console.log(room_type);
       if(room_type === type){
@@ -89,9 +93,6 @@ $( document ).ready(function() {
     channel.bind('send-to-task', function(data) {
       console.log(data);
         if(userId === data['user']['id']){
-          $.post("/leave-room", {
-            _token: "{{ csrf_token() }}"
-          } );
           window.location.href='/task-room';
         }
     });
@@ -101,7 +102,7 @@ $( document ).ready(function() {
       $.get('/still-here', {
         _token: "{{ csrf_token() }}"
       });
-    },10000);
+    },3000);
 
     
 });

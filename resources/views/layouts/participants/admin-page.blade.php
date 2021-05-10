@@ -3,7 +3,7 @@
 
 
 @section('content')
-
+<script src="//cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
 <script>
 
 function convertTZ(date) {
@@ -13,9 +13,38 @@ function convertTZ(date) {
 var in_session = {{ $in_session }};
 var roomTotal = parseInt("{{ count(\Teamwork\User::where('in_room',1)->where('id','!=',1)->get()) }}");
 var time_remaining = null;
+var session_count = null;
+var happened = false;
+var subsession_length = 45;
 $( document ).ready(function() {
+  options = {
+          item: function(values) {
+            return `<tr id='${values.participant_id}'>
+                      <td class='participant_id'>${values.participant_id}</td>
+                      <td class='group_id'>${values.group_id}</td>
+                      <td class='group_size'><span class='group_size_${values.group_id}'></span></td>
+                      <td class='activity'><span class='green'>${values.active}</span></td>
+                      <td class='group_role'>${values.group_role}</td>
+                    </tr>`;
+          } ,
+          valueNames: ['participant_id','group_id','group_size','activity','group_role']
+        }
+  adminTable = new List('admin-table',options);
+    adminTable.on('searchComplete',function(e){
+          if($(`#search_type`).val() != 'All Columns' && !happened){
+             happened = true;
+              adminTable.search($('#search').val(),[$(`#search_type`).val()]);
+             
+          }else{
+            if (happened){
+              happened = false;
+            }
+          }
+        });
+      
+
   if(localStorage.getItem('num_sessions')){
-    $('#num_sessions').val(localStorage.getItem('num_sessions'))
+    $('#num_sessions').val(localStorage.getItem('num_sessions'));
   }
   console.log('{{ $groupMembers }}');
   //console.log('{{ $time_remaining }}');
@@ -31,9 +60,9 @@ $( document ).ready(function() {
           }
           if(time_remaining == 0 ){
             if('{{ $user->current_session }}' != '{{ $user->max_sessions }}')
-                $.get('/assign-groups',function(data){setTimeout(function(){window.location.reload();},5000)});
+                $.get('/assign-groups',function(data){setTimeout(function(){null},5000)});//window.location.reload();
             else
-                window.location.reload();
+              window.location.reload();
           }
           $('#session_timer').text(time_remaining > 0 ? time_remaining : 0);
       },1000);
@@ -49,10 +78,10 @@ $( document ).ready(function() {
     $.get('/toggle-session',function(data){console.log(data)});
   });
 
-  $('#assign').on('click',function(event){
-    $.get('/reassign',function(data){setTimeout(function(){window.location.reload();},5000)});
+  //$('#assign').on('click',function(event){
+    //$.get('/reassign',function(data){setTimeout(function(){null},5000)});
     
-  });
+  //});
 
   $('#force').on('click',function(e){
     $.get('/force-refresh');
@@ -65,7 +94,38 @@ $( document ).ready(function() {
       url: '/begin-session',
       data:{num_sessions:$('#num_sessions').val(),_token: "{{ csrf_token() }}"},
       success: function(data){
-        $.get('/assign-groups',function(data){setTimeout(function(){window.location.reload();},5000)});
+
+        $('#num_sessions').attr('disabled',true);
+        $(`<h4 id='session1'>Current session: <span id='session_count'>1</span>/${$('#num_sessions').val()}</h4>`).insertAfter('#num_sessions');
+        $(`<h4 id='session2'>Time until next session: <span id='session_timer'>0:45</span></h4>`).insertAfter('#num_sessions');
+        $('#begin').attr('disabled',true);
+
+        time_remaining = subsession_length;
+        session_count = 1;
+        setInterval(function(){
+
+          console.log(time_remaining);
+            time_remaining -= 1;
+            if(time_remaining == 0){
+                if( session_count.toString() === $('#num_sessions').val().toString()){
+                  //session_count += 1;
+                  //$('#session_count').text(session_count);
+                  time_remaining = null;
+                  $('#num_sessions').attr('disabled',true);
+                  $('#session1').remove();
+                  $('#session2').remove();
+                  $('#begin').attr('disabled',false);
+                  adminTable.clear();
+              }
+                else{
+                  session_count += 1;
+                  $('#session_count').text(session_count);
+                  time_remaining = subsession_length;
+                }
+            }
+
+            $('#session_timer').text(time_remaining > 0 ? time_remaining : 0);
+        },1000);
       }
     });
   });
@@ -122,6 +182,7 @@ $( document ).ready(function() {
 
 
 
+
   Pusher.logToConsole = true;
   console.log("{{ config('app.PUSHER_APP_KEY') }}");
   //console.log('tourd');
@@ -132,29 +193,45 @@ $( document ).ready(function() {
 
     var channel = pusher.subscribe('my-channel');
     channel.bind('player-joined-room', function(data) {
-      //alert(JSON.stringify(data));
-          roomTotal += 1;
-          $('#wait_num').text((roomTotal < 0 ? 0 : roomTotal).toString());
-          //$('#waiting-room-members').append(new Option(data['user']['participant_id'], data['user']['id'],id=data['user']['participant_id']));
-          //consol
-          if(!$('#'+data['user']['participant_id']+'_waiting').length){
-              $('#waiting-room-members').append($('<option>', {
-                  value: data['user']['id'],
-                  text: data['user']['participant_id'],
-                  id:data['user']['participant_id']+'_waiting'
-              }));
-          }
-          
+      
+
+      roomTotal += 1;
+      adminTable.remove('participant_id',data['user']['participant_id']);
+      adminTable.add({
+        participant_id:data['user']['participant_id'],
+        group_id:'WaitingRoom',
+        activity:"<span style='color:green'>active</span>",
+        group_role:data['user']['group_role']
+
+      });
+      $('.group_size_WaitingRoom').text($('.group_size_WaitingRoom').length);
+      //adminTable.reIndex();
 
 
       });
 
     channel.bind('player-left-room', function(data) {
         roomTotal -= 1;
-        console.log(data);
-        $('#wait_num').text((roomTotal < 0 ? 0 : roomTotal).toString());
-        $('#'+data['user']['participant_id']+'_waiting').remove();
+        adminTable.remove('participant_id',data['participant_id']);
+        $('.group_size_WaitingRoom').text($('.group_size_WaitingRoom').length);
+        //adminTable.reIndex();
       });
+
+    channel.bind('send-to-task', function(data) {
+        adminTable.remove('participant_id',data['user']['participant_id']);
+        adminTable.add({
+          participant_id:data['user']['participant_id'],
+          group_id:data['user']['group_id'],
+          activity:"<span style='color:green'>active</span>",
+          group_role:data['user']['group_role']
+
+        });
+        $(`.group_size_${data['user']['group_id']}`).text($(`.group_size_${data['user']['group_id']}`).length);
+        //adminTable.reIndex();
+
+    });
+
+
     channel.bind('study-closed', function(data) {
         if(in_session){
           in_session = !in_session;
@@ -174,7 +251,78 @@ $( document ).ready(function() {
 
 </script>
 
-<div class="container">
+<style>
+  .list {
+  font-family:sans-serif;
+}
+td, th {
+  padding:10px; 
+  border:solid 1px #eee;
+}
+
+input {
+  border:solid 1px #ccc;
+  border-radius: 5px;
+  padding:7px 14px;
+  margin-bottom:10px
+}
+input:focus {
+  outline:none;
+  border-color:#aaa;
+}
+.sort {
+  padding:8px 30px;
+  border-radius: 6px;
+  border:none;
+  display:inline-block;
+  color:#fff;
+  text-decoration: none;
+  background-color: #809dba!important;
+}
+.sort:hover {
+  text-decoration: none;
+  background-color:#1b8aba;
+}
+.sort:focus {
+  outline:none;
+}
+.sort:after {
+  display:inline-block;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  content:"";
+  position: relative;
+  top:-10px;
+  right:-5px;
+}
+.sort.asc:after {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #fff;
+  content:"";
+  position: relative;
+  top:4px;
+  right:-5px;
+}
+.sort.desc:after {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #fff;
+  content:"";
+  position: relative;
+  top:-4px;
+  right:-5px;
+}
+  </style>
+
+<div class="container" style='max-width:90%'>
   <div id="notify">
       <div class="ads" style='width:1px'>
       </div>
@@ -201,77 +349,106 @@ $( document ).ready(function() {
         <div class="text-center">
               <button style='background-color:green' class="btn btn-lg btn-primary" value="1" id="begin">Begin Session</button><p></p>
               <h5># of sub-sessions</h5>
-              <select id='num_sessions'>
+                @if($user->current_session)
+                  <select disabled id='num_sessions'>
+                @else
+                  <select id='num_sessions'>
+                @endif
                   <option value="1">1</option>
-                  <option value="2">2</option>
+                  <option  value="2">2</option>
                   <option value="3">3</option>
-                  <option value="4">4</option>
+                  <option selected='selected' value="4">4</option>
               </select>
               @if($user->current_session)
-                  <h4>Current session: {{ $user->current_session }}/{{ $user->max_sessions }}</h4>
-                  <h4>Time until next session: <span id='session_timer'>{{ $time_remaining }}</span></h4>
+                  <h4 id='session1'>Current session: {{ $user->current_session }}/{{ $user->max_sessions }}</h4>
+                  <h4 id='session2'>Time until next session: <span id='session_timer'>{{ $time_remaining }}</span></h4>
               @endif
             </div>
         <hr />
         <div class="text-center">
-              <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="assign">Assign groups</button><p></p>
               <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="force">Force Refresh</button>
             </div>
 
          
       </div>
-      <div class='col-md-6'>
+      <div class='col-md-8' id='admin-table' style='border:1px solid black;padding:15px'>
         <div class='text-center'>
-          <h2> Study Info</h2>
-          <hr />
-              <h3>Waiting Room members: (<span id='wait_num'>{{ count($waitingRoomMembers) }}</span>)</h3>
-              <select style='max-height:200px;width:75%' multiple id='waiting-room-members'>
-              @foreach($waitingRoomMembers as $key => $w_mem)
-                <option value='{{ $w_mem->id }}' id='{{ $w_mem->participant_id }}_waiting'>
-                  {{ $w_mem->participant_id }}
+          <h3> Session Info </h3>
+          <hr>
+          <div style='display:block; text-align:center; margin:auto'>
+                <h5 style='display:inline-block;text-align:center; margin:auto'>Search: </h5>
+              <input class='search' id='search' style='display:inline-block;text-align:center; margin:auto'/>
+              <select class='form-control' id='search_type' style='display:inline-block;text-align:center; margin:auto;width:auto'>
+                <option value='all' selected='selected'>
+                  All Columns
                 </option>
-              @endforeach
+                <option value='participant_id'>
+                  participant_id
+                </option>
+                <option value='group_id'>
+                  group_id
+                </option>
+                <option value='group_size'>
+                  group_size
+                </option>
+                <option value='activity'>
+                  activity
+                </option>
+                <option value='group_role'>
+                  group_role
+                </option>
               </select>
-        </div>
-        <hr />
-        <div class='text-center'>
-              <h3>Group Members</h3>
-              <hr />
-              
-              @foreach($groupMembers as $group_id => $group)
-                <h4> Group {{ $group_id }}</h4>
-                <select style='max-height:200px;width:75%' multiple id='group-members-{{ $group_id }}'>
-                  @foreach($group as $key => $member)
-                    <option value='{{ $member->id }}' id='{{ $member->participant_id }}'>
-                      {{ $member->participant_id }}
-                    </option>
-                  @endforeach
-                </select>
-              @endforeach
-              
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="text-center">
-              <h3>Credit Getters</h3>
-              <hr />
-              <h4>Start of date range:</h4>
-              <input type='datetime-local' id='date_start' name='date_start' />
-              <p></p>
-              <h4>End of date range:</h4>
-              <input type='datetime-local' id='date_end' name='date_end' />
-              <p></p>
-              <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="credit">Get from range</button>
-              <p></p>
-              <ul id='credit_getters'>
-                @foreach($creditGetters as $key => $cg)
-                  <li>
-                    {{ $cg->participant_id }}
-                  </li>
+          </div>
+          <br />
+          <div style='max-height:75vh; overflow-y: auto;'>
+            <table style='margin:auto'>
+              <tr>
+                  <th>
+                    <a class='sort' data-sort='participant_id' href='#'>participant_id</a>
+                  </th>
+                  <th>
+                    <a class='sort' data-sort='group_id' href='#'>group_id</a>
+                  </th>
+                  <th>
+                    <a class='sort' data-sort='group_size' href='#'>group_size</a>
+                  </th>
+                  <th>
+                    <a class='sort' data-sort='activity' href='#'>activity</a>
+                  </th>
+                  <th>
+                    <a class='sort' data-sort='group_role' href='#'>group_role</a>
+                  </th>
+                </tr>
+              <tbody class='list'>
+                @foreach($waitingRoomMembers as $key => $w_mem)
+                    <tr id='{{ $w_mem->participant_id }}'>
+                      <td class='participant_id'>{{ $w_mem->participant_id }}</td>
+                      <td class='group_id'>WaitingRoom</td>
+                      <td class='group_size'><span class='group_size_WaitingRoom'>{{ count($waitingRoomMembers) }}</span></td>
+                      <td class='activity'><span style='color:green'>active</span></td>
+                      <td class='group_role'>{{ $w_mem->group_role }}</td>
+                    </tr>
                 @endforeach
-              </ul>
-            </div>
+                @foreach($groupMembers as $group_id => $group)
+                    @foreach($group as $key => $member)
+                        <tr id='{{ $member->participant_id }}'>
+                          <td class='participant_id'>{{ $member->participant_id }}</td>
+                          <td class='group_id'>{{ $member->group_id }}</td>
+                          <td class='group_size'><span class='group_size_{{ $member->group_id }}'>{{ count($group) }}</span></td>
+                          <td class='activity'><span style='color:green'>active</span></td>
+                          <td class='group_role'>{{ $member->group_role }}</td>
+                        </tr>
+                    @endforeach
+                @endforeach
+                
+                
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
       </div>
+      
     </div>
 </div>
 @stop

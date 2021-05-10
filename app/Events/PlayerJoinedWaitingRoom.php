@@ -10,8 +10,10 @@ use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class PlayerJoinedWaitingRoom implements ShouldBroadcast
+class PlayerJoinedWaitingRoom implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -24,7 +26,9 @@ class PlayerJoinedWaitingRoom implements ShouldBroadcast
      */
     public function __construct(User $user)
     {
+
         $this->user = $user;
+        Log::debug('this happened######');
     }
 
     /**

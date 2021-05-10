@@ -7,6 +7,9 @@ use Teamwork\User;
 use Teamwork\Group;
 use Teamwork\GroupTask;
 use Teamwork\Events\SendToTask;
+use Teamwork\Jobs\SendTaskEvent;
+use Teamwork\Jobs\AssignGroups;
+use Teamwork\Jobs\SessionComplete;
 use Teamwork\Events\EndSubsession;
 use Teamwork\Events\ForceRefresh;
 use Teamwork\Events\PlayerJoinedWaitingRoom;
@@ -47,6 +50,8 @@ class WaitingRoomController extends Controller
 
         
         $all_users = User::get();
+
+        #sleep(1);
 
         event(new PlayerJoinedWaitingRoom($this_user));
 
@@ -91,7 +96,16 @@ class WaitingRoomController extends Controller
         $now = \Carbon\Carbon::now();
         $time = \Teamwork\Time::create(['user_id' => \Auth::user()->id,
                                 'type' => 'session']);
+
         $time->recordStartTime();
+        //(new AssignGroups(''))->dispatch('');//->delay(\Carbon\Carbon::now()->addSeconds(5));
+        //(new AssignGroups(''))->dispatch('')->delay(\Carbon\Carbon::now()->addSeconds(45 * 1));
+        //(new AssignGroups(''))->dispatch('')->delay(\Carbon\Carbon::now()->addSeconds(5));
+        for($i=0; $i<$request->num_sessions; $i++){
+            (new AssignGroups(''))->dispatch('')->delay(\Carbon\Carbon::now()->addSeconds(45 * $i));
+        }
+        (new SessionComplete(''))->dispatch('')->delay(\Carbon\Carbon::now()->addSeconds(45 * $request->num_sessions));
+        
         return '200';
 
 
@@ -152,30 +166,11 @@ class WaitingRoomController extends Controller
 
             $time_elapsed = $session_start->created_at->diffInSeconds(\Carbon\Carbon::now());
        
-            $session_length = 120;
+            $session_length = 45;
 
             $time_remaining = $session_length * $admin->current_session - $time_elapsed;
             $total_time = $session_length * $admin->max_sessions;
 
-            if($time_elapsed >= $total_time){
-                $admin->current_session = NULL;
-                $admin->max_sessions = NULL;
-                $admin->save();
-
-            }
-
-            /*while($time_remaining < 0){
-                $admin->current_session += 1;
-                if ($admin->current_session > $admin->max_sessions){
-                    $admin->current_session = null;
-                    $admin->max_sessions = null;
-                    $admin->save();
-                    $time_remaining = null;
-                    break;
-                }
-                 $time_remaining = $session_length * $admin->current_session - $time_elapsed;
-            }*/
-            $admin->save();
 
         }
         
@@ -193,85 +188,7 @@ class WaitingRoomController extends Controller
     }
 
     public function assignGroups(Request $request){
-        $admin = User::where('id',1)->first();
-        $admin->current_session += 1;
-        $admin->save();
-        
-        
-        while(true){
-            $task = 1;
-            $task_name = "Cryptography";
-            $in_room = User::where('in_room',1)->where('id','!=',1)->get()->shuffle();
-            #$in_room = (array) $in_room;
-            Log::debug($in_room);
-            #shuffle($indices);
-            #shuffle($in_room);
-            if(count($in_room) >= 3){
-                $leader = $in_room[0];
-                $leader->group_role = 'leader';
-                $follower1 = $in_room[1];
-                $follower1->group_role = 'follower1';
-                $follower2 = $in_room[2];
-                $follower2->group_role = 'follower2';
-
-                $group = new Group;
-                $group->save();
-
-                $leader->group_id = $group->id;
-                $follower1->group_id = $group->id;
-                $follower2->group_id = $group->id;
-
-                foreach([$leader,$follower1,$follower2] as $user){
-                    try{
-                        \DB::table('group_user')
-                           ->insert(['user_id' => $user->id,
-                                     'group_id' => $group->id,
-                                     'created_at' => date("Y-m-d H:i:s"),
-                                     'updated_at' => date("Y-m-d H:i:s")]);
-                    }
-
-                    catch(\Exception $e){
-                        // Will throw an exception if the group ID and user ID are duplicates. Just ignore
-                    }
-                    if($user->task_id == 0)
-                        $user->task_id = rand(1,16);
-                    else
-                        $user->task_id = (($user->task_id + 1) % 16) + 1;
-
-                }
-
-                if($task == 1){
-                    \Teamwork\GroupTask::initializeCryptoTasks($group->id,$randomize=false,$final=$admin->current_session == $admin->max_sessions);
-                }
-                else{
-                    \Teamwork\GroupTask::initializeMemoryTasks($group->id,$randomize=false);
-                }
-
-                $group_task = \Teamwork\GroupTask::where('group_id',$group->id)->where('name',$task_name)->orderBy('order','ASC')->first();
-                $group_task->task_id = $leader->task_id;
-                $group_task->save();
-                $leader->in_room = 0;
-                $follower1->in_room = 0;
-                $follower2->in_room = 0;
-                $leader->save();
-                $follower1->save();
-                $follower2->save();
-
-                event(new SendToTask($leader));
-                event(new SendToTask($follower1));
-                event(new SendToTask($follower2));
-
-
-                
-
-
-
-            }
-            else{
-                return '200';
-            }
-
-        }
+        return '200';
 
 
 
@@ -444,14 +361,7 @@ class WaitingRoomController extends Controller
 
 
 
-        foreach($room_users as $key => $room_user) {
-
-            $diff = $room_user->updated_at->diffInSeconds(\Carbon\Carbon::now());
-            if($diff > 30){
-                $room_user->in_room = 0;
-                $room_user->save();
-            }
-        }
+        
 
         $room_users = User::where('in_room',$task)->where('id','!=',1)->orderBy('updated_at','ASC')->get();
         /*
@@ -516,7 +426,7 @@ class WaitingRoomController extends Controller
         #    if($this_group->started && $group_task->completed == 0)
         #        return redirect('/task-room');
         #}
-        
+        #sleep(1);
 
         event(new PlayerJoinedWaitingRoom($this_user));
         return view('layouts.participants.waiting-room')
@@ -524,6 +434,19 @@ class WaitingRoomController extends Controller
             ->with('task',$task)
             ->with('PUSHER_APP_KEY',config('app.PUSHER_APP_KEY'))
             ->with('time_remaining',$time_remaining);
+    }
+
+    public function clearRoom(Request $request){
+        $admin = User::where('id',1)->first();
+        $admin->current_session = null;
+        $admin->max_sessions = null;
+        $admin->save();
+        $group_tasks = GroupTask::where('name','Cryptography')->get();
+        foreach($group_tasks as $key => $gt){
+            $gt->completed = 1;
+            $gt->save();
+        }
+        return redirect('/admin-page');
     }
 
     public function getMemoryWaitingRoom(Request $request){
@@ -599,6 +522,8 @@ class WaitingRoomController extends Controller
         if($this_group->started && $group_task->completed == 0)
             return redirect('/task-room/memory');
 
+        #sleep(1);
+
         event(new PlayerJoinedWaitingRoom($this_user));
         return view('layouts.participants.waiting-room')
             ->with('users',$room_users)
@@ -617,7 +542,7 @@ class WaitingRoomController extends Controller
 
         $this_user = User::where('id',$user_id)->first();
 
-        event(new PlayerLeftWaitingRoom($group_task,User::find($user_id)));
+        event(new PlayerLeftWaitingRoom(User::find($user_id)->participant_id));
         
         $this_user->in_room = 0;
 
@@ -634,6 +559,18 @@ class WaitingRoomController extends Controller
         $this_user = User::where('id',$user_id)->first();
 
         $this_user->touch();
+
+        $room_users = User::where('in_room',1)->where('id','!=',1)->get();
+
+        foreach($room_users as $key => $room_user) {
+
+            $diff = $room_user->updated_at->diffInSeconds(\Carbon\Carbon::now());
+            if($diff > 5){
+                $room_user->in_room = 0;
+                $room_user->save();
+                event(new PlayerLeftWaitingRoom($room_user->participant_id));
+            }
+        }
 
         return '200';
     }

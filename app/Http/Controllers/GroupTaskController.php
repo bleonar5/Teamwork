@@ -7,6 +7,7 @@ use Teamwork\GroupTask;
 use Teamwork\Response;
 use Teamwork\Events\AllReadyInGroup;
 use Teamwork\Events\LeaderAnswered;
+use Teamwork\Events\PlayerLeftWaitingRoom;
 use \Teamwork\Tasks as Task;
 use Teamwork\Events\TaskComplete;
 use Teamwork\Events\ActionSubmitted;
@@ -876,6 +877,10 @@ class GroupTaskController extends Controller
       $task->points = $request->task_result;
       $task->completed = true;
       $task->save();
+      $task_members = User::where('group_id',$task->group_id)->get();
+      foreach($task_members as $key => $task_member){
+        event(new PlayerLeftWaitingRoom($task_member->participant_id));
+      }
 
       // Record the end time for this task
       //$time = Time::where('user_id', '=', \Auth::user()->id)
