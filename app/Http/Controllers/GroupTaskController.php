@@ -671,13 +671,13 @@ class GroupTaskController extends Controller
                     ->where('type','task')
                     ->first();
       if ($time){
-        $time_remaining = 600 - \Carbon\Carbon::parse($time->start_time)->diffInSeconds(\Carbon\Carbon::now());
+        $time_remaining = 15 - \Carbon\Carbon::parse($time->start_time)->diffInSeconds(\Carbon\Carbon::now());
         
       }
 
       else{
         $this->recordStartTime($request, 'task');
-        $time_remaining = 600;
+        $time_remaining = 15;
       }
         
 
