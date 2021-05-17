@@ -24,6 +24,9 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('group_role')->default('');
             $table->string('participant_id')->unique()->nullable();
+            $table->string('status')->nullable();
+            $table->Integer('current_session')->nullable();
+            $table->Integer('max_sessions')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

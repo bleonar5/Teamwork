@@ -59,6 +59,19 @@ Route::get('/reassign', [
 	'roles' => ['Researcher'] // Only a logged in user can view this page
 ]);
 
+
+Route::get('/admin-menu', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@adminMenu',
+	'roles' => ['Researcher'] // Only a logged in user can view this page
+]);
+
+Route::get('/historical-data', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@historicalData',
+	'roles' => ['Researcher'] // Only a logged in user can view this page
+]);
+
 Route::get('/end-subsession', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'WaitingRoomController@endSubsession',
@@ -74,6 +87,12 @@ Route::get('/force-refresh', [
 Route::post('/begin-session', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'WaitingRoomController@beginSession',
+	'roles' => ['Researcher'] // Only a logged in user can view this page
+]);
+
+Route::post('/confirm-paid', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@confirmPaid',
 	'roles' => ['Researcher'] // Only a logged in user can view this page
 ]);
 
@@ -632,6 +651,12 @@ Route::post('/optimization-group', [
 	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
 ]);
 
+Route::post('/set-idle', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@setIdle',
+	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
+]);
+
 Route::get('/get-prob-val', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'AjaxController@getProbVal',
@@ -755,6 +780,12 @@ Route::post('/give-credit', [
 Route::get('/still-here', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'WaitingRoomController@stillHere',
+	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
+]);
+
+Route::get('/still-present', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'GroupTaskController@stillPresent',
 	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
 ]);
 

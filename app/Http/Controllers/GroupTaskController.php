@@ -7,6 +7,7 @@ use Teamwork\GroupTask;
 use Teamwork\Response;
 use Teamwork\Events\AllReadyInGroup;
 use Teamwork\Events\LeaderAnswered;
+use Teamwork\Events\StatusChanged;
 use Teamwork\Events\PlayerLeftWaitingRoom;
 use \Teamwork\Tasks as Task;
 use Teamwork\Events\TaskComplete;
@@ -30,6 +31,9 @@ class GroupTaskController extends Controller
 
     public function getTask(Request $request) {
       $group_id = \Auth::user()->group_id;
+      $user = User::find(\Auth::user()->id);
+      $user->status = 'Active';
+      $user->save();
 
       //$task_id = $request->session()->get('currentGroupTask');
       //$task_name = GroupTask::find($task_id)->name;
@@ -119,6 +123,9 @@ class GroupTaskController extends Controller
     }
 
     public function endTask(Request $request) {
+      $user = User::find(\Auth::user()->id);
+      $user->status = 'Inactive';
+      $user->save();
 
 
       $task = \Teamwork\GroupTask::with('response')
@@ -181,8 +188,41 @@ class GroupTaskController extends Controller
     }
 
     public function endExperiment() {
+      $user = \Auth::user();
+      $user->status = 'Inactive';
+      $user->save();
       return view('layouts.participants.group-experiment-end');
     }
+
+    public function stillPresent(Request $request) {
+      $user_id = \Auth::user()->id;
+
+        $this_user = User::where('id',$user_id)->first();
+
+        if($this_user->status){
+          if($this_user->status == 'Inactive'){
+            $this_user->status = "Active";
+            $this_user->save();
+          }
+        }
+
+        $this_user->touch();
+
+        $group_users = User::where('group_id',$this_user->group_id)->whereIn('status',['Active','Idle'])->get();
+
+        foreach($group_users as $key => $group_user) {
+
+            $diff = $group_user->updated_at->diffInSeconds(\Carbon\Carbon::now());
+            if($diff > 10){
+                $group_user->status = 'Inactive';
+                $group_user->save();
+                event(new StatusChanged($group_user));
+            }
+        }
+
+        return '200';
+
+    } 
 
     public function memoryGroupIntro(Request $request) {
       $this->recordStartTime($request, 'intro');

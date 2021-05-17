@@ -134,6 +134,15 @@ class GroupTask extends Model
       return Self::initializeTasks($group_id, $taskArray, $randomize);
     }
 
+    public static function initializeWaitingRoomTasks($group_id, $randomize) {
+      $taskArray = '[
+        {"taskName":"WaitingRoom","taskParams":{"hasIndividuals":"false","hasGroup":"true","task":"1"}}
+        ]';
+      
+      
+      return Self::initializeTasks($group_id, $taskArray, $randomize);
+    }
+
     public static function initializeCryptoPilotNoConsentTasks($group_id, $randomize) {
       $taskArray = '[
         {"taskName":"WaitingRoom","taskParams":{"hasIndividuals":"false","hasGroup":"true","task":"1"}}

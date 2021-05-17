@@ -17,7 +17,8 @@ var maxResponses = {{ $maxResponses }};
 var whose_turn = {{ $whose_turn }};
 var task_id = {{ $task_id }};
 var group_id = {{ $user->group_id }};
-var user_id = {{ $user->id }}
+var user_id = {{ $user->id }};
+var group_role = '{{ $user->group_role }}';
 var local_guess = [];
 var responses = '';
 var time_remaining;
@@ -32,6 +33,20 @@ var mapping_guess = '';
 var payment = 8.00;
 var guesses = [];
 var page = 1;
+var tm;
+
+function start_timer(){
+  tm = setTimeout(function(){
+    $.post('/set-idle', {
+      _token: "{{ csrf_token() }}",
+      user_id:'{{ $user->id }}'
+    });
+  },10000);
+}
+
+function clear_timer(){
+  clearTimeout(tm);
+}
 
 
 $( document ).ready(function() {
@@ -94,6 +109,9 @@ $( document ).ready(function() {
 
   switch(whose_turn){
     case 0:
+      if(group_role == 'follower1'){
+        start_timer();
+      }
       $('#submit-mapping').attr('disabled',true);
       $('#submit-mapping').text('Waiting for Team');
       $('#submit-hypothesis').attr('disabled',true);
@@ -101,6 +119,9 @@ $( document ).ready(function() {
       $('#order-instructions').modal('toggle');
       break;
     case 1:
+      if(group_role == 'follower2'){
+        start_timer();
+      }
       $('#submit-mapping').attr('disabled',true);
       $('#submit-mapping').text('Waiting\nFor Teammates...');
       $('#submit-equation').attr('disabled',true);
@@ -108,6 +129,9 @@ $( document ).ready(function() {
       $('#order-instructions').modal('toggle');
       break;
     case 2:
+      if(group_role == 'leader'){
+        start_timer();
+      }
       $('#submit-hypothesis').attr('disabled',true);
       $('#submit-hypothesis').text('Waiting\nFor Teammates...');
       $('#submit-equation').attr('disabled',true);
@@ -190,6 +214,13 @@ $( document ).ready(function() {
     $("#timer-warning").modal();
   }, 540 * 1000);
 
+  var itv = setInterval(function() {
+      console.log('GOING OFF');
+      $.get('/still-present', {
+        _token: "{{ csrf_token() }}"
+      });
+    },3000);
+
   var channel = pusher.subscribe('task-channel');
     channel.bind('action-submitted',function(data){
       console.log(data['group_task']['id']);
@@ -198,6 +229,12 @@ $( document ).ready(function() {
         console.log(data.group_task.whose_turn);
         switch(data.group_task.whose_turn){
           case 0:
+            if(group_role == 'follower1'){
+              start_timer();
+            }
+            if(group_role == 'leader'){
+              clear_timer();
+            }
             $('#submit-mapping').attr('disabled',true);
             $('#submit-mapping').text('Waiting for Team');
             $('#submit-hypothesis').attr('disabled',true);
@@ -214,6 +251,12 @@ $( document ).ready(function() {
             localStorage.setItem('payment',$('#payment').text());
             break;
           case 1:
+            if(group_role == 'follower2'){
+              start_timer();
+            }
+            if(group_role == 'follower1'){
+              clear_timer();
+            }
             $('#submit-mapping').attr('disabled',true);
             $('#submit-mapping').text('Waiting for Team');
             $('#submit-equation').attr('disabled',true);
@@ -223,6 +266,12 @@ $( document ).ready(function() {
             //$('#order-instructions').modal('toggle');
             break;
           case 2:
+            if(group_role == 'leader'){
+              start_timer();
+            }
+            if(group_role == 'follower2'){
+              clear_timer();
+            }
             $('#submit-hypothesis').attr('disabled',true);
             $('#submit-hypothesis').text('Waiting for Team');
             $('#submit-equation').attr('disabled',true);

@@ -5,6 +5,7 @@ namespace Teamwork\Http\Controllers;
 use Illuminate\Http\Request;
 use Teamwork\User;
 use Teamwork\Group;
+use Teamwork\Session;
 use Teamwork\GroupTask;
 use Teamwork\Events\SendToTask;
 use Teamwork\Jobs\SendTaskEvent;
@@ -88,6 +89,14 @@ class WaitingRoomController extends Controller
         return '200';
     }
 
+    public function setIdle(Request $request){
+        $user = User::find($request->user_id);
+        $user->status = 'Idle';
+        $user->save();
+        return '200';
+
+    }
+
     public function beginSession(Request $request){
         $user = User::where('id',1)->first();
         $user->current_session = 0;
@@ -98,13 +107,14 @@ class WaitingRoomController extends Controller
                                 'type' => 'session']);
 
         $time->recordStartTime();
+        $session_length = 120;
         //(new AssignGroups(''))->dispatch('');//->delay(\Carbon\Carbon::now()->addSeconds(5));
         //(new AssignGroups(''))->dispatch('')->delay(\Carbon\Carbon::now()->addSeconds(45 * 1));
         //(new AssignGroups(''))->dispatch('')->delay(\Carbon\Carbon::now()->addSeconds(5));
         for($i=0; $i<$request->num_sessions; $i++){
-            (new AssignGroups(''))->dispatch('')->delay(\Carbon\Carbon::now()->addSeconds(45 * $i));
+            (new AssignGroups(''))->dispatch('')->delay(\Carbon\Carbon::now()->addSeconds($session_length * $i));
         }
-        (new SessionComplete(''))->dispatch('')->delay(\Carbon\Carbon::now()->addSeconds(45 * $request->num_sessions));
+        (new SessionComplete(''))->dispatch('')->delay(\Carbon\Carbon::now()->addSeconds($session_length * $request->num_sessions));
         
         return '200';
 
@@ -166,7 +176,7 @@ class WaitingRoomController extends Controller
 
             $time_elapsed = $session_start->created_at->diffInSeconds(\Carbon\Carbon::now());
        
-            $session_length = 45;
+            $session_length = 120;
 
             $time_remaining = $session_length * $admin->current_session - $time_elapsed;
             $total_time = $session_length * $admin->max_sessions;
@@ -587,6 +597,28 @@ class WaitingRoomController extends Controller
       return $random;
     }
 
+    public function adminMenu(Request $request){
+        return view('layouts.participants.admin-menu');
+    }
+
+    public function historicalData(Request $request){
+        $userSessions = Session::where('complete',1)->get();
+
+
+        return view('layouts.participants.historical-data')
+                ->with('userSessions',$userSessions);
+    }
+
+    public function confirmPaid(Request $request){
+        $session_ids = $request->session_ids;
+        foreach($session_ids as $key => $sid){
+            $sesh = Session::find($sid);
+            $sesh->paid = 1;
+            $sesh->save();
+        }
+        return '200';
+    }
+
     public function makeGroups(Request $request){
 
         //$leaders = User::where('in_room',true)->where('group_role','leader')->get();
@@ -646,6 +678,8 @@ class WaitingRoomController extends Controller
 
 
     }
+
+
 
     private function test_assignment(array $leaders, array $followers,$depth = 4,$participant_repeat=false) {
         if($depth == 0)

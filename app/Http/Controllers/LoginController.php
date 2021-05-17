@@ -125,6 +125,9 @@ class LoginController extends Controller
        elseif($request->task_package == 'lab-round-5'){
          \Teamwork\GroupTask::initializeLabRoundFiveTasks(\Auth::user()->group_id, $randomize = false);
        }
+       elseif($request->task_package == 'waiting-room'){
+         \Teamwork\GroupTask::initializeWaitingRoomTasks(\Auth::user()->group_id, $randomize = false);
+       }
        else{
          \Teamwork\GroupTask::initializeCryptoTasks($group->id, $randomize = false);
          Log::debug('Lets go');

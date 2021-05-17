@@ -15,7 +15,7 @@ var roomTotal = parseInt("{{ count(\Teamwork\User::where('in_room',1)->where('id
 var time_remaining = null;
 var session_count = null;
 var happened = false;
-var subsession_length = 45;
+var subsession_length = 120;
 $( document ).ready(function() {
   options = {
           item: function(values) {
@@ -246,6 +246,28 @@ $( document ).ready(function() {
           $('#session_toggle').text(in_session ? 'Study Is Open' : 'Study Is Closed');
         }
       });
+    channel.bind('status-changed', function(data) {
+      user_row = adminTable.get('participant_id',data['user']['participant_id']);
+      values = user_row.values();
+      switch(data['user']['status']){
+        case 'Active':
+          values['activity'] = `<td class='activity'><span style='color:green'>Active</span></td>`;
+          break;
+        case 'Inactive':
+          values['activity'] = `<td class='activity'><span style='color:red'>Inactive</span></td>`;
+          break;
+        case 'Idle':
+          values['activity'] = `<td class='activity'><span style='color:yellow'>Idle</span></td>`;
+          break;
+        default:
+          values['activity'] = '';
+          break;
+
+      }
+      values['activity'] = data['user']['status'];
+      user_row.values(values);
+    })
+
 
 });
 
@@ -366,7 +388,8 @@ input:focus {
             </div>
         <hr />
         <div class="text-center">
-              <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="force">Force Refresh</button>
+              <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="force">Force Refresh</button><p></p>
+              <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="historical-data" onclick="window.location.href='/historical-data'">Historical Data</button>
             </div>
 
          
@@ -435,7 +458,13 @@ input:focus {
                           <td class='participant_id'>{{ $member->participant_id }}</td>
                           <td class='group_id'>{{ $member->group_id }}</td>
                           <td class='group_size'><span class='group_size_{{ $member->group_id }}'>{{ count($group) }}</span></td>
-                          <td class='activity'><span style='color:green'>active</span></td>
+                          @if($member->status == 'Active')
+                            <td class='activity'><span style='color:green'>Active</span></td>
+                          @elseif($member->status == 'Inactive')
+                            <td class='activity'><span style='color:red'>Inactive</span></td>
+                          @else
+                            <td class='activity'><span style='color:yellow'>Idle</span></td>
+                          @endif
                           <td class='group_role'>{{ $member->group_role }}</td>
                         </tr>
                     @endforeach

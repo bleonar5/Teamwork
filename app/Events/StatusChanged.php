@@ -9,11 +9,9 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class PlayerJoinedWaitingRoom implements ShouldBroadcastNow
+class StatusChanged implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -26,7 +24,6 @@ class PlayerJoinedWaitingRoom implements ShouldBroadcastNow
      */
     public function __construct(User $user)
     {
-
         $this->user = $user;
     }
 
@@ -42,6 +39,6 @@ class PlayerJoinedWaitingRoom implements ShouldBroadcastNow
 
     public function broadcastAs()
     {
-        return 'player-joined-room';
+        return 'status-changed';
     }
 }

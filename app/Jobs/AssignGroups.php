@@ -12,6 +12,7 @@ use Teamwork\Group;
 use Teamwork\Events\SendToTask;
 use Teamwork\Events\EndSubsession;
 use Teamwork\Jobs\SendTaskComplete;
+use Teamwork\Session;
 use Illuminate\Support\Facades\Log;
 
 
@@ -42,6 +43,8 @@ class AssignGroups implements ShouldQueue
         $admin->save();
         
         
+        $created_at = \Carbon\Carbon::now();
+
         while(true){
             $task = 1;
             $task_name = "Cryptography";
@@ -101,11 +104,62 @@ class AssignGroups implements ShouldQueue
                 $follower1->save();
                 $follower2->save();
 
+                
+
+                if($admin->current_session == 1){
+                	$leader_session = new Session;
+                	$leader_session->participant_id = $leader->participant_id;
+                	$leader_session->type = $task_name;
+                	$leader_session->num_subsessions = 1;
+                	$leader_session->total_sessions = Session::where('participant_id',$leader->participant_id)->count() + 1;
+                	$leader_session->group_ids = (String) $leader->group_id;
+                	$leader_session->group_role = $leader->group_role;
+                	$leader_session->created_at = $created_at;
+                	$leader_session->save(['timestamps' => 'false']);
+
+                	$follower1_session = new Session;
+                	$follower1_session->participant_id = $follower1->participant_id;
+                	$follower1_session->type = $task_name;
+                	$follower1_session->num_subsessions = 1;
+                	$follower1_session->total_sessions = Session::where('participant_id',$follower1->participant_id)->count() + 1;
+                	$follower1_session->group_ids = (String) $follower1->group_id;
+                	$follower1_session->group_role = $follower1->group_role;
+                	$follower1_session->created_at = $created_at;
+                	$follower1_session->save(['timestamps' => 'false']);
+
+                	$follower2_session = new Session;
+                	$follower2_session->participant_id = $follower2->participant_id;
+                	$follower2_session->type = $task_name;
+                	$follower2_session->num_subsessions = 1;
+                	$follower2_session->total_sessions = Session::where('participant_id',$follower2->participant_id)->count() + 1;
+                	$follower2_session->group_ids = (String) $follower2->group_id;
+                	$follower2_session->group_role = $follower2->group_role;
+                	$follower2_session->created_at = $created_at;
+                	$follower2_session->save(['timestamps' => 'false']);
+                }
+                else{
+                	$leader_session = Session::where('participant_id',$leader->participant_id)->orderBy('created_at','desc')->first();
+                	$leader_session->num_subsessions = $leader_session->num_subsessions + 1;
+                	$leader_session->group_ids = $leader_session->group_ids.','.$leader->group_id;
+                	$leader_session->save();
+
+                	$follower1_session = Session::where('participant_id',$follower1->participant_id)->orderBy('created_at','desc')->first();
+                	$follower1_session->num_subsessions = $follower1_session->num_subsessions + 1;
+                	$follower1_session->group_ids = $follower1_session->group_ids.','.$follower2->group_id;
+                	$follower1_session->save();
+
+                	$follower2_session = Session::where('participant_id',$follower2->participant_id)->orderBy('created_at','desc')->first();
+                	$follower2_session->num_subsessions = $follower2_session->num_subsessions + 1;
+                	$follower2_session->group_ids = $follower2_session->group_ids.','.$follower2->group_id;
+                	$follower2_session->save();
+                }
+                
+
                 $session_start = \Teamwork\Time::where('type','session')->orderBy('created_at','desc')->first();
 
                 $time_elapsed = $session_start->created_at->diffInSeconds(\Carbon\Carbon::now());
            
-                $session_length = 45;
+                $session_length = 120;
 
                 event(new SendToTask($leader));
                 event(new SendToTask($follower1));
@@ -114,6 +168,10 @@ class AssignGroups implements ShouldQueue
                 (new SendTaskComplete($leader->id))->dispatch($leader->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-30));
                 (new SendTaskComplete($follower1->id))->dispatch($follower1->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-30));
                 (new SendTaskComplete($follower2->id))->dispatch($follower2->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-30));
+
+                if($admin->current_session == $admin->max_sessions){
+                	(new SendSessionComplete($follower2->id))->dispatch($follower2->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length));
+                }
 
                 #(new SendTaskComplete($leader->id))->dispatch($leader->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-30));
                 #(new SendTaskComplete($follower1->id))->dispatch($follower1->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-30));

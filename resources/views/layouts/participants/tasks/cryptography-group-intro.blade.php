@@ -17,7 +17,13 @@
 $( document ).ready(function() {
   page_count = 1;
 
-  
+  var itv = setInterval(function() {
+      console.log('GOING OFF');
+      $.get('/still-present', {
+        _token: "{{ csrf_token() }}"
+      });
+    },7000);
+
   
 
   $(".alert").hide();
