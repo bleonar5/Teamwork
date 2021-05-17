@@ -16,6 +16,8 @@ var time_remaining = null;
 var session_count = null;
 var happened = false;
 var subsession_length = 120;
+var current_session = parseInt('{{ $user->current_sessions }}');
+var max_sessions = parseInt('{{ $user->max_sessions }}');
 $( document ).ready(function() {
   options = {
           item: function(values) {
@@ -50,22 +52,31 @@ $( document ).ready(function() {
   //console.log('{{ $time_remaining }}');
   if('{{ $time_remaining }}' != ''){
       time_remaining = parseInt('{{ $time_remaining }}');
+      
       setInterval(function(){
-        console.log(time_remaining);
-          time_remaining -= 1;
-          if(time_remaining == 30){
-            $.get('/end-subsession',function(data){
-              //window.location.reload();
-            });
-          }
-          if(time_remaining == 0 ){
-            if('{{ $user->current_session }}' != '{{ $user->max_sessions }}')
-                $.get('/assign-groups',function(data){setTimeout(function(){null},5000)});//window.location.reload();
-            else
-              window.location.reload();
-          }
-          $('#session_timer').text(time_remaining > 0 ? time_remaining : 0);
-      },1000);
+
+          console.log(time_remaining);
+            time_remaining -= 1;
+            if(time_remaining == 0){
+                if( session_count.toString() === $('#num_sessions').val().toString()){
+                  //session_count += 1;
+                  //$('#session_count').text(session_count);
+                  time_remaining = null;
+                  $('#num_sessions').attr('disabled',true);
+                  $('#session1').remove();
+                  $('#session2').remove();
+                  $('#begin').attr('disabled',false);
+                  adminTable.clear();
+              }
+                else{
+                  session_count += 1;
+                  $('#session_count').text(session_count);
+                  time_remaining = subsession_length;
+                }
+            }
+
+            $('#session_timer').text(time_remaining > 0 ? time_remaining : 0);
+        },1000);
 
   }
 

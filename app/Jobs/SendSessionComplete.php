@@ -10,6 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Teamwork\User;
 use Teamwork\Events\TaskComplete;
 use Teamwork\Events\EndSubsession;
+use Teamwork\Session;
 use Illuminate\Support\Facades\Log;
 
 
@@ -39,5 +40,12 @@ class SendSessionComplete implements ShouldQueue
         $admin->current_session = null;
         $admin->max_sessions = null;
         $admin->save();
+
+        $last_session = Session::orderBy('created_at','desc')->first();
+        $these_sessions = Session::where('created_at',$last_session->created_at)->get();
+        foreach($these_sessions as $key => $sesh){
+            $sesh->completed = 1;
+            $sesh->save();
+        }
     }
 }
