@@ -46,14 +46,14 @@
     ];
 var resourceId = '';
 var sid = '';
-var time_remaining = parseInt('{{ $time_remaining }}');
+var task_time_remaining = parseInt('{{ $time_remaining }}');
 
 
 $( document ).ready(function() {
   var subsession_itv = setInterval(function(){
-    console.log(time_remaining);
-    time_remaining -= 1;
-      $('#time_remaining').text(time_remaining > 0 ? new Date(time_remaining * 1000).toISOString().substr(14, 5) : '00:00');
+    console.log(task_time_remaining);
+    task_time_remaining -= 1;
+      $('#task_time_remaining').text(task_time_remaining > 0 ? new Date(task_time_remaining * 1000).toISOString().substr(14, 5) : '00:00');
           
   },1000);
 
@@ -197,7 +197,7 @@ $( document ).ready(function() {
 <div class="container">
   @if($user->group_role == 'leader')
     <div>
-      <h5 style='text-align:center;margin: auto;padding-top:10px;'>Task ends in: <span id='time_remaining'>{{ gmdate('i:s',$time_remaining) }}</span></h3>
+      <h5 style='text-align:center;margin: auto;padding-top:10px;'>Task ends in: <span id='task_time_remaining'>{{ gmdate('i:s',$time_remaining) }}</span></h3>
     </div>
   @endif
   <div class="row vertical-center" style='min-height:95vh'>

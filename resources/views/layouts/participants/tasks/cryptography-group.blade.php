@@ -328,11 +328,15 @@ $( document ).ready(function() {
     });
 
     channel.bind('end-subsession', function(data){
-      alert('The next round is beginning soon. You will be sent to the waiting room to be matched with a new team.')
-      setTimeout(function(){
-          $('#cryptography-end-form').submit();
-          
-      },5000)
+      if(data['user']['id'] == user_id){
+        alert('The next round is beginning soon. You will be sent to the waiting room to be matched with a new team.')
+        setTimeout(function(){
+            $('#cryptography-end-form').submit();
+            
+        },5000);
+
+      }
+      
     });
 
     channel.bind('force-refresh', function(data) {

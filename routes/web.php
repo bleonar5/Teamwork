@@ -47,6 +47,18 @@ Route::get('/assign-groups', [
 	'roles' => ['Researcher'] // Only a logged in user can view this page
 ]);
 
+Route::get('/test-session', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@testSession',
+	'roles' => ['Researcher'] // Only a logged in user can view this page
+]);
+
+Route::post('/save-notes', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@saveNotes',
+	'roles' => ['Researcher'] // Only a logged in user can view this page
+]);
+
 Route::get('/clear-room', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'WaitingRoomController@clearRoom',
@@ -88,6 +100,12 @@ Route::post('/begin-session', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'WaitingRoomController@beginSession',
 	'roles' => ['Researcher'] // Only a logged in user can view this page
+]);
+
+Route::post('/status-change', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@statusChange',
+	'roles' => ['Participant','Group'] // Only a logged in user can view this page
 ]);
 
 Route::post('/confirm-paid', [

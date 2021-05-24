@@ -48,7 +48,7 @@ class AssignGroups implements ShouldQueue
         while(true){
             $task = 1;
             $task_name = "Cryptography";
-            $in_room = User::where('in_room',1)->where('id','!=',1)->get()->shuffle();
+            $in_room = User::where('in_room',1)->where('id','!=',1)->where('status','Active')->get()->shuffle();
             #$in_room = (array) $in_room;
             Log::debug('assign');
             #shuffle($indices);
@@ -136,6 +136,24 @@ class AssignGroups implements ShouldQueue
                 	$follower2_session->group_role = $follower2->group_role;
                 	$follower2_session->created_at = $created_at;
                 	$follower2_session->save(['timestamps' => 'false']);
+
+
+                    
+                    $sessions = Session::orderBy('created_at')->get();
+                    $count = 0;
+                    $created_at = null;
+                    foreach($sessions as $key => $session){
+                        if($session->created_at != $created_at){
+                            $count += 1;
+                            $created_at = $session->created_at;
+                        }
+                        if(is_null($session->session_id)){
+                            $session->session_id = $count;
+                            $session->save();
+                        }
+
+                    }
+                    $count += 1;
                 }
                 else{
                 	$leader_session = Session::where('participant_id',$leader->participant_id)->orderBy('created_at','desc')->first();
@@ -169,7 +187,12 @@ class AssignGroups implements ShouldQueue
                 (new SendTaskComplete($follower1->id))->dispatch($follower1->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-30));
                 (new SendTaskComplete($follower2->id))->dispatch($follower2->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-30));
 
+                Log::debug($admin->current_session);
+                Log::debug($admin->max_sessions);
+
+
                 if($admin->current_session == $admin->max_sessions){
+                    Log::debug('confirmed');
                 	(new SendSessionComplete($follower2->id))->dispatch($follower2->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length));
                 }
 

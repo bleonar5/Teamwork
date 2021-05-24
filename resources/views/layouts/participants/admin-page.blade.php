@@ -15,9 +15,11 @@ var roomTotal = parseInt("{{ count(\Teamwork\User::where('in_room',1)->where('id
 var time_remaining = null;
 var session_count = null;
 var happened = false;
+var session_begun = false;
 var subsession_length = 120;
 var current_session = parseInt('{{ $user->current_sessions }}');
 var max_sessions = parseInt('{{ $user->max_sessions }}');
+var itv;
 $( document ).ready(function() {
   options = {
           item: function(values) {
@@ -33,14 +35,17 @@ $( document ).ready(function() {
         }
   adminTable = new List('admin-table',options);
     adminTable.on('searchComplete',function(e){
-          if($(`#search_type`).val() != 'All Columns' && !happened){
+          if($(`#search_type`).val() != 'all' && !happened){
+            console.log('event3');
              happened = true;
               adminTable.search($('#search').val(),[$(`#search_type`).val()]);
              
           }else{
             if (happened){
+              console.log('event2');
               happened = false;
             }
+            
           }
         });
       
@@ -51,8 +56,10 @@ $( document ).ready(function() {
   console.log('{{ $groupMembers }}');
   //console.log('{{ $time_remaining }}');
   if('{{ $time_remaining }}' != ''){
+    session_begun = true;
+    $('#begin').attr('disabled',true);
       time_remaining = parseInt('{{ $time_remaining }}');
-      
+      session_count = current_session;
       setInterval(function(){
 
           console.log(time_remaining);
@@ -99,13 +106,14 @@ $( document ).ready(function() {
   });
 
   $('#begin').on('click',function(e){
+    session_begun = true;
     $.ajax({
       type: "POST",
       
       url: '/begin-session',
       data:{num_sessions:$('#num_sessions').val(),_token: "{{ csrf_token() }}"},
       success: function(data){
-
+        
         $('#num_sessions').attr('disabled',true);
         $(`<h4 id='session1'>Current session: <span id='session_count'>1</span>/${$('#num_sessions').val()}</h4>`).insertAfter('#num_sessions');
         $(`<h4 id='session2'>Time until next session: <span id='session_timer'>0:45</span></h4>`).insertAfter('#num_sessions');
@@ -211,7 +219,7 @@ $( document ).ready(function() {
       adminTable.add({
         participant_id:data['user']['participant_id'],
         group_id:'WaitingRoom',
-        activity:"<span style='color:green'>active</span>",
+        activity:"<span style='color:green'>Active</span>",
         group_role:data['user']['group_role']
 
       });
@@ -228,12 +236,49 @@ $( document ).ready(function() {
         //adminTable.reIndex();
       });
 
+    channel.bind('session-begun',function(data) {
+      if(!session_begun){
+        $('#num_sessions').val(data['user']['max_sessions']);
+        $('#num_sessions').attr('disabled',true);
+          $(`<h4 id='session1'>Current session: <span id='session_count'>1</span>/${$('#num_sessions').val()}</h4>`).insertAfter('#num_sessions');
+          $(`<h4 id='session2'>Time until next session: <span id='session_timer'>0:45</span></h4>`).insertAfter('#num_sessions');
+          $('#begin').attr('disabled',true);
+
+          time_remaining = subsession_length;
+          session_count = 1;
+          setInterval(function(){
+
+            console.log(time_remaining);
+              time_remaining -= 1;
+              if(time_remaining == 0){
+                  if( session_count.toString() === $('#num_sessions').val().toString()){
+                    //session_count += 1;
+                    //$('#session_count').text(session_count);
+                    time_remaining = null;
+                    $('#num_sessions').attr('disabled',true);
+                    $('#session1').remove();
+                    $('#session2').remove();
+                    $('#begin').attr('disabled',false);
+                    adminTable.clear();
+                }
+                  else{
+                    session_count += 1;
+                    $('#session_count').text(session_count);
+                    time_remaining = subsession_length;
+                  }
+              }
+
+              $('#session_timer').text(time_remaining > 0 ? time_remaining : 0);
+          },1000);
+      }
+    });
+
     channel.bind('send-to-task', function(data) {
         adminTable.remove('participant_id',data['user']['participant_id']);
         adminTable.add({
           participant_id:data['user']['participant_id'],
           group_id:data['user']['group_id'],
-          activity:"<span style='color:green'>active</span>",
+          activity:"<span style='color:green'>Active</span>",
           group_role:data['user']['group_role']
 
         });
@@ -258,7 +303,8 @@ $( document ).ready(function() {
         }
       });
     channel.bind('status-changed', function(data) {
-      user_row = adminTable.get('participant_id',data['user']['participant_id']);
+      console.log("yep");
+      user_row = adminTable.get('participant_id',data['user']['participant_id'])[0];
       values = user_row.values();
       switch(data['user']['status']){
         case 'Active':
@@ -268,14 +314,14 @@ $( document ).ready(function() {
           values['activity'] = `<td class='activity'><span style='color:red'>Inactive</span></td>`;
           break;
         case 'Idle':
-          values['activity'] = `<td class='activity'><span style='color:yellow'>Idle</span></td>`;
+          values['activity'] = `<td class='activity'><span style='color:#b0b02b'>Idle</span></td>`;
           break;
         default:
           values['activity'] = '';
           break;
 
       }
-      values['activity'] = data['user']['status'];
+      //values['activity'] = data['user']['status'];
       user_row.values(values);
     })
 
@@ -399,7 +445,7 @@ input:focus {
             </div>
         <hr />
         <div class="text-center">
-              <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="force">Force Refresh</button><p></p>
+              <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="force">Refresh All</button><p></p>
               <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="historical-data" onclick="window.location.href='/historical-data'">Historical Data</button>
             </div>
 
@@ -459,7 +505,11 @@ input:focus {
                       <td class='participant_id'>{{ $w_mem->participant_id }}</td>
                       <td class='group_id'>WaitingRoom</td>
                       <td class='group_size'><span class='group_size_WaitingRoom'>{{ count($waitingRoomMembers) }}</span></td>
-                      <td class='activity'><span style='color:green'>active</span></td>
+                      @if($w_mem->status == 'Active')
+                        <td class='activity'><span style='color:green'>Active</span></td>
+                      @elseif($w_mem->status == 'Inactive')
+                        <td class='activity'><span style='color:red'>Inactive</span></td>
+                      @endif
                       <td class='group_role'>{{ $w_mem->group_role }}</td>
                     </tr>
                 @endforeach
@@ -474,7 +524,7 @@ input:focus {
                           @elseif($member->status == 'Inactive')
                             <td class='activity'><span style='color:red'>Inactive</span></td>
                           @else
-                            <td class='activity'><span style='color:yellow'>Idle</span></td>
+                            <td class='activity'><span style='color:#b0b02b'>Idle</span></td>
                           @endif
                           <td class='group_role'>{{ $member->group_role }}</td>
                         </tr>

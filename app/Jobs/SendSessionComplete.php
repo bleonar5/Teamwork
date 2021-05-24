@@ -41,11 +41,20 @@ class SendSessionComplete implements ShouldQueue
         $admin->max_sessions = null;
         $admin->save();
 
+        $lingerers = User::where('in_room',1)->where('id','!=',1)->get();
+        foreach($lingerers as $key => $user){
+            $user->in_room = 0;
+            $user->status = 'Inactive';
+            $user->save();
+        }
+
         $last_session = Session::orderBy('created_at','desc')->first();
         $these_sessions = Session::where('created_at',$last_session->created_at)->get();
         foreach($these_sessions as $key => $sesh){
-            $sesh->completed = 1;
+            $sesh->complete = 1;
             $sesh->save();
         }
+
+        event(new SessionComplete($admin));
     }
 }

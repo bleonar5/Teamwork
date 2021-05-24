@@ -13,8 +13,40 @@
   var group_id  = {{ $user->group_id }};
   var user_id = {{ $user->id }};
   var page_count;
+  var tmt;
+  var status = '{{ $user->status }}';
 
 $( document ).ready(function() {
+  tmt = setTimeout(function(){
+    status = 'Idle';
+    $.post('/status-change',{
+      _token: '{{ csrf_token() }}',
+      id: user_id,
+      status: 'Idle'
+    });
+  },10000);
+
+  $('#next').on('click',function(event){
+    clearTimeout(tmt);
+    if(status == 'Idle'){
+      status = 'Active'
+      $.post('/status-change',{
+        _token: '{{ csrf_token() }}',
+        id: user_id,
+        status: 'Active'
+      });
+    }
+    tmt = setTimeout(function(){
+      status = 'Idle';
+      $.post('/status-change',{
+        _token: '{{ csrf_token() }}',
+        id: user_id,
+        status: 'Idle'
+      });
+    },10000);
+  });
+
+
   page_count = 1;
 
   var itv = setInterval(function() {

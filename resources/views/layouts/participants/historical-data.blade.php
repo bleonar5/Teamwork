@@ -13,15 +13,26 @@ function convertTZ(date) {
 function clearFilter(){
   $('#start_date').val('');
   $('#end_date').val('');
+  $('#search_type').val('all');
   $('#search').val('');
-  adminTable.filter();
+  
+  adminTable.search();
+}
+
+function checkAll(){
+  $('input[type="checkbox"]').attr('checked',true);
+}
+
+function uncheckAll(){
+  $('input[type="checkbox"]').attr('checked',true);
 }
 
 function confirmPayment(){
-  adminTable.filter();
+  //adminTable.filter();
   session_ids = [];
   $('input:checked:enabled').each(function(){
     session_ids.push(parseInt($(this).attr('id').split('_')[1]));
+    $(this).attr('disabled',true);
   });
   
   $.post('/confirm-paid',{
@@ -34,7 +45,7 @@ var happened = false;
 
 $( document ).ready(function() {
   options = {
-          valueNames: ['participant_id','session','type','num_subsessions','total_sessions','group_ids','role','eligible','paid','notes']
+          valueNames: ['participant_id','session_id','session_time','type','num_subsessions','total_sessions','group_ids','role','eligible','paid','notes']
         }
   adminTable = new List('admin-table',options);
     adminTable.on('searchComplete',function(e){
@@ -107,9 +118,42 @@ $( document ).ready(function() {
     }
     
   });
+
+  $('.link').on('click',function(event) {
+    id = $(this).attr('id').split('_')[1];
+    notetext = $(`#notes_${id.toString()}`).text();
+    $('#note_text').val(notetext);
+    $('#ok-edit-note').attr('whichnote',id);
+    $('#edit_note').modal('toggle');
+    
+  });
+
+  $('#ok-edit-note').on('click',function(event){
+    console.log(`#notes_${$('#ok-edit-note').attr('whichnote')}`)
+    $(`#notes_${$('#ok-edit-note').attr('whichnote')}`).text($('#note_text').val());
+    $.post('/save-notes',{
+      _token:'{{ csrf_token() }}',
+      note:$('#note_text').val(),
+      id:$('#ok-edit-note').attr('whichnote')
+
+
+    })
+  });
       
+  Pusher.logToConsole = true;
 
-
+    var pusher = new Pusher('{{ config("app.PUSHER_APP_KEY") }}', {
+      cluster: 'us2'
+    });
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('session-changed', function(data){
+      if(data['session']['paid']){
+        $(`#paid_${data['session']['id']}`).attr('disabled',true).attr('checked',true);
+      }
+      if(data['session']['notes']){
+        $(`#notes_${data['session']['id']}`).text(data['session']['notes']);
+      }
+    });
 });
 
 </script>
@@ -209,6 +253,9 @@ input:focus {
                 <option value='group_ids'>
                   group_ids
                 </option>
+                <option value='session_id'>
+                  session_id
+                </option>
                 <option value='notes'>
                   notes
                 </option>
@@ -220,6 +267,8 @@ input:focus {
               <h5 style='display:inline-block;text-align:center; margin:auto'> to </h5>
               <input style='display:inline-block;text-align:center; margin:auto' type='datetime-local' id='end_date' name='end_date' />
               <button class='btn-primary btn' id='clearFilter' style='margin-left:10px;' onclick='clearFilter()'>Clear filter</button>
+              <button class='btn-primary btn' id='confirm_payment' style='margin-left:10px;' onclick='checkAll()'>Check All</button>
+              <button class='btn-primary btn' id='confirm_payment' style='margin-left:10px;' onclick='uncheckAll()'>Uncheck All</button>
               <button class='btn-primary btn' id='confirm_payment' style='margin-left:10px;' onclick='confirmPayment()'>Confirm pay</button>
           </div>
           <br />
@@ -228,28 +277,31 @@ input:focus {
             <table style='margin:auto'>
               <tr>
                   <th>
-                    <a class='sort' data-sort='participant_id' href='#'>participant id</a>
+                    <a class='sort' data-sort='participant_id' href='#'>pid</a>
                   </th>
                   <th>
-                    <a class='sort' data-sort='session' href='#'>session</a>
+                    <a class='sort' data-sort='session_id' href='#'>sesh</a>
+                  </th>
+                  <th>
+                    <a class='sort' data-sort='session_time' href='#'>sesh time</a>
                   </th>
                   <th>
                     <a class='sort' data-sort='type' href='#'>type</a>
                   </th>
                   <th>
-                    <a class='sort' data-sort='num_subsessions' href='#'># subsessions</a>
+                    <a class='sort' data-sort='num_subsessions' href='#'># subs</a>
                   </th>
                   <th>
-                    <a class='sort' data-sort='total_sessions' href='#'>total sessions</a>
+                    <a class='sort' data-sort='total_sessions' href='#'># seshes</a>
                   </th>
                   <th>
-                    <a class='sort' data-sort='group_ids' href='#'>group ids</a>
+                    <a class='sort' data-sort='group_ids' href='#'>groups</a>
                   </th>
                   <th>
                     <a class='sort' data-sort='role' href='#'>role</a>
                   </th>
                   <th>
-                    <a class='sort' data-sort='eligible' href='#'>eligible?</a>
+                    <a class='sort' data-sort='eligible' href='#'>elig?</a>
                   </th>
                   <th>
                     <a class='sort' data-sort='paid' href='#'>paid?</a>
@@ -264,7 +316,8 @@ input:focus {
                 @foreach($userSessions as $key => $session)
                     <tr id='{{ $session->id }}'>
                       <td class='participant_id'>{{ $session->participant_id }}</td>
-                      <td class='session'>{{ $session->created_at }}</td>
+                      <td class='session_id'>{{ $session->session_id }}</td>
+                      <td class='session_time'>{{ $session->created_at }}</td>
                       <td class='type'>{{ $session->type }}</td>
                       <td class='num_subsessions'>{{ $session->num_subsessions }}</td>
                       <td class='total_sessions'>{{ $session->total_sessions }}</td>
@@ -284,7 +337,7 @@ input:focus {
                           <input type='checkbox' class='paid_box' name='paid_{{ $session->id }}' id='paid_{{ $session->id }}' >
                         @endif
                       </td>
-                      <td class='notes'>{{ $session->notes }}</td>
+                      <td class='notes'><span style='display:none' id='notes_{{ $session->id }}'>{{ $session->notes }}</span><a href='#' id='link_{{ $session->id }}' class='link'>Edit</a></td>
                     </tr>
                 @endforeach
                 
@@ -299,4 +352,23 @@ input:focus {
       
     </div>
 </div>
+
+<div class="modal fade" id="edit_note">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title text-center">
+          Edit Note 
+          </h4>
+          
+        </div>
+        <div class="modal-body text-center">
+          <textarea class='form-control' id='note_text' name='note'></textarea> 
+          <p></p>
+          <button whichnote='' class="btn btn-lg btn-primary pull-right" id="ok-edit-note" data-dismiss="modal" type="button">Ok</button>
+
+        </div>
+      </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+  </div><!-- modal -->
 @stop

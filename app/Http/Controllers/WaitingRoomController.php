@@ -12,6 +12,9 @@ use Teamwork\Jobs\SendTaskEvent;
 use Teamwork\Jobs\AssignGroups;
 use Teamwork\Jobs\SessionComplete;
 use Teamwork\Events\EndSubsession;
+use Teamwork\Events\SessionBegun;
+use Teamwork\Events\SessionChanged;
+use Teamwork\Events\StatusChanged;
 use Teamwork\Events\ForceRefresh;
 use Teamwork\Events\PlayerJoinedWaitingRoom;
 use Teamwork\Events\PlayerLeftWaitingRoom;
@@ -93,8 +96,16 @@ class WaitingRoomController extends Controller
         $user = User::find($request->user_id);
         $user->status = 'Idle';
         $user->save();
+
+        event(new StatusChanged($user));
         return '200';
 
+    }
+
+    public function testSession(Request $request){
+        $last_session = Session::orderBy('created_at','desc')->first();
+        $these_sessions = Session::where('created_at',$last_session->created_at)->get();
+        return $these_sessions;
     }
 
     public function beginSession(Request $request){
@@ -114,8 +125,11 @@ class WaitingRoomController extends Controller
         for($i=0; $i<$request->num_sessions; $i++){
             (new AssignGroups(''))->dispatch('')->delay(\Carbon\Carbon::now()->addSeconds($session_length * $i));
         }
-        (new SessionComplete(''))->dispatch('')->delay(\Carbon\Carbon::now()->addSeconds($session_length * $request->num_sessions));
+        //(new SessionComplete(''))->dispatch('')->delay(\Carbon\Carbon::now()->addSeconds($session_length * $request->num_sessions));
         
+
+        event(new SessionBegun($user));
+
         return '200';
 
 
@@ -308,6 +322,14 @@ class WaitingRoomController extends Controller
         return '200';
     }
 
+    public function statusChange(Request $request){
+        $user = User::find($request->id);
+        $user->status = $request->status;
+        $user->save();
+        event(new StatusChanged($user));
+        return '200';
+    }
+
     public function getWaitingRoom(Request $request){
 
 
@@ -346,7 +368,10 @@ class WaitingRoomController extends Controller
         $this_user->signature_date = \Carbon\Carbon::now();
 
         $this_user->in_room = $task;
+        $this_user->status = 'Active';
         $this_user->save();
+
+        event(new StatusChanged($this_user));
 
         $admin = User::where('id',1)->first();
         if($admin->current_session){
@@ -457,6 +482,14 @@ class WaitingRoomController extends Controller
             $gt->save();
         }
         return redirect('/admin-page');
+    }
+
+    public function saveNotes(Request $request){
+        $sesh = Session::find($request->id);
+        $sesh->notes = $request->note;
+        $sesh->save();
+        event(new SessionChanged($sesh));
+        return '200';
     }
 
     public function getMemoryWaitingRoom(Request $request){
@@ -570,15 +603,17 @@ class WaitingRoomController extends Controller
 
         $this_user->touch();
 
-        $room_users = User::where('in_room',1)->where('id','!=',1)->get();
+        $room_users = User::where('in_room',1)->where('status','Active')->where('id','!=',1)->get();
 
         foreach($room_users as $key => $room_user) {
 
             $diff = $room_user->updated_at->diffInSeconds(\Carbon\Carbon::now());
             if($diff > 5){
-                $room_user->in_room = 0;
+                //$room_user->in_room = 0;
+                $room_user->status = 'Inactive';
                 $room_user->save();
-                event(new PlayerLeftWaitingRoom($room_user->participant_id));
+                event(new StatusChanged($room_user));
+                //event(new PlayerLeftWaitingRoom($room_user->participant_id));
             }
         }
 
@@ -615,6 +650,7 @@ class WaitingRoomController extends Controller
             $sesh = Session::find($sid);
             $sesh->paid = 1;
             $sesh->save();
+            event(new SessionChanged($sesh));
         }
         return '200';
     }
