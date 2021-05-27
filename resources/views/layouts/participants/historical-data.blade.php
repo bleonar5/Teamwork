@@ -177,7 +177,7 @@ input:focus {
   border-color:#aaa;
 }
 .sort {
-  padding:8px 30px;
+  padding:4px 15px;
   border-radius: 6px;
   border:none;
   display:inline-block;
@@ -251,13 +251,13 @@ input:focus {
                   All Columns
                 </option>
                 <option value='participant_id'>
-                  participant_id
+                  p_id
                 </option>
                 <option value='group_ids'>
-                  group_ids
+                  g_ids
                 </option>
                 <option value='session_id'>
-                  session_id
+                  s_id
                 </option>
                 <option value='notes'>
                   notes
@@ -280,13 +280,13 @@ input:focus {
             <table style='margin:auto'>
               <tr>
                   <th>
-                    <a class='sort' data-sort='participant_id' href='#'>pid</a>
+                    <a class='sort' data-sort='participant_id' href='#'>p_id</a>
                   </th>
                   <th>
-                    <a class='sort' data-sort='session_id' href='#'>sesh</a>
+                    <a class='sort' data-sort='session_id' href='#'>s_id</a>
                   </th>
                   <th>
-                    <a class='sort' data-sort='session_time' href='#'>sesh time</a>
+                    <a class='sort' data-sort='session_time' href='#'>s_time</a>
                   </th>
                   <th>
                     <a class='sort' data-sort='type' href='#'>type</a>
@@ -298,7 +298,7 @@ input:focus {
                     <a class='sort' data-sort='total_sessions' href='#'># seshes</a>
                   </th>
                   <th>
-                    <a class='sort' data-sort='group_ids' href='#'>groups</a>
+                    <a class='sort' data-sort='group_ids' href='#'>g_ids</a>
                   </th>
                   <th>
                     <a class='sort' data-sort='role' href='#'>role</a>

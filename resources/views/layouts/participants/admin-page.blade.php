@@ -326,6 +326,7 @@ $( document ).ready(function() {
       switch(data['user']['status']){
         case 'Active':
           values['activity'] = `<td class='activity'><span style='color:green'>Active</span></td>`;
+          
           break;
         case 'Inactive':
           values['activity'] = `<td class='activity'><span style='color:red'>Inactive</span></td>`;
@@ -376,7 +377,7 @@ input:focus {
   border-color:#aaa;
 }
 .sort {
-  padding:8px 30px;
+  padding:4px 15px;
   border-radius: 6px;
   border:none;
   display:inline-block;
@@ -494,19 +495,19 @@ input:focus {
                   All Columns
                 </option>
                 <option value='participant_id'>
-                  participant_id
+                  p_id
                 </option>
                 <option value='group_id'>
-                  group_id
+                  g_id
                 </option>
                 <option value='group_size'>
-                  group_size
+                  g_size
                 </option>
                 <option value='activity'>
-                  activity
+                  status
                 </option>
                 <option value='group_role'>
-                  group_role
+                  g_role
                 </option>
               </select>
           </div>
@@ -515,19 +516,19 @@ input:focus {
             <table style='margin:auto'>
               <tr>
                   <th>
-                    <a class='sort' data-sort='participant_id' href='#'>participant_id</a>
+                    <a class='sort' data-sort='participant_id' href='#'>p_id</a>
                   </th>
                   <th>
-                    <a class='sort' data-sort='group_id' href='#'>group_id</a>
+                    <a class='sort' data-sort='group_id' href='#'>g_id</a>
                   </th>
                   <th>
-                    <a class='sort' data-sort='group_size' href='#'>group_size</a>
+                    <a class='sort' data-sort='group_size' href='#'>g_size</a>
                   </th>
                   <th>
-                    <a class='sort' data-sort='activity' href='#'>activity</a>
+                    <a class='sort' data-sort='activity' href='#'>status</a>
                   </th>
                   <th>
-                    <a class='sort' data-sort='group_role' href='#'>group_role</a>
+                    <a class='sort' data-sort='group_role' href='#'>g_role</a>
                   </th>
                   <th>
                   </th>
