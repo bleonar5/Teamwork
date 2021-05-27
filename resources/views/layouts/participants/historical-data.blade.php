@@ -48,7 +48,7 @@ $( document ).ready(function() {
         }
   adminTable = new List('admin-table',options);
     adminTable.on('searchComplete',function(e){
-          if($(`#search_type`).val() != 'All Columns' && !happened){
+          if($(`#search_type`).val() != 'all' && !happened){
              happened = true;
               adminTable.search($('#search').val(),[$(`#search_type`).val()]);
              
@@ -58,7 +58,6 @@ $( document ).ready(function() {
             }
           }
         });
-
   $('#start_date').on('change',function(event){
 
     if ($('#start_date').val()){
