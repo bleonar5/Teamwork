@@ -16,6 +16,8 @@ use Teamwork\Events\SessionBegun;
 use Teamwork\Events\SessionChanged;
 use Teamwork\Events\StatusChanged;
 use Teamwork\Events\ForceRefresh;
+use Teamwork\Events\ForceRefreshUser;
+use Teamwork\Events\ForceRefreshGroup;
 use Teamwork\Events\PlayerJoinedWaitingRoom;
 use Teamwork\Events\PlayerLeftWaitingRoom;
 use Teamwork\Events\StudyOpened;
@@ -92,9 +94,43 @@ class WaitingRoomController extends Controller
         return '200';
     }
 
+    public function forceRefreshUser($id, Request $request){
+        $user_id = $id;
+
+        $this_user = User::where('participant_id',$user_id)->first();
+
+        event(new ForceRefreshUser($this_user));
+        return '200';
+    }
+
+    public function forceRefreshGroup($id, Request $request){
+        $user_id = $id;
+
+        $this_user = User::where('participant_id',$user_id)->first();
+
+        $group = User::where('group_id',$this_user->group_id)->get();
+
+        foreach($group as $key => $g){
+            event(new ForceRefreshUser($g));
+        }
+
+        
+        return '200';
+    }
+
     public function setIdle(Request $request){
         $user = User::find($request->user_id);
         $user->status = 'Idle';
+        $user->save();
+
+        event(new StatusChanged($user));
+        return '200';
+
+    }
+
+    public function setActive(Request $request){
+        $user = User::find($request->user_id);
+        $user->status = 'Active';
         $user->save();
 
         event(new StatusChanged($user));

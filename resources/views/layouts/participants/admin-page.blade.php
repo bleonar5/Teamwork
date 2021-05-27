@@ -17,7 +17,7 @@ var session_count = null;
 var happened = false;
 var session_begun = false;
 var subsession_length = 120;
-var current_session = parseInt('{{ $user->current_sessions }}');
+var current_session = parseInt('{{ $user->current_session }}');
 var max_sessions = parseInt('{{ $user->max_sessions }}');
 var itv;
 $( document ).ready(function() {
@@ -29,6 +29,17 @@ $( document ).ready(function() {
                       <td class='group_size'><span class='group_size_${values.group_id}'></span></td>
                       <td class='activity'><span class='green'>${values.active}</span></td>
                       <td class='group_role'>${values.group_role}</td>
+                      <td>
+                            <div class="dropdown">
+                              <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Functions
+                              </button>
+                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" onclick="$.get('/force-refresh-user/${values.participant_id}')" href="#">Refresh User</a>
+                                <a class="dropdown-item" onclick="$.get('/force-refresh-group/${values.participant_id}')" href="#">Refresh Group</a>
+                              </div>
+                            </div>
+                          </td>
                     </tr>`;
           } ,
           valueNames: ['participant_id','group_id','group_size','activity','group_role']
@@ -50,7 +61,7 @@ $( document ).ready(function() {
         });
       
 
-  if(localStorage.getItem('num_sessions')){
+  if(localStorage.getItem('num_sessions') && current_session){
     $('#num_sessions').val(localStorage.getItem('num_sessions'));
   }
   console.log('{{ $groupMembers }}');
@@ -223,7 +234,9 @@ $( document ).ready(function() {
         group_role:data['user']['group_role']
 
       });
-      $('.group_size_WaitingRoom').text($('.group_size_WaitingRoom').length);
+      //$('.group_size_WaitingRoom').text($('.group_size_WaitingRoom').length);
+      group_num = $("tr:contains('WaitingRoom'):contains('Active')").length;
+      $('.group_size_WaitingRoom').text(group_num);
       //adminTable.reIndex();
 
 
@@ -232,7 +245,9 @@ $( document ).ready(function() {
     channel.bind('player-left-room', function(data) {
         roomTotal -= 1;
         adminTable.remove('participant_id',data['participant_id']);
-        $('.group_size_WaitingRoom').text($('.group_size_WaitingRoom').length);
+        group_num = $("tr:contains('WaitingRoom'):contains('Active')").length;
+        $('.group_size_WaitingRoom').text(group_num);
+        //$('.group_size_WaitingRoom').text($('.group_size_WaitingRoom').length);
         //adminTable.reIndex();
       });
 
@@ -282,7 +297,9 @@ $( document ).ready(function() {
           group_role:data['user']['group_role']
 
         });
-        $(`.group_size_${data['user']['group_id']}`).text($(`.group_size_${data['user']['group_id']}`).length);
+        //$(`.group_size_${data['user']['group_id']}`).text($(`.group_size_${data['user']['group_id']}`).length);
+        group_num = $(`tr:contains('${data['user']['group_id']}'):contains('Active')`).length;
+        $(`.group_size_${data['user']['group_id']}`).text(group_num);
         //adminTable.reIndex();
 
     });
@@ -323,6 +340,15 @@ $( document ).ready(function() {
       }
       //values['activity'] = data['user']['status'];
       user_row.values(values);
+      if(data['user']['in_room']){
+            console.log('this')
+            group_num = $("tr:contains('WaitingRoom'):contains('Active')").length;
+            $('.group_size_WaitingRoom').text(group_num);
+          }
+          else{
+            group_num = $(`tr:contains('${data['user']['group_id']}'):contains('Active')`).length;
+            $(`.group_size_${data['user']['group_id']}`).text(group_num);
+          }
     })
 
 
@@ -407,8 +433,13 @@ input:focus {
       </div>
   </div>
     <div class="row justify-content-center vertical-center">
-      <div class="col-md-3 p-4">
 
+      <div class="col-md-3 p-4">
+        <div class="text-center">
+              <button style='display:inline-block' class="btn btn-lg btn-primary"  id="home" onclick='window.location.href="/admin-menu"'>Admin Home</button>
+              <button style='display:inline-block' class="btn btn-lg btn-primary" value="1" id="historical-data" onclick="window.location.href='/historical-data'">Historical Data</button>
+            </div>
+            <hr />
         <div class="text-center">
           <h2>Study Controls:</h3>
               @if($in_session)
@@ -446,7 +477,7 @@ input:focus {
         <hr />
         <div class="text-center">
               <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="force">Refresh All</button><p></p>
-              <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="historical-data" onclick="window.location.href='/historical-data'">Historical Data</button>
+              
             </div>
 
          
@@ -498,27 +529,41 @@ input:focus {
                   <th>
                     <a class='sort' data-sort='group_role' href='#'>group_role</a>
                   </th>
+                  <th>
+                  </th>
                 </tr>
               <tbody class='list'>
                 @foreach($waitingRoomMembers as $key => $w_mem)
                     <tr id='{{ $w_mem->participant_id }}'>
                       <td class='participant_id'>{{ $w_mem->participant_id }}</td>
                       <td class='group_id'>WaitingRoom</td>
-                      <td class='group_size'><span class='group_size_WaitingRoom'>{{ count($waitingRoomMembers) }}</span></td>
+                      <td class='group_size'><span class='group_size_WaitingRoom'>{{ \Teamwork\User::where('in_room',1)->where('status','Active')->count() }}</span></td>
                       @if($w_mem->status == 'Active')
                         <td class='activity'><span style='color:green'>Active</span></td>
                       @elseif($w_mem->status == 'Inactive')
                         <td class='activity'><span style='color:red'>Inactive</span></td>
                       @endif
                       <td class='group_role'>{{ $w_mem->group_role }}</td>
+                      <td>
+                        <div class="dropdown">
+                          <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Functions
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" onclick="$.get(`/force-refresh-user/{{ $w_mem->participant_id }}`)" href="#">Refresh User</a>
+                            <a class="dropdown-item" onclick="$.get(`/force-refresh-group/{{ $w_mem->participant_id }}`)" href="#">Refresh Group</a>
+                          </div>
+                        </div>
+                      </td>
                     </tr>
+
                 @endforeach
                 @foreach($groupMembers as $group_id => $group)
                     @foreach($group as $key => $member)
                         <tr id='{{ $member->participant_id }}'>
                           <td class='participant_id'>{{ $member->participant_id }}</td>
                           <td class='group_id'>{{ $member->group_id }}</td>
-                          <td class='group_size'><span class='group_size_{{ $member->group_id }}'>{{ count($group) }}</span></td>
+                          <td class='group_size'><span class='group_size_{{ $member->group_id }}'>{{ \Teamwork\User::where('group_id',$member->group_id)->where('status','Active')->count() }}</span></td>
                           @if($member->status == 'Active')
                             <td class='activity'><span style='color:green'>Active</span></td>
                           @elseif($member->status == 'Inactive')
@@ -527,6 +572,17 @@ input:focus {
                             <td class='activity'><span style='color:#b0b02b'>Idle</span></td>
                           @endif
                           <td class='group_role'>{{ $member->group_role }}</td>
+                          <td>
+                            <div class="dropdown">
+                              <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Functions
+                              </button>
+                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" onclick="$.get(`/force-refresh-user/{{ $member->participant_id }}`)" href="#">Refresh User</a>
+                                <a class="dropdown-item" onclick="$.get(`/force-refresh-group/{{ $member->participant_id }}`)" href="#">Refresh Group</a>
+                              </div>
+                            </div>
+                          </td>
                         </tr>
                     @endforeach
                 @endforeach

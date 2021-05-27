@@ -96,6 +96,19 @@ Route::get('/force-refresh', [
 	'roles' => ['Researcher'] // Only a logged in user can view this page
 ]);
 
+Route::get('/force-refresh-user/{id}', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@forceRefreshUser',
+	'roles' => ['Researcher'] // Only a logged in user can view this page
+]);
+
+Route::get('/force-refresh-group/{id}', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@forceRefreshGroup',
+	'roles' => ['Researcher'] // Only a logged in user can view this page
+]);
+
+
 Route::post('/begin-session', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'WaitingRoomController@beginSession',
@@ -320,6 +333,8 @@ Route::get('/choose-reporter/{choice}', [
 	'uses' => 'IndividualTaskController@setReporter',
 	'roles' => ['Participant'] // Only a logged in user can view this page
 ]);
+
+
 
 Route::get('/teammates', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
@@ -674,6 +689,13 @@ Route::post('/set-idle', [
 	'uses' => 'WaitingRoomController@setIdle',
 	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
 ]);
+
+Route::post('/set-active', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'WaitingRoomController@setActive',
+	'roles' => ['Group', 'Participant'] // Only a logged in user can view this page
+]);
+
 
 Route::get('/get-prob-val', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified

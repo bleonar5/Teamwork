@@ -329,11 +329,8 @@ $( document ).ready(function() {
 
     channel.bind('end-subsession', function(data){
       if(data['user']['id'] == user_id){
-        alert('The next round is beginning soon. You will be sent to the waiting room to be matched with a new team.')
-        setTimeout(function(){
-            $('#cryptography-end-form').submit();
-            
-        },5000);
+        //alert('The next round is beginning soon. You will be sent to the waiting room to be matched with a new team.')
+        $('#cryptography-end-form').submit();
 
       }
       
@@ -342,6 +339,20 @@ $( document ).ready(function() {
     channel.bind('force-refresh', function(data) {
       //console.log('YEAHH');
       if(data['group_task']['group_id'].toString() === '{{ $user->group_id }}'){
+        alert('In a few seconds, your page will refresh. Your progress in the task will be preserved.');
+        setTimeout(function(){
+            window.location.reload();
+        },5000);
+      }
+        
+        
+
+
+        //$('#waitingList').append("<li style='text-align:left' id='"+data['user']['id'].toString()+"'>"+data['user']['id']+" : "+data['user']['group_role']+"</li>");
+    });
+    channel.bind('force-refresh-user', function(data) {
+      //console.log('YEAHH');
+      if(data['user']['id'].toString() === '{{ $user->id }}'){
         alert('In a few seconds, your page will refresh. Your progress in the task will be preserved.');
         setTimeout(function(){
             window.location.reload();
@@ -365,6 +376,10 @@ $( document ).ready(function() {
   });
 
   $("#submit-equation").on("click", function(event) {
+    $.post('/set-active', {
+      _token: "{{ csrf_token() }}",
+      user_id:'{{ $user->id }}'
+    });
       event.preventDefault();
       $("#alert").hide();
 
@@ -425,6 +440,10 @@ $( document ).ready(function() {
   });
 
   $("#submit-hypothesis").on("click", function(event){
+    $.post('/set-active', {
+      _token: "{{ csrf_token() }}",
+      user_id:'{{ $user->id }}'
+    });
       event.preventDefault();
       if ($("#hypothesis-left").val() === '---' || $("#hypothesis-right").val() === '---'){
         $('#invalid-hypothesis').modal('toggle');
@@ -454,6 +473,10 @@ $( document ).ready(function() {
   });
 
   $("#submit-mapping").on("click", function(event){
+    $.post('/set-active', {
+      _token: "{{ csrf_token() }}",
+      user_id:'{{ $user->id }}'
+    });
       event.preventDefault();
       var result = true;
       var guessStr = '';

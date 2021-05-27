@@ -24,7 +24,7 @@ function checkAll(){
 }
 
 function uncheckAll(){
-  $('input[type="checkbox"]').attr('checked',true);
+  $('input[type="checkbox"]').attr('checked',false);
 }
 
 function confirmPayment(){
@@ -32,7 +32,6 @@ function confirmPayment(){
   session_ids = [];
   $('input:checked:enabled').each(function(){
     session_ids.push(parseInt($(this).attr('id').split('_')[1]));
-    $(this).attr('disabled',true);
   });
   
   $.post('/confirm-paid',{
@@ -148,7 +147,7 @@ $( document ).ready(function() {
     var channel = pusher.subscribe('my-channel');
     channel.bind('session-changed', function(data){
       if(data['session']['paid']){
-        $(`#paid_${data['session']['id']}`).attr('disabled',true).attr('checked',true);
+        $(`#paid_${data['session']['id']}`).attr('checked',true);
       }
       if(data['session']['notes']){
         $(`#notes_${data['session']['id']}`).text(data['session']['notes']);
@@ -237,8 +236,12 @@ input:focus {
     <div class="row justify-content-center vertical-center">
       <div class='col-md-12' id='admin-table' style='border:1px solid black;padding:15px'>
         <div class='text-center'>
+          <div>
           <h3>Historical Data</h3>
-          <button class='btn-primary btn' onclick='window.location.href="/admin-page"' >Session Data</button>
+          <div>
+            <button class='btn-primary btn' onclick='window.location.href="/admin-menu"' >Admin Home</button>
+            <button class='btn-primary btn' onclick='window.location.href="/admin-page"' >Session Data</button>
+          </div>
           <hr>
           <div class='col-md-5' style='display:inline-block; text-align:center; margin:auto'>
                 <h5 style='display:inline-block;text-align:center; margin:auto'>Search: </h5>
@@ -332,7 +335,7 @@ input:focus {
                       </td>
                       <td class='paid'>
                         @if($session->paid)
-                          <input type='checkbox' class='paid_box' name='paid_{{ $session->id }}' id='paid_{{ $session->id }}' checked disabled>
+                          <input type='checkbox' class='paid_box' name='paid_{{ $session->id }}' id='paid_{{ $session->id }}' checked>
                         @else
                           <input type='checkbox' class='paid_box' name='paid_{{ $session->id }}' id='paid_{{ $session->id }}' >
                         @endif

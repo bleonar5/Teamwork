@@ -95,6 +95,22 @@ $( document ).ready(function() {
         //$('#waitingList').append("<li style='text-align:left' id='"+data['user']['id'].toString()+"'>"+data['user']['id']+" : "+data['user']['group_role']+"</li>");
     });
 
+    channel.bind('force-refresh-user', function(data) {
+      //console.log(data['group_task']['group_id']);
+      //console.log('{{ $user->group_id }}');
+      if(data['user']['id'].toString() === '{{ $user->id }}'){
+        alert('In a few seconds, your page will refresh. Your progress in the task will be preserved.');
+        setTimeout(function(){
+            window.location.reload();
+        },5000);
+      }
+        
+        
+
+
+        //$('#waitingList').append("<li style='text-align:left' id='"+data['user']['id'].toString()+"'>"+data['user']['id']+" : "+data['user']['group_role']+"</li>");
+    });
+
     channel.bind('clear-storage', function(data){
       console.log('freedom!');
       localStorage.clear();
