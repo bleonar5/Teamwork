@@ -242,7 +242,7 @@ input:focus {
             <button class='btn-primary btn' onclick='window.location.href="/admin-page"' >Session Data</button>
           </div>
           <hr>
-          <div class='col-md-5' style='display:inline-block; text-align:center; margin:auto'>
+          <div class='col-md-12' style='display:inline-block; text-align:center; margin:auto'>
                 <h5 style='display:inline-block;text-align:center; margin:auto'>Search: </h5>
               <input class='search' id='search' style='display:inline-block;text-align:center; margin:auto'/>
               <select class='form-control' id='search_type' style='display:inline-block;text-align:center; margin:auto;width:auto'>
@@ -263,7 +263,7 @@ input:focus {
                 </option>
               </select>
           </div><p></p>
-          <div class='col-md-8'style='display:inline-block; text-align:center; margin:auto'>
+          <div class='col-md-12'style='display:inline-block; text-align:center; margin:auto'>
               <h5 style='display:inline-block;text-align:center; margin:auto'>Date Range: </h5>
               <input style='display:inline-block;text-align:center; margin:auto' type='datetime-local' id='start_date' name='start_date' />
               <h5 style='display:inline-block;text-align:center; margin:auto'> to </h5>
@@ -319,7 +319,7 @@ input:focus {
                     <tr id='{{ $session->id }}'>
                       <td class='participant_id'>{{ $session->participant_id }}</td>
                       <td class='session_id'>{{ $session->session_id }}</td>
-                      <td class='session_time'>{{ $session->created_at }}</td>
+                      <td class='session_time'>{{ $session->created_at->setTimezone('EST') }}</td>
                       <td class='type'>{{ $session->type }}</td>
                       <td class='num_subsessions'>{{ $session->num_subsessions }}</td>
                       <td class='total_sessions'>{{ $session->total_sessions }}</td>
@@ -339,7 +339,13 @@ input:focus {
                           <input type='checkbox' class='paid_box' name='paid_{{ $session->id }}' id='paid_{{ $session->id }}' >
                         @endif
                       </td>
-                      <td class='notes'><span style='display:none' id='notes_{{ $session->id }}'>{{ $session->notes }}</span><a href='#' id='link_{{ $session->id }}' class='link'>Edit</a></td>
+                      <td class='notes'><span style='display:none' id='notes_{{ $session->id }}'>{{ $session->notes }}</span><a href='#' style="max-width:150px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id='link_{{ $session->id }}' class='link'>
+                        @if($session->notes)
+                          {{ $session->notes }}
+                        @else
+                          Edit
+                        @endif
+                      </a></td>
                     </tr>
                 @endforeach
                 

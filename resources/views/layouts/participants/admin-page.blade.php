@@ -478,6 +478,7 @@ input:focus {
         <hr />
         <div class="text-center">
               <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="force">Refresh All</button><p></p>
+              <button style='background-color:red' class="btn btn-lg btn-primary" onclick='window.location.href="/clear-room"' value="1" id="clear">Clear Room / End Session</button><p></p>
               
             </div>
 

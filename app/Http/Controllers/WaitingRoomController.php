@@ -517,6 +517,12 @@ class WaitingRoomController extends Controller
             $gt->completed = 1;
             $gt->save();
         }
+        $waiters = User::where('in_room',1)->where('id','!=',1)->get();
+        foreach($waiters as $key => $w){
+            $w->in_room = 0;
+            $w->status = 'Inactive';
+            $w->save();
+        }
         return redirect('/admin-page');
     }
 
