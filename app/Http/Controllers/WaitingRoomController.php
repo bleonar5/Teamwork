@@ -679,7 +679,7 @@ class WaitingRoomController extends Controller
     }
 
     public function historicalData(Request $request){
-        $userSessions = Session::where('complete',1)->get();
+        $userSessions = Session::get();
 
 
         return view('layouts.participants.historical-data')
