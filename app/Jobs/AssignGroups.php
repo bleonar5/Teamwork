@@ -156,22 +156,95 @@ class AssignGroups implements ShouldQueue
                     $count += 1;
                 }
                 else{
-                	$leader_session = Session::where('participant_id',$leader->participant_id)->orderBy('created_at','desc')->first();
-                	$leader_session->num_subsessions = $leader_session->num_subsessions + 1;
-                	$leader_session->group_ids = $leader_session->group_ids.','.$leader->group_id;
-                	$leader_session->save();
+                    $group_session = Session::whereIn('participant_id',array($leader->participant_id,$follower1->participant_id,$follower2->participant_id))->orderBy('created_at','desc')->first();
+                	$leader_session = Session::where('participant_id',$leader->participant_id)->orderBy('created_at','desc')->where('session_id',$group_session->session_id)->first();
+                    if(!$leader_session){
+                        $leader_session = new Session;
+                        $leader_session->participant_id = $leader->participant_id;
+                        $leader_session->type = $task_name;
+                        $leader_session->num_subsessions = 1;
+                        $leader_session->total_sessions = Session::where('participant_id',$leader->participant_id)->count() + 1;
+                        $leader_session->group_ids = (String) $leader->group_id;
+                        $leader_session->group_role = $leader->group_role;
+                        $leader_session->created_at = $created_at;
+                        $leader_session->session_id = $group_session->session_id;
+                        $leader_session->save(['timestamps' => 'false']);
 
-                	$follower1_session = Session::where('participant_id',$follower1->participant_id)->orderBy('created_at','desc')->first();
-                	$follower1_session->num_subsessions = $follower1_session->num_subsessions + 1;
-                	$follower1_session->group_ids = $follower1_session->group_ids.','.$follower2->group_id;
-                	$follower1_session->save();
 
-                	$follower2_session = Session::where('participant_id',$follower2->participant_id)->orderBy('created_at','desc')->first();
-                	$follower2_session->num_subsessions = $follower2_session->num_subsessions + 1;
-                	$follower2_session->group_ids = $follower2_session->group_ids.','.$follower2->group_id;
-                	$follower2_session->save();
+                    }
+                	else{
+                        $leader_session->num_subsessions = $leader_session->num_subsessions + 1;
+                	   $leader_session->group_ids = $leader_session->group_ids.','.$leader->group_id;
+                	   $leader_session->save();
+                    }
+
+                	$follower1_session = Session::where('participant_id',$follower1->participant_id)->orderBy('created_at','desc')->where('session_id',$group_session->session_id)->first();
+                    if(!$follower1_session){
+                        $follower1_session = new Session;
+                        $follower1_session->participant_id = $follower1->participant_id;
+                        $follower1_session->type = $task_name;
+                        $follower1_session->num_subsessions = 1;
+                        $follower1_session->total_sessions = Session::where('participant_id',$follower1->participant_id)->count() + 1;
+                        $follower1_session->group_ids = (String) $follower1->group_id;
+                        $follower1_session->group_role = $follower1->group_role;
+                        $follower1_session->created_at = $created_at;
+                        $follower1_session->session_id = $group_session->session_id;
+                        $follower1_session->save(['timestamps' => 'false']);
+                        
+
+                    }
+                    else{
+                        $follower1_session->num_subsessions = $follower1_session->num_subsessions + 1;
+                        $follower1_session->group_ids = $follower1_session->group_ids.','.$follower1->group_id;
+                        $follower1_session->save();
+                    }
+                	
+
+                	$follower2_session = Session::where('participant_id',$follower2->participant_id)->orderBy('created_at','desc')->where('session_id',$group_session->session_id)->first();
+                    if(!$follower2_session){
+                        $follower2_session = new Session;
+                        $follower2_session->participant_id = $follower2->participant_id;
+                        $follower2_session->type = $task_name;
+                        $follower2_session->num_subsessions = 1;
+                        $follower2_session->total_sessions = Session::where('participant_id',$follower2->participant_id)->count() + 1;
+                        $follower2_session->group_ids = (String) $follower2->group_id;
+                        $follower2_session->group_role = $follower2->group_role;
+                        $follower2_session->created_at = $created_at;
+                        $follower2_session->session_id = $group_session->session_id;
+                        $follower2_session->save(['timestamps' => 'false']);
+                        
+
+                    }
+                    else{
+                        $follower2_session->num_subsessions = $follower2_session->num_subsessions + 1;
+                        $follower2_session->group_ids = $follower2_session->group_ids.','.$follower2->group_id;
+                        $follower2_session->save();
+                    }
+                	
                 }
-                
+                /*
+                if(!$leader_session->session_id){
+                    if($follower1->session_id)
+                        $leader_session->session_id = $follower1_session->session_id;
+                    if($follower2->session_id)
+                        $leader_session->session_id = $follower2_session->session_id;
+                    $leader_session->save();
+                }
+                if(!$follower1_session->session_id){
+                    if($leader->session_id)
+                        $follower1_session->session_id = $leader_session->session_id;
+                    if($follower2->session_id)
+                        $follower1_session->session_id = $follower2_session->session_id;
+                    $follower1_session->save();
+                }
+                if(!$follower2_session->session_id){
+                    if($leader->session_id)
+                        $follower2_session->session_id = $leader_session->session_id;
+                    if($follower1->session_id)
+                        $follower2_session->session_id = $follower1_session->session_id;
+                    $follower2_session->save();
+                }
+                */
 
                 $session_start = \Teamwork\Time::where('type','session')->orderBy('created_at','desc')->first();
 

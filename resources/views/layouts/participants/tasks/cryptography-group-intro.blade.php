@@ -36,15 +36,10 @@ $( document ).ready(function() {
         status: 'Active'
       });
     }
-    tmt = setTimeout(function(){
-      status = 'Idle';
-      $.post('/status-change',{
-        _token: '{{ csrf_token() }}',
-        id: user_id,
-        status: 'Idle'
-      });
-    },10000);
+    
   });
+
+
 
 
   page_count = 1;
@@ -117,7 +112,16 @@ $( document ).ready(function() {
       window.location.href='/participant-login';
     });
     channel.bind('all-ready', function(data) {
+
       if(data['user']['group_id'] == group_id){
+        tmt = setTimeout(function(){
+          status = 'Idle';
+          $.post('/status-change',{
+            _token: '{{ csrf_token() }}',
+            id: user_id,
+            status: 'Idle'
+          });
+        },10000);
         $('#next').attr('disabled',false);
         $("#inst_" + page_count).hide();
         page_count += 1;

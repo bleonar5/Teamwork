@@ -71,7 +71,7 @@ $( document ).ready(function() {
     $('#begin').attr('disabled',true);
       time_remaining = parseInt('{{ $time_remaining }}');
       session_count = current_session;
-      setInterval(function(){
+      itv = setInterval(function(){
 
           console.log(time_remaining);
             time_remaining -= 1;
@@ -85,7 +85,7 @@ $( document ).ready(function() {
                   $('#session2').remove();
                   $('#begin').attr('disabled',false);
                   adminTable.clear();
-              }
+                }
                 else{
                   session_count += 1;
                   $('#session_count').text(session_count);
@@ -132,7 +132,8 @@ $( document ).ready(function() {
 
         time_remaining = subsession_length;
         session_count = 1;
-        setInterval(function(){
+        clearInterval(itv);
+        itv = setInterval(function(){
 
           console.log(time_remaining);
             time_remaining -= 1;
@@ -146,7 +147,7 @@ $( document ).ready(function() {
                   $('#session2').remove();
                   $('#begin').attr('disabled',false);
                   adminTable.clear();
-              }
+                }
                 else{
                   session_count += 1;
                   $('#session_count').text(session_count);
@@ -210,6 +211,10 @@ $( document ).ready(function() {
     });
   });
 
+  $('th').on('click',function(event){
+    $('#tablediv').scrollTop(0);
+  });
+
 
 
 
@@ -261,7 +266,8 @@ $( document ).ready(function() {
 
           time_remaining = subsession_length;
           session_count = 1;
-          setInterval(function(){
+          clearInterval(itv);
+          itv = setInterval(function(){
 
             console.log(time_remaining);
               time_remaining -= 1;
@@ -347,7 +353,7 @@ $( document ).ready(function() {
             $('.group_size_WaitingRoom').text(group_num);
           }
           else{
-            group_num = $(`tr:contains('${data['user']['group_id']}'):contains('Active')`).length;
+            group_num = $(`tr:contains('${data['user']['group_id']}'):not(:contains('Inactive'))`).length;
             $(`.group_size_${data['user']['group_id']}`).text(group_num);
           }
     })
@@ -358,6 +364,11 @@ $( document ).ready(function() {
 </script>
 
 <style>
+  thead { position: sticky; top: 0; z-index: 1; }
+
+tbody {     /* Just for the demo          */
+    overflow-y: hidden;   /* Hide the horizontal scroll */
+}
   .list {
   font-family:sans-serif;
 }
@@ -471,7 +482,7 @@ input:focus {
                   <option selected='selected' value="4">4</option>
               </select>
               @if($user->current_session)
-                  <h4 id='session1'>Current session: {{ $user->current_session }}/{{ $user->max_sessions }}</h4>
+                  <h4 id='session1'>Current session: <span id='session_count'>{{ $user->current_session }}</span>/{{ $user->max_sessions }}</h4>
                   <h4 id='session2'>Time until next session: <span id='session_timer'>{{ $time_remaining }}</span></h4>
               @endif
             </div>
@@ -513,7 +524,7 @@ input:focus {
               </select>
           </div>
           <br />
-          <div style='max-height:75vh; overflow-y: auto;'>
+          <div id='tablediv' style='max-height:75vh; overflow-y: auto;'>
             <table style='margin:auto'>
               <tr>
                   <th>
@@ -565,7 +576,7 @@ input:focus {
                         <tr id='{{ $member->participant_id }}'>
                           <td class='participant_id'>{{ $member->participant_id }}</td>
                           <td class='group_id'>{{ $member->group_id }}</td>
-                          <td class='group_size'><span class='group_size_{{ $member->group_id }}'>{{ \Teamwork\User::where('group_id',$member->group_id)->where('status','Active')->count() }}</span></td>
+                          <td class='group_size'><span class='group_size_{{ $member->group_id }}'>{{ \Teamwork\User::where('group_id',$member->group_id)->where('status','!=','Inactive')->count() }}</span></td>
                           @if($member->status == 'Active')
                             <td class='activity'><span style='color:green'>Active</span></td>
                           @elseif($member->status == 'Inactive')

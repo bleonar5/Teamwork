@@ -20,11 +20,11 @@ function clearFilter(){
 }
 
 function checkAll(){
-  $('input[type="checkbox"]').attr('checked',true);
+  $('input[type="checkbox"]:enabled:not(:checked)').prop('checked',true);
 }
 
 function uncheckAll(){
-  $('input[type="checkbox"]').attr('checked',false);
+  $('input[type="checkbox"]:enabled:checked').prop('checked',false);
 }
 
 function confirmPayment(){
@@ -32,6 +32,7 @@ function confirmPayment(){
   session_ids = [];
   $('input:checked:enabled').each(function(){
     session_ids.push(parseInt($(this).attr('id').split('_')[1]));
+    $(this).prop('disabled',true)
   });
   
   $.post('/confirm-paid',{
@@ -137,6 +138,17 @@ $( document ).ready(function() {
 
     })
   });
+
+  $('th').on('click',function(event){
+    $('#tablediv').scrollTop(0);
+  });
+
+  $('input[type="checkbox"]').on('change',function(event){
+    if($(this).attr('checked'))
+      $(`#paidspan_${$(this).attr('id').split('_')[1]}`).text('1');
+    else
+      $(`#paidspan_${$(this).attr('id').split('_')[1]}`).text('0');
+  })
       
   Pusher.logToConsole = true;
 
@@ -157,10 +169,17 @@ $( document ).ready(function() {
 </script>
 
 <style>
+
+thead { position: sticky; top: 0; z-index: 1; }
+
+tbody {     /* Just for the demo          */
+    overflow-y: hidden;   /* Hide the horizontal scroll */
+}
   .list {
   font-family:sans-serif;
 }
 td, th {
+  background-color:white;
   padding:10px; 
   border:solid 1px #eee;
 }
@@ -275,45 +294,47 @@ input:focus {
           </div>
           <br />
           <br />
-          <div style='max-height:75vh; overflow-y: auto;'>
+          <div id='tablediv' style='max-height:75vh; overflow-y: auto;'>
             <table style='margin:auto'>
-              <tr>
-                  <th>
-                    <a class='sort' data-sort='participant_id' href='#'>p_id</a>
-                  </th>
-                  <th>
-                    <a class='sort' data-sort='session_id' href='#'>s_id</a>
-                  </th>
-                  <th>
-                    <a class='sort' data-sort='session_time' href='#'>s_time</a>
-                  </th>
-                  <th>
-                    <a class='sort' data-sort='type' href='#'>type</a>
-                  </th>
-                  <th>
-                    <a class='sort' data-sort='num_subsessions' href='#'># subs</a>
-                  </th>
-                  <th>
-                    <a class='sort' data-sort='total_sessions' href='#'># seshes</a>
-                  </th>
-                  <th>
-                    <a class='sort' data-sort='group_ids' href='#'>g_ids</a>
-                  </th>
-                  <th>
-                    <a class='sort' data-sort='role' href='#'>role</a>
-                  </th>
-                  <th>
-                    <a class='sort' data-sort='eligible' href='#'>elig?</a>
-                  </th>
-                  <th>
-                    <a class='sort' data-sort='paid' href='#'>paid?</a>
-                  </th>
-                  <th>
-                    <a class='sort' data-sort='notes' href='#'>notes</a>
-                  </th>
-                  
-                  
-                </tr>
+              <thead>
+                <tr class='header'>
+                    <th>
+                      <a class='sort' data-sort='participant_id' href='#'>p_id</a>
+                    </th>
+                    <th>
+                      <a class='sort' data-sort='session_id' href='#'>s_id</a>
+                    </th>
+                    <th>
+                      <a class='sort' data-sort='session_time' href='#'>s_time</a>
+                    </th>
+                    <th>
+                      <a class='sort' data-sort='type' href='#'>type</a>
+                    </th>
+                    <th>
+                      <a class='sort' data-sort='num_subsessions' href='#'># subs</a>
+                    </th>
+                    <th>
+                      <a class='sort' data-sort='total_sessions' href='#'># seshes</a>
+                    </th>
+                    <th>
+                      <a class='sort' data-sort='group_ids' href='#'>g_ids</a>
+                    </th>
+                    <th>
+                      <a class='sort' data-sort='role' href='#'>role</a>
+                    </th>
+                    <th>
+                      <a class='sort' data-sort='eligible' href='#'>elig?</a>
+                    </th>
+                    <th>
+                      <a class='sort' data-sort='paid' href='#'>paid?</a>
+                    </th>
+                    <th>
+                      <a class='sort' data-sort='notes' href='#'>notes</a>
+                    </th>
+                    
+                    
+                  </tr>
+                </thead>
               <tbody class='list'>
                 @foreach($userSessions as $key => $session)
                     <tr id='{{ $session->id }}'>
@@ -333,9 +354,12 @@ input:focus {
                         @endif
                       </td>
                       <td class='paid'>
+
                         @if($session->paid)
-                          <input type='checkbox' class='paid_box' name='paid_{{ $session->id }}' id='paid_{{ $session->id }}' checked>
+                          <span id='paidspan_{{ $session->id }}' style='display:none'>1</span>
+                          <input type='checkbox' class='paid_box' name='paid_{{ $session->id }}' id='paid_{{ $session->id }}' checked disabled>
                         @else
+                          <span id='paidspan_{{ $session->id }}' style='display:none'>0</span>
                           <input type='checkbox' class='paid_box' name='paid_{{ $session->id }}' id='paid_{{ $session->id }}' >
                         @endif
                       </td>
