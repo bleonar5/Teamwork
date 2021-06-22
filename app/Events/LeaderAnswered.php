@@ -1,5 +1,7 @@
 <?php
 
+#SPECIAL EVENT FOR MEMORY TASK, ALLOWS USER TO PROCEED ONCE LEADER ANSWERS
+
 namespace Teamwork\Events;
 
 use Teamwork\User;
@@ -35,7 +37,7 @@ class LeaderAnswered implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return ['memory-channel'];//return new PrivateChannel('user.'.$this->user->id);
+        return ['memory-channel'];
     }
 
     public function broadcastAs()

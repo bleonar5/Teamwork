@@ -1,5 +1,7 @@
 <?php
 
+#LEGACY CODE -- GABE MANSUR
+
 namespace Teamwork;
 
 use Illuminate\Notifications\Notifiable;

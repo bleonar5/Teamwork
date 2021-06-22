@@ -1,4 +1,9 @@
 <?php
+
+#LEGACY CODE -- GABE MANSUR
+#UDPATED BY JANANI SEKAR AND BRIAN LEONARD
+#CONTAINS CONTENT FOR CONCLUSION PAGES
+
 namespace Teamwork\Tasks;
 use Teamwork\ConfirmationCode;
 

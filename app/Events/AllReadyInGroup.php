@@ -1,4 +1,5 @@
 <?php
+//EVENT FOR ALLOWING USERS TO PROCEED ONCE EVERYONE HAS CLICKED NEXT ON INSTRUCTIONS
 
 namespace Teamwork\Events;
 
@@ -34,7 +35,7 @@ class AllReadyInGroup implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return ['task-channel'];//return new PrivateChannel('user.'.$this->user->id);
+        return ['task-channel'];
     }
 
     public function broadcastAs()

@@ -1,5 +1,7 @@
 <?php
 
+#JOB TO MARK SESSION COMPLETE IN DB AND FIRE SESSIONCOMPLETE EVENT
+
 namespace Teamwork\Jobs;
 
 use Illuminate\Bus\Queueable;
@@ -36,11 +38,13 @@ class SendSessionComplete implements ShouldQueue
      */
     public function handle()
     {
+        //MARK SESSION NO LONGER ACTIVE
         $admin = User::where('id',1)->first();
         $admin->current_session = null;
         $admin->max_sessions = null;
         $admin->save();
 
+        //CLEARS OUT REMAINING USERS FROM WAITING ROOM
         $lingerers = User::where('in_room',1)->where('id','!=',1)->get();
         foreach($lingerers as $key => $user){
             $user->in_room = 0;
@@ -48,13 +52,12 @@ class SendSessionComplete implements ShouldQueue
             $user->save();
         }
 
+        //MARKS INDIVIDUAL SESSION ENTRIES AS COMPLETED
         $last_session = Session::orderBy('created_at','desc')->first();
         $these_sessions = Session::where('created_at',$last_session->created_at)->get();
         foreach($these_sessions as $key => $sesh){
             $sesh->complete = 1;
             $sesh->save();
         }
-
-        event(new SessionComplete($admin));
     }
 }

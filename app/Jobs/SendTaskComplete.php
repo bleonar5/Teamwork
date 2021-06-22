@@ -1,5 +1,7 @@
 <?php
 
+#THIS JOB FIRES AN EVENT TO REMOVE A USER FROM THEIR TASK AT THE END OF THE SUBSESSION
+
 namespace Teamwork\Jobs;
 
 use Illuminate\Bus\Queueable;
@@ -35,7 +37,6 @@ class SendTaskComplete implements ShouldQueue
      */
     public function handle()
     {
-        Log::debug('Crannibal2');
         $this_user = User::find($this->id);
         event(new EndSubsession($this_user));
     }

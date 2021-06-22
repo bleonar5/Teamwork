@@ -1,5 +1,7 @@
 <?php
 
+#JOB FOR FIRING DELAYED EVENT TO SEND USER FROM WAITING ROOM TO THEIR TASK
+
 namespace Teamwork\Jobs;
 
 use Illuminate\Bus\Queueable;
@@ -34,7 +36,6 @@ class SendTaskEvent implements ShouldQueue
      */
     public function handle()
     {
-        Log::debug('Crannibal');
         $this_user = User::find($this->id);
         event(new SendToTask($this_user));
     }

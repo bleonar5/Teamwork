@@ -1,5 +1,8 @@
 <?php
 
+#EVENT INFORMS ADMIN PAGE OF SESSION START 
+#IN CASE THERE ARE TWO ADMINS AT ONCE
+
 namespace Teamwork\Events;
 
 use Teamwork\User;
@@ -34,7 +37,7 @@ class SessionBegun implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return ['my-channel'];//return new PrivateChannel('user.'.$this->user->id);
+        return ['my-channel'];
     }
 
     public function broadcastAs()
