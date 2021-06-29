@@ -1,5 +1,7 @@
 <?php
 
+//SPECIAL EVENT FOR CLEARNING USER LOCALSTORAGE IN CASE OF ODD ISSUES
+
 namespace Teamwork\Events;
 
 use Teamwork\User;
@@ -35,7 +37,7 @@ class ClearStorage implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return ['task-channel'];//return new PrivateChannel('user.'.$this->user->id);
+        return ['task-channel'];
     }
 
     public function broadcastAs()

@@ -1,5 +1,8 @@
 <?php
 
+#EVENT CAUSES USER'S WINDOW TO REFRESH, FOR TROUBLESHOOTING PURPOSES
+#ALSO IS USED FOR 'GROUP REFRESH' FUNCTIONALITY
+
 namespace Teamwork\Events;
 
 use Teamwork\User;
@@ -35,7 +38,7 @@ class ForceRefreshUser implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return ['task-channel'];//return new PrivateChannel('user.'.$this->user->id);
+        return ['task-channel'];
     }
 
     public function broadcastAs()

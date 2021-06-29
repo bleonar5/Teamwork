@@ -1,5 +1,7 @@
 <?php
 
+#EVENT MOVES USERS FROM 'STUDY CLOSED' PAGE TO LOGIN PAGE
+
 namespace Teamwork\Events;
 
 use Teamwork\User;
@@ -34,7 +36,7 @@ class StudyOpened implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return ['my-channel'];//return new PrivateChannel('user.'.$this->user->id);
+        return ['my-channel'];
     }
 
     public function broadcastAs()

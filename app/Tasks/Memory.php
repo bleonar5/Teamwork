@@ -1,4 +1,9 @@
 <?php
+
+#LEGACY CODE -- GABE MANSUR
+#MINOR UPDATES BY BRIAN LEONARD
+#CONTAINS CONTENT FOR MEMORY TASK
+
 namespace Teamwork\Tasks;
 
 class Memory {

@@ -1,5 +1,7 @@
 <?php
 
+#EVENT NOTIFIES ADMIN-PAGE IF USER LEAVES WAITING ROOM
+
 namespace Teamwork\Events;
 
 use Teamwork\GroupTask;

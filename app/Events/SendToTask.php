@@ -1,5 +1,7 @@
 <?php
 
+#EVENT MOVES USER FROM WAITING ROOM TO THEIR TASK
+
 namespace Teamwork\Events;
 
 use Teamwork\User;
@@ -36,7 +38,7 @@ class SendToTask implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return ['my-channel'];//return new PrivateChannel('user.'.$this->user->id);
+        return ['my-channel'];
     }
 
     public function broadcastAs()

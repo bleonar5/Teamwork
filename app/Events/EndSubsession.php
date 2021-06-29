@@ -1,5 +1,7 @@
 <?php
 
+#EVENT FORCES USER TO END CURRENT TASK AND EITHER RETURN TO WAITING ROOM OR PROCEED TO CONCLUSION
+
 namespace Teamwork\Events;
 
 use Teamwork\User;
@@ -35,7 +37,7 @@ class EndSubsession implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return ['task-channel'];//return new PrivateChannel('user.'.$this->user->id);
+        return ['task-channel'];
     }
 
     public function broadcastAs()

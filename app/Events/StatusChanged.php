@@ -1,5 +1,7 @@
 <?php
 
+#EVENT INFORMS ADMIN PAGE IF ANY USER CHANGES STATUS (ACTIVE/INACTIVE/IDLE)
+
 namespace Teamwork\Events;
 
 use Teamwork\User;
@@ -34,7 +36,7 @@ class StatusChanged implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return ['my-channel'];//return new PrivateChannel('user.'.$this->user->id);
+        return ['my-channel'];
     }
 
     public function broadcastAs()

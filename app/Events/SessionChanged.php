@@ -1,5 +1,8 @@
 <?php
 
+#EVENT UPDATES HISTORICAL DATA TABLE 
+#IN CASE ANOTHER ADMIN MAKES A CHANGE
+
 namespace Teamwork\Events;
 
 use Teamwork\User;
@@ -35,7 +38,7 @@ class SessionChanged implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return ['my-channel'];//return new PrivateChannel('user.'.$this->user->id);
+        return ['my-channel'];
     }
 
     public function broadcastAs()

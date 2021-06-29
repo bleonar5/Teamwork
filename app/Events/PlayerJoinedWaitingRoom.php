@@ -1,5 +1,7 @@
 <?php
 
+//EVENT UPDATES ADMIN PAGE WITH INFO ABOUT NEW USER IN WAITING ROOM
+
 namespace Teamwork\Events;
 
 use Teamwork\User;
@@ -37,7 +39,7 @@ class PlayerJoinedWaitingRoom implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return ['my-channel'];//return new PrivateChannel('user.'.$this->user->id);
+        return ['my-channel'];
     }
 
     public function broadcastAs()

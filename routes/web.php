@@ -164,6 +164,12 @@ Route::get('/pick-member', [
 	'roles' => ['Participant', 'Group'] // Only a logged in user can view this page
 ]);
 
+Route::get('/group-survey', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'IndividualTaskController@groupSurvey',
+	'roles' => ['Participant', 'Group'] // Only a logged in user can view this page
+]);
+
 Route::get('/admin-page', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'WaitingRoomController@adminPage',
@@ -447,6 +453,18 @@ Route::get('/psi-iri', [
 Route::post('/psi-iri', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'IndividualTaskController@savePsiIri',
+	'roles' => ['Participant'] // Only a logged in user can view this page
+]);
+
+Route::post('/group-survey', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'IndividualTaskController@saveGroupSurvey',
+	'roles' => ['Participant'] // Only a logged in user can view this page
+]);
+
+Route::get('/group-survey-end', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'IndividualTaskController@groupSurveyEnd',
 	'roles' => ['Participant'] // Only a logged in user can view this page
 ]);
 

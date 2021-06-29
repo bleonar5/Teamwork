@@ -1,5 +1,7 @@
 <?php
 
+//EVENT LETS TEAM KNOW THAT A RULE HAS BEEN BROKEN
+
 namespace Teamwork\Events;
 
 use Teamwork\User;
@@ -35,7 +37,7 @@ class RuleBroken implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return ['task-channel'];//return new PrivateChannel('user.'.$this->user->id);
+        return ['task-channel'];
     }
 
     public function broadcastAs()

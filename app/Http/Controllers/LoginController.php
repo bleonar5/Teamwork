@@ -1,5 +1,9 @@
 <?php
 
+#LEGACY CODE -- GABE MANSUR
+#UPDATED BY BRIAN LEONARD
+#HANDLES LOGIN OPERATIONS
+
 namespace Teamwork\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -9,31 +13,46 @@ use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
-    public function participantLogin() {
-      $in_session = User::where('id',1)->first()->in_room;
-      $date = User::where('id',1)->first()->signature;
-      Log::debug($date);
-      return view('layouts.participants.participant-login')
-              ->with('in_session',$in_session)
-              ->with('date',$date);
-    }
-    public function mturkLogin() {
-      $in_session = User::where('id',1)->first()->in_room;
-      return view('layouts.participants.mturk-login')
-              ->with('in_session',1)
-              ->with('package', 'individual-pilot');;
-    }
+  //DISPLAYS DEFAULT LOGIN SCREEN
+  //USERS SIGN IN AND ARE ENROLLED IN THE DEFAULT TASK LIST (CURRENTLY CRYPTO PILOT)
+  public function participantLogin() {
+    //CHECK STUDY IS OPEN
+    $in_session = User::where('id',1)->first()->in_room;
+    //GET THE SCHEDULED TIME FOR SESSION
+    $date = User::where('id',1)->first()->signature;
 
-    public function participantPackageLogin($package) {
-      $in_session = User::where('id',1)->first()->in_room;
-      $date = User::where('id',1)->first()->signature;
-      return view('layouts.participants.participant-login')
-             ->with('in_session',$in_session)
-             ->with('package', $package)
-             ->with('date',$date);
-    }
+    return view('layouts.participants.participant-login')
+      ->with('in_session',$in_session)
+      ->with('date',$date);
+  }
 
-    public function postParticipantLogin(Request $request) {
+  //DISPLAYS SPECIAL LOGIN SCREEN FOR OUR MTURK PILOT (ASSIGNED TO PHASE 1 INDIVIDUAL TASK LIST)
+  public function mturkLogin() {
+
+    $in_session = User::where('id',1)->first()->in_room;
+
+    return view('layouts.participants.mturk-login')
+      ->with('in_session',1)
+      ->with('package', 'individual-pilot');;
+  }
+
+  //DISPLAYS LOGIN SCREEN WITH PARAMETER INDICATING WHICH TASK LIST TO ASSIGN
+  //DIFFERENT 'TASK-PACKAGE' LABELS CAN BE FOUND IN GROUPTASK.PHP
+  //EXAMPLE LABEL: CRYPTO-PILOT
+  public function participantPackageLogin($package) {
+
+    $in_session = User::where('id',1)->first()->in_room;
+
+    $date = User::where('id',1)->first()->signature;
+
+    return view('layouts.participants.participant-login')
+      ->with('in_session',$in_session)
+      ->with('package', $package)
+      ->with('date',$date);
+  }
+
+  //LOGS USER IN ONCE THEY'VE ENTERED THEIR PARTICIPANT ID
+  public function postParticipantLogin(Request $request) {
 
       // Create or find the user
       $user = User::firstOrCreate(['participant_id' => $request->participant_id],
@@ -45,25 +64,32 @@ class LoginController extends Controller
       $user->save();
       \Auth::login($user);
 
-      //$group = Group::where('group_number',$user->id)->first();
       $newGroup = false;
+
       // If the group doesn't exist yet, create it
       if($user->group_id == 1){
+
         $newGroup = true;
         $group = new Group;
         $group->save();
 
       }
-      else{
+      //ELSE FIND IT
+      else
         $group = Group::find($user->group_id);
-      }
+
+      //GET THE LATEST INCOMPLETE TASK ON THE TASK LIST FOR THIS GROUP
       $currentTask = \Teamwork\GroupTask::where('group_id',$user->group_id)
-                              ->where('completed',0)
-                              ->orderBy('order','ASC')
-                              ->first();
+        ->where('completed',0)
+        ->orderBy('order','ASC')
+        ->first();
+
+      //IF SUCH A TASK EXISTS
       if($currentTask){
+        //MARK IT IN THE SESSION AS THE CURRENT TASK
         $request->session()->put('currentGroupTask', $currentTask->id);
-        return redirect('/waiting-room');
+        //SEND THEM TO IT
+        return redirect('/get-group-task');
       }
 
       // If the user exists, update the user's group ID, if needed
@@ -72,6 +98,7 @@ class LoginController extends Controller
        $user->save();
       }
 
+      //CREATES A CROSS-TABLE RECORD FOR THIS USER-GROUP PAIR
       try{
         \DB::table('group_user')
            ->insert(['user_id' => $user->id,
@@ -86,74 +113,95 @@ class LoginController extends Controller
 
 
       // If this is a newly created group, create some tasks if requested
+      // IF THERE IS A TASK_PACKAGE SPECIFIED
       if(isset($request->task_package)) {
-       if($request->task_package == 'group-memory'){
-         \Teamwork\GroupTask::initializeMemoryTasks(\Auth::user()->group_id, $randomize = false);
-         $user->group_role = 'leader';
-         $user->save();
-         return redirect('/task-room');
-       }
-       elseif($request->task_package == 'group-1'){
-         \Teamwork\GroupTask::initializeGroupOneTasks(\Auth::user()->group_id, $randomize = false);
-       }
-       elseif($request->task_package == 'group-2'){
-         \Teamwork\GroupTask::initializeGroupTwoTasks(\Auth::user()->group_id, $randomize = false);
-       }
-       elseif($request->task_package == 'group-3'){
-         \Teamwork\GroupTask::initializeGroupThreeTasks(\Auth::user()->group_id, $randomize = false);
-       }
-       elseif($request->task_package == 'group-test'){
-         \Teamwork\GroupTask::initializeGroupTestTasks(\Auth::user()->group_id, $randomize = false);
-       }
-       elseif($request->task_package == 'crypto-pilot'){
+        //ASSIGN MEMORY TASKS
+        if($request->task_package == 'group-memory'){
+          \Teamwork\GroupTask::initializeMemoryTasks(\Auth::user()->group_id, $randomize = false);
+          $user->group_role = 'leader';
+          $user->save();
+          return redirect('/task-room');
+        }
+        elseif($request->task_package == 'test'){
+          \Teamwork\GroupTask::initializeTestTasks(\Auth::user()->group_id, $randomize = false);
+        }
+        elseif($request->task_package == 'group-1'){
+          \Teamwork\GroupTask::initializeGroupOneTasks(\Auth::user()->group_id, $randomize = false);
+        }
+        elseif($request->task_package == 'group-2'){
+          \Teamwork\GroupTask::initializeGroupTwoTasks(\Auth::user()->group_id, $randomize = false);
+        }
+        elseif($request->task_package == 'group-3'){
+          \Teamwork\GroupTask::initializeGroupThreeTasks(\Auth::user()->group_id, $randomize = false);
+        }
+        elseif($request->task_package == 'group-test'){
+          \Teamwork\GroupTask::initializeGroupTestTasks(\Auth::user()->group_id, $randomize = false);
+        }
+        //ASSIGN CRYPTO PILOT TASKS
+        elseif($request->task_package == 'crypto-pilot'){
+          //CHECKS IF USER HAS CONSENTED PREVIOUSLY
           $sig = \Teamwork\Response::where('user_id',\Auth::user()->id)->where('prompt','signature')->get();
-          if(count($sig) > 0)
-            \Teamwork\GroupTask::initializeCryptoPilotNoConsentTasks(\Auth::user()->group_id, $randomize = false);
-          else
-            \Teamwork\GroupTask::initializeCryptoPilotTasks(\Auth::user()->group_id, $randomize = false);
-       }
-       elseif($request->task_package == 'individual-pilot'){
-         \Teamwork\GroupTask::initializeLabIndividualPilotTasks(\Auth::user()->group_id, $randomize = false);
-         return redirect('/get-individual-task');
-       }
-       elseif($request->task_package == 'lab-round-3'){
-         \Teamwork\GroupTask::initializeLabRoundThreeTasks(\Auth::user()->group_id, $randomize = false);
-       }
-       elseif($request->task_package == 'lab-round-4'){
-         \Teamwork\GroupTask::initializeLabRoundFourTasks(\Auth::user()->group_id, $randomize = false);
-       }
-       elseif($request->task_package == 'lab-round-5'){
-         \Teamwork\GroupTask::initializeLabRoundFiveTasks(\Auth::user()->group_id, $randomize = false);
-       }
-       elseif($request->task_package == 'waiting-room'){
-         \Teamwork\GroupTask::initializeWaitingRoomTasks(\Auth::user()->group_id, $randomize = false);
-       }
-       else{
-         \Teamwork\GroupTask::initializeCryptoTasks($group->id, $randomize = false);
-         Log::debug('Lets go');
-       }
-      }
-      else{
-          $sig = \Teamwork\Response::where('user_id',\Auth::user()->id)->where('prompt','signature')->get();
+
           if(count($sig) > 0)
             \Teamwork\GroupTask::initializeCryptoPilotNoConsentTasks(\Auth::user()->group_id, $randomize = false);
           else
             \Teamwork\GroupTask::initializeCryptoPilotTasks(\Auth::user()->group_id, $randomize = false);
         }
+        //ASSIGN COMBINED PILOT TASKS
+        elseif($request->task_package == 'combined-pilot'){
+          \Teamwork\GroupTask::initializeCombinedPilotTasks(\Auth::user()->group_id, $randomize = false);
+          return redirect('/get-individual-task');
+        }
+        //ASSIGNS PHASE 1 PILOT TASKS
+        elseif($request->task_package == 'individual-pilot'){
+          \Teamwork\GroupTask::initializeLabIndividualPilotTasks(\Auth::user()->group_id, $randomize = false);
+          return redirect('/get-individual-task');
+        }
+        elseif($request->task_package == 'lab-round-3'){
+          \Teamwork\GroupTask::initializeLabRoundThreeTasks(\Auth::user()->group_id, $randomize = false);
+        }
+        elseif($request->task_package == 'lab-round-4'){
+          \Teamwork\GroupTask::initializeLabRoundFourTasks(\Auth::user()->group_id, $randomize = false);
+        }
+        elseif($request->task_package == 'lab-round-5'){
+          \Teamwork\GroupTask::initializeLabRoundFiveTasks(\Auth::user()->group_id, $randomize = false);
+        }
+        elseif($request->task_package == 'waiting-room'){
+          \Teamwork\GroupTask::initializeWaitingRoomTasks(\Auth::user()->group_id, $randomize = false);
+        }
+        //IF TASK_PACKAGE UNIDENTIFIABLE, ASSIGN CRYPTO PILOT TASK LIST
+        else{
+          \Teamwork\GroupTask::initializeCryptoPilotTasks($group->id, $randomize = false);
+        }
+      }
+      //IF NO TASK_PACKAGE SPECIFIED, ASSIGN CRYPTO PILOT TASK LIST
+      else{
+        //CHECK IF CONSENTED PRIOR
+        $sig = \Teamwork\Response::where('user_id',\Auth::user()->id)->where('prompt','signature')->get();
+        if(count($sig) > 0)
+          \Teamwork\GroupTask::initializeCryptoPilotNoConsentTasks(\Auth::user()->group_id, $randomize = false);
+        else
+          \Teamwork\GroupTask::initializeCryptoPilotTasks(\Auth::user()->group_id, $randomize = false);
+      }
 
       return redirect('/get-group-task');
+
     }
 
+    //LEGACY CODE
+    //NOT CURRENTLY USED
     public function individualLogin() {
       return view('layouts.participants.individual-only-login');
     }
 
+    //LEGACY CODE
     public function individualPackageLogin(Request $request, $package) {
       return view('layouts.participants.individual-only-login')
              ->with('package', $package)
              ->with('surveyCode', $request->c);
     }
 
+    //LEGACY CODE
     public function postIndividualLogin(Request $request) {
 
       // See if this user already exists
@@ -204,6 +252,7 @@ class LoginController extends Controller
       return redirect('/get-individual-task');
     }
 
+    //LEGACY CODE
     public function retryIndividual() {
 
       $group = Group::firstOrCreate(['group_number' => uniqid()]);
@@ -222,11 +271,12 @@ class LoginController extends Controller
       return redirect('/get-individual-task');
     }
 
-
+    //LEGACY CODE
     public function groupLogin() {
       return view('layouts.participants.group-login');
     }
 
+    //LEGACY CODE
     public function postGroupLogin(Request $request) {
 
       $group = Group::firstOrCreate(['group_number' => $request->group_id]);
@@ -243,12 +293,14 @@ class LoginController extends Controller
       return redirect('/get-group-task');
     }
 
+    //LEGACY CODE
     public function groupCreateLogin() {
       $tasks = \Teamwork\GroupTask::getTasks();
       return view('layouts.participants.group-create-login')
              ->with('tasks', $tasks);
     }
 
+    //LEGACY CODE
     public function postGroupCreateLogin(Request $request) {
 
       $group = Group::firstOrCreate(['group_number' => $request->group_id]);
@@ -269,10 +321,12 @@ class LoginController extends Controller
       return redirect('/group-create');
     }
 
+    //LEGACY CODE
     public function groupAddParticipants() {
       return view('layouts.participants.group-add-participants');
     }
 
+    //LEGACY CODE
     public function postGroupAddParticipants(Request $request) {
 
       $group = Group::firstOrCreate(['group_number' => $request->group_id]);

@@ -35,6 +35,7 @@ var guesses = [];
 var page = 1;
 var tm;
 
+//COUNTDOWN FOR IDLE STATUS
 function start_timer(){
   tm = setTimeout(function(){
     $.post('/set-idle', {
@@ -44,69 +45,62 @@ function start_timer(){
   },10000);
 }
 
+//CLEAR IDLE COUNTDOWN
 function clear_timer(){
   clearTimeout(tm);
 }
 
 
 $( document ).ready(function() {
+  //GETS TIMER INFO FROM SERVER
   time_remaining = parseInt('{{ $time_remaining }}');
+
+  //GETS INFO ON PRIOR RESPONSES IF USER IS REFRESHING
   responses = $('<div>').html('{{ $responses }}')[0].textContent;
-  console.log(responses);
   responses = JSON.parse(responses);
-  console.log(responses);
+
+  //IF THERE ARE PRIOR RESPONSES
   if (responses.length  > 0){
+    //LOOP THROUGH THEM
     for(var i = 0; i < responses.length; i++){
+      //IF LEADER RESPONSE
       if(responses[i]['prompt'].includes('Guess Full Mapping')){
-        console.log(responses[i]['response'].split(', Correct: ')[0]);
         if(responses[i]['response'].split(', Correct: ')[0].includes(','))
           guesses = responses[i]['response'].split(', Correct: ')[0].split(',');
         else
           guesses = [responses[i]['response'].split(', Correct: ')[0]];
-        console.log(guesses);
-        $(".full-mapping").each(function(i, el){
-          
+        
+        $(".full-mapping").each(function(i, el){          
           $(el).val(guesses[i].split('=')[1]);
         });
-        //mapping_guess = '['+responses[i]['response'].split(', Correct: ')[0]+']';
-        //mapping_guess = JSON.parse(mapping_guess);
-        console.log(mapping_guess);
+
         trials++;
         payment -= 0.50;
       }
+      //IF FOLLOWER2 RESPONSE
       if(responses[i]['prompt'].includes('Propose Hypothesis')){
         $("#hypothesis-result").append('<h5>' + responses[i]['response'].replace(':','is').replace('=',' = ') + '</h5>');
       }
+      //IF FOLLOWER1 RESPONSE
       if(responses[i]['prompt'].includes('Propose Equation')){
         $("#answers").append('<h5 class="answer">' + responses[i]['response'].replace('=',' = ') + '</h5>');
-        //equations.push(response[i]['response']);
       }
+      //IF RULE BROKEN RESPONSE
       if(responses[i]['prompt'].includes('Rule Broken')){
          payment -= 2.00;
       }
     }
+    //UPDATE PAYMENT AND TRIAL COUNTER
     $('#payment').text(payment.toFixed(2));
     $("#trial-counter").html(trials);
     
-    //$('#mapping-list').html(localStorage.getItem('mapping'));
-    //local_guess = JSON.parse(localStorage.getItem('mapping'));
-    //$(".full-mapping").each(function(i, el){
-        //$(el).val(local_guess[i]);
-      //});
-  }
-  else{
-    localStorage.setItem('group_id',group_id);
-    localStorage.setItem('trials',trials); 
-    localStorage.setItem('equations',$('#answers').html());
-    localStorage.setItem('hypotheses',$('#hypothesis-result').html());
-    localStorage.setItem('mapping','[]');
-    localStorage.setItem('payment',$('#payment').text());
-
   }
 
   whose_turn = parseInt(whose_turn);
+  //DEFINES RULESET
   task_id = parseInt(task_id);
 
+  //SHOWS DIFFERENT DISPLAY DEPENDING ON TURN
   switch(whose_turn){
     case 0:
       if(group_role == 'follower1'){
@@ -142,17 +136,11 @@ $( document ).ready(function() {
       break;
 
   }
-  Pusher.logToConsole = true;
-
-    var pusher = new Pusher('{{ config("app.PUSHER_APP_KEY") }}', {
-      cluster: 'us2'
-    });
 
   $("#alert").hide();
-  //$("#hypothesis").hide();
-  //$("#guess-full-mapping").hide();
   $("#task-end").hide();
 
+  //RULESETS
   rules = {
     1:[1,4],
     2:[1,7],
@@ -190,181 +178,155 @@ $( document ).ready(function() {
     'The fifth equation must NOT contain a minus sign',
   ]
 
-  //create task_id to pass in
-  //task_id = Math.floor(Math.random() * 15) + 1;
-  console.log(rules[task_id]);
+  //INITIALIZE CRYPTO GAME WITH SPECIFIED RULESET
   var crypto = new Cryptography(mapping,rules[task_id]);
 
   $('#rule_1').text(rule_desc[rules[task_id][0] - 1]);
   $('#rule_2').text(rule_desc[rules[task_id][1] - 1])
 
-  /*
-  initializeTimer(time_remaining, function() {
-    $.post('/task-complete', {_token: "{{ csrf_token() }}"});
-    $("#crypto-header").hide();
-    $("#crypto-ui").hide();
-    $("#task-end").show();
-    $('#time-up').modal();
-    setTimeout(function(){
-        $('#continue').click();
-    },5000);
-  });*/
-
+  //WARNS THEM WHEN THEY HAVE A MINUTE LEFT
   setTimeout(function() {
     $("#timer-warning").modal();
   }, 540 * 1000);
 
+  //PINGS SERVER PERIODICALLY TO CONFIRM STILL ON PAGE
   var itv = setInterval(function() {
-      console.log('GOING OFF');
-      $.get('/still-present', {
-        _token: "{{ csrf_token() }}"
-      });
-    },3000);
+    $.get('/still-present', {
+      _token: "{{ csrf_token() }}"
+    });
+  },3000);
 
+  //INITIALIZES PUSHER
+  //TO COMMUNICATE WITH SERVER
+  Pusher.logToConsole = true;
+
+  var pusher = new Pusher('{{ config("app.PUSHER_APP_KEY") }}', {
+    cluster: 'us2'
+  });
+
+  //SPECIFIC CHANNEL FOR CRYPTO AND MEMORY
   var channel = pusher.subscribe('task-channel');
-    channel.bind('action-submitted',function(data){
-      console.log(data['group_task']['id']);
-      console.log('{{ $user->group_id }}');
-      if (data['group_task']['group_id'].toString() == '{{ $user->group_id }}'){
-        console.log(data.group_task.whose_turn);
-        switch(data.group_task.whose_turn){
-          case 0:
-            if(group_role == 'follower1'){
-              start_timer();
-            }
-            if(group_role == 'leader'){
-              clear_timer();
-            }
-            $('#submit-mapping').attr('disabled',true);
-            $('#submit-mapping').text('Waiting for Team');
-            $('#submit-hypothesis').attr('disabled',true);
-            $('#submit-hypothesis').text('Waiting for Team');
-            $('#submit-equation').attr('disabled',false);
-            $('#submit-equation').text('Submit');
-            //$('#order-instructions').modal('toggle');
-            trials++;
-            $("#trial-counter").html(trials);
-            localStorage.setItem('trials',trials);
-            if(trials == maxResponses)
-              $('#last-trial').modal();
-            $('#payment').text((((parseFloat($('#payment').text()) - 0.50) > 0.00) ? (parseFloat($('#payment').text()) - 0.50) : 0.00).toFixed(2));
-            localStorage.setItem('payment',$('#payment').text());
-            break;
-          case 1:
-            if(group_role == 'follower2'){
-              start_timer();
-            }
-            if(group_role == 'follower1'){
-              clear_timer();
-            }
-            $('#submit-mapping').attr('disabled',true);
-            $('#submit-mapping').text('Waiting for Team');
-            $('#submit-equation').attr('disabled',true);
-            $('#submit-equation').text('Waiting for Team');
-            $('#submit-hypothesis').attr('disabled',false);
-            $('#submit-hypothesis').text('Submit');
-            //$('#order-instructions').modal('toggle');
-            break;
-          case 2:
-            if(group_role == 'leader'){
-              start_timer();
-            }
-            if(group_role == 'follower2'){
-              clear_timer();
-            }
-            $('#submit-hypothesis').attr('disabled',true);
-            $('#submit-hypothesis').text('Waiting for Team');
-            $('#submit-equation').attr('disabled',true);
-            $('#submit-equation').text('Waiting for Team');
-            $('#submit-mapping').attr('disabled',false);
-            $('#submit-mapping').text('Submit');
-            //$('#order-instructions').modal('toggle');
-            break;
-          default:
-            break;
 
-        }
-      }
-    });
-    /*
-    channel.bind('all-ready', function(data) {
-        if (data['user']['group_id'].toString() == '{{ $user->group_id }}'){
+  //WHEN ANOTHER PLAYER TAKES THEIR TURN
+  channel.bind('action-submitted',function(data){
+    //IF THEY ARE IN THIS GROUP (CHANNEL IS SHARED)
+    if (data['group_task']['group_id'].toString() == '{{ $user->group_id }}'){
+      //HANDLES DEPENDING ON TURN AND ROLE
+      switch(data.group_task.whose_turn){
+        //IF EQUATION TURN
+        case 0:
+          //START IDLE TIMER IF USER IS EQUATIONS
+          if(group_role == 'follower1'){
+            start_timer();
+          }
 
-            trials++;
-            $("#trial-counter").html(trials);
+          //END EDLE TIMER IF USER IS LEADER
+          if(group_role == 'leader'){
+            clear_timer();
+          }
+          //UPDATE DISPLAY AND COUNTER
+          trials++;
+          $('#submit-mapping').attr('disabled',true);
+          $('#submit-mapping').text('Waiting for Team');
+          $('#submit-hypothesis').attr('disabled',true);
+          $('#submit-hypothesis').text('Waiting for Team');
+          $('#submit-equation').attr('disabled',false);
+          $('#submit-equation').text('Submit');
+          $("#trial-counter").html(trials);
 
-            if(trials == maxResponses) {
-              $('#last-trial').modal();
-            }
-          $('.sub-btn').attr('disabled',false);
+          //INFORM IF LAST TRIAL
+          if(trials == maxResponses)
+            $('#last-trial').modal();
 
-          $('.sub-btn').text('Submit');
-          //isReady = true;
-          $('#payment').text((((parseInt($('#payment').text()) - 0.50) > 0.00) ? (parseInt($('#payment').text()) - 0.50) : 0.00).toFixed(2));
-        }
+          //UPDATE PAYMENT IF CHANGED
+          $('#payment').text((((parseFloat($('#payment').text()) - 0.50) > 0.00) ? (parseFloat($('#payment').text()) - 0.50) : 0.00).toFixed(2));
 
-    });*/
-    /*
-    channel.bind('task-complete', function(data){
-      if (data['user']['id'].toString() == '{{ $user->id }}'){
-        localStorage.clear();
-        $("#task-result").val(1);
-        $("#crypto-header").hide();
-        $("#crypto-ui").hide();
-        $("#task-end").show();
-      }
-    });*/
-    channel.bind('rule-broken', function(data){
-      if (data['user']['group_id'].toString() == '{{ $user->group_id }}'){
-        $("#rule_broken").modal('toggle');
-        $('#payment').text((((parseFloat($('#payment').text()) - 2.00) > 0.00) ? (parseFloat($('#payment').text()) - 2.00) : 0.00).toFixed(2));
-        localStorage.setItem('payment',$('#payment').text());
-      }
-    });
-    channel.bind('clear-storage', function(data){
-      console.log('freedom!');
-      localStorage.clear();
-      window.location.href='/participant-login';
-    });
+          break;
+        //IF HYPOTHESIS TURN
+        case 1:
+          //START IDLE TIMER IF USER IS HYPOTHESES
+          if(group_role == 'follower2'){
+            start_timer();
+          }
 
-    channel.bind('end-subsession', function(data){
-      if(data['user']['id'] == user_id){
-        //alert('The next round is beginning soon. You will be sent to the waiting room to be matched with a new team.')
-        $('#cryptography-end-form').submit();
+          //END IDLE TIMER IF USER IS EQUATIONS    
+          if(group_role == 'follower1'){
+            clear_timer();
+          }
+
+          //UPDATE DISPLAY
+          $('#submit-mapping').attr('disabled',true);
+          $('#submit-mapping').text('Waiting for Team');
+          $('#submit-equation').attr('disabled',true);
+          $('#submit-equation').text('Waiting for Team');
+          $('#submit-hypothesis').attr('disabled',false);
+          $('#submit-hypothesis').text('Submit');
+
+          break;
+        //IF LEADER TURN
+        case 2:
+          //START IDLE TIMER IF USER IS LEADER
+          if(group_role == 'leader'){
+            start_timer();
+          }
+          //START IDLE TIMER IF USER IS HYPOTHESES
+          if(group_role == 'follower2'){
+            clear_timer();
+          }
+
+          //UPDATE DISPLAY
+          $('#submit-hypothesis').attr('disabled',true);
+          $('#submit-hypothesis').text('Waiting for Team');
+          $('#submit-equation').attr('disabled',true);
+          $('#submit-equation').text('Waiting for Team');
+          $('#submit-mapping').attr('disabled',false);
+          $('#submit-mapping').text('Submit');
+
+          break;
+
+        default:
+          break;
 
       }
-      
-    });
+    }
+  });
+  
+  //IF ANOTHER USER BREAKS RULE
+  channel.bind('rule-broken', function(data){
+    //IF USER IN THIS GROUP
+    if (data['user']['group_id'].toString() == '{{ $user->group_id }}'){
+      //INFORM
+      $("#rule_broken").modal('toggle');
+      //UPDATE PAYMENT
+      $('#payment').text((((parseFloat($('#payment').text()) - 2.00) > 0.00) ? (parseFloat($('#payment').text()) - 2.00) : 0.00).toFixed(2));
 
-    channel.bind('force-refresh', function(data) {
-      //console.log('YEAHH');
-      if(data['group_task']['group_id'].toString() === '{{ $user->group_id }}'){
-        alert('In a few seconds, your page will refresh. Your progress in the task will be preserved.');
-        setTimeout(function(){
-            window.location.reload();
-        },5000);
-      }
-        
-        
+    }
+  });
 
+  //IF ADMIN RUNS CLEAR STORAGE
+  //BOOT USER AND CLEAR LOCALSTORAGE
+  channel.bind('clear-storage', function(data){
+    localStorage.clear();
+    window.location.href='/participant-login';
+  });
 
-        //$('#waitingList').append("<li style='text-align:left' id='"+data['user']['id'].toString()+"'>"+data['user']['id']+" : "+data['user']['group_role']+"</li>");
-    });
-    channel.bind('force-refresh-user', function(data) {
-      //console.log('YEAHH');
-      if(data['user']['id'].toString() === '{{ $user->id }}'){
-        alert('In a few seconds, your page will refresh. Your progress in the task will be preserved.');
-        setTimeout(function(){
-            window.location.reload();
-        },5000);
-      }
-        
-        
+  //IF SUBSESSION IS ENDING, END TASK
+  channel.bind('end-subsession', function(data){
+    if(data['user']['id'] == user_id){
+      $('#cryptography-end-form').submit();
+    }
+  });
 
+  //IF ADMIN USES FORCE REFRESH
+  channel.bind('force-refresh-user', function(data) {
+    if(data['user']['id'].toString() === '{{ $user->id }}'){
+      setTimeout(function(){
+          window.location.reload();
+      },5000);
+    }
+  });
 
-        //$('#waitingList').append("<li style='text-align:left' id='"+data['user']['id'].toString()+"'>"+data['user']['id']+" : "+data['user']['group_role']+"</li>");
-    });
-
+  //ONCE USER CLICKS OUT OF TIMES UP POPUP, UPDATE INFO AND TOGGLE END OF TASK PROMPT
   $("#ok-time-up").on('click', function(event) {
     localStorage.clear();
     $("#task-result").val(0);
@@ -375,150 +337,158 @@ $( document ).ready(function() {
     event.preventDefault();
   });
 
+  //WHEN USER SUBMITS EQUATION
   $("#submit-equation").on("click", function(event) {
+    //UPDATE STATUS
     $.post('/set-active', {
       _token: "{{ csrf_token() }}",
       user_id:'{{ $user->id }}'
     });
-      event.preventDefault();
-      $("#alert").hide();
 
-      var equation = $("#equation").val().toUpperCase().replace(/=/g, '');
-
-      if(equation == '') {
-        event.preventDefault();
-        $('#invalid_equation').modal('toggle');
-        return;
-      };
-
-      try {
-        var res = crypto.parseEquation(equation,trials);
-        var answer = res[0];
-        var rule_broken = res[1];
-        console.log('??????');
-        console.log(res);
-        console.log(rule_broken);
-        if(rule_broken){
-          $.post("/rule-broken", {
-            _token: "{{ csrf_token() }}",
-            rule_broken: rule_broken
-          });
-        }
-
-        $("#answers").append('<h5 class="answer">' + equation + ' = ' + answer + '</h5>');
-        localStorage.setItem('equations',$('#answers').html());
-        $("#equation").val('');
-
-        $.post("/cryptography", {
-            _token: "{{ csrf_token() }}",
-            prompt: "Propose Equation",
-            guess: equation + '=' + answer
-          }, function(data) {
-            console.log(data);
-              
-            if(data == 'WAIT'){
-
-              $('#submit-equation').text('Waiting for Team');
-              $('#submit-equation').attr('disabled',true);
-              //Ready = false;
-            }
-           //sReady = false;
-            
-          } );
-      }
-      catch(e) {
-        //var res = crypto.parseEquation(equation,trials);
-        console.log(e);
-        $('#alert-text-equation').text(e);
-        $('#invalid_equation').modal('toggle');
-        //$("#alert").html(e);
-        //$("#alert").show();
-      }
     event.preventDefault();
-      
-      
-  });
+    $("#alert").hide();
 
-  $("#submit-hypothesis").on("click", function(event){
-    $.post('/set-active', {
-      _token: "{{ csrf_token() }}",
-      user_id:'{{ $user->id }}'
-    });
+    //GET INPUT
+    var equation = $("#equation").val().toUpperCase().replace(/=/g, '');
+
+    //MUST SUBMIT SOMETHING
+    if(equation == '') {
       event.preventDefault();
-      if ($("#hypothesis-left").val() === '---' || $("#hypothesis-right").val() === '---'){
-        $('#invalid-hypothesis').modal('toggle');
-        return false;
+      $('#invalid_equation').modal('toggle');
+      return;
+    };
+
+    //CHECK RESPONSE 
+    try {
+      var res = crypto.parseEquation(equation,trials);
+      var answer = res[0];
+      var rule_broken = res[1];
+
+      if(rule_broken){
+        $.post("/rule-broken", {
+          _token: "{{ csrf_token() }}",
+          rule_broken: rule_broken
+        });
       }
 
-      var result = crypto.testHypothesis($("#hypothesis-left").val(), $("#hypothesis-right").val());
-      var output = (result) ? "true" : "false";
-      $("#hypothesis-result").append('<h5>' + $("#hypothesis-left").val() + " = " + $("#hypothesis-right").val() + " is " + output + '</h5>');
-      localStorage.setItem('hypotheses',$('#hypothesis-result').html());
+      //ADD EQUATION TO DISPLAY
+      $("#answers").append('<h5 class="answer">' + equation + ' = ' + answer + '</h5>');
+      $("#equation").val('');
 
+      //SUBMIT RESPONSE TO SERVER
       $.post("/cryptography", {
           _token: "{{ csrf_token() }}",
-          prompt: "Propose Hypothesis",
-          guess: $("#hypothesis-left").val() + '=' + $("#hypothesis-right").val() + ' : ' + output
+          prompt: "Propose Equation",
+          guess: equation + '=' + answer
         }, function(data) {
-          console.log(data);
           if(data == 'WAIT'){
-            $('#submit-hypothesis').text('Waiting for Team');
-            $('#submit-hypothesis').attr('disabled',true);
-            //isReady = false;
+            $('#submit-equation').text('Waiting for Team');
+            $('#submit-equation').attr('disabled',true);
           }
-          isReady = false;
-          
-        });
-      event.preventDefault();
+        } 
+      );
+    }
+    //IF INVALID
+    catch(e) {
+      $('#alert-text-equation').text(e);
+      $('#invalid_equation').modal('toggle');
+    }
+    event.preventDefault();
   });
 
-  $("#submit-mapping").on("click", function(event){
+  //IF USER SUBMITS HYPOTHESIS
+  $("#submit-hypothesis").on("click", function(event){
+    //UPDATE STATUS
     $.post('/set-active', {
       _token: "{{ csrf_token() }}",
       user_id:'{{ $user->id }}'
     });
-      event.preventDefault();
-      var result = true;
-      var guessStr = '';
-      var mappingList = '';
-      var mappingArr = [];
 
-      $(".full-mapping").each(function(i, el){
-        mappingArr.push($(el).val());
-        mappingList += '<span>' + $(el).attr('name') + ' = ' + $(el).val() + '</span>';
-        guessStr += $(el).attr('name') + '=' + $(el).val() + ',';
-        if(crypto.testHypothesis($(el).attr('name'), $(el).val()) == false) result = false;
+    event.preventDefault();
+
+    //BOTH INPUTS MUST BE FILLED
+    if ($("#hypothesis-left").val() === '---' || $("#hypothesis-right").val() === '---'){
+      $('#invalid-hypothesis').modal('toggle');
+      return false;
+    }
+
+    //PROCESS RESULT
+    var result = crypto.testHypothesis($("#hypothesis-left").val(), $("#hypothesis-right").val());
+    var output = (result) ? "true" : "false";
+
+    //UPDATE DISPLAY
+    $("#hypothesis-result").append('<h5>' + $("#hypothesis-left").val() + " = " + $("#hypothesis-right").val() + " is " + output + '</h5>');
+
+    //SUBMIT RESPONSE TO SERVER
+    $.post("/cryptography", {
+        _token: "{{ csrf_token() }}",
+        prompt: "Propose Hypothesis",
+        guess: $("#hypothesis-left").val() + '=' + $("#hypothesis-right").val() + ' : ' + output
+      }, function(data) {
+        if(data == 'WAIT'){
+          $('#submit-hypothesis').text('Waiting for Team');
+          $('#submit-hypothesis').attr('disabled',true);
+        }
+        isReady = false;
       });
 
-      localStorage.setItem('mapping',JSON.stringify(mappingArr));
+    event.preventDefault();
 
-      //$("#mapping-list").html(mappingList);
-      $.post("/cryptography", {
-          _token: "{{ csrf_token() }}",
-          prompt: "Guess Full Mapping",
-          mapping: JSON.stringify(mapping),
-          guess: guessStr
-        }, function(data) {
-          console.log(data);
-          if(data=='WAIT'){
-            $('#submit-mapping').text('Waiting for Team');
-            $('#submit-mapping').attr('disabled',true);
-            isReady = false;
-          }
-          //isReady = false;
-          
-        } );
-
-      if(result) {
-        $.post('/task-complete', {_token: "{{ csrf_token() }}"});
-      }
-
-      else if (trials == maxResponses) {
-        $.post('/task-complete', {_token: "{{ csrf_token() }}"});
-      }
-      event.preventDefault();
   });
 
+  //IF USER SUBMITS FULL MAPPING
+  $("#submit-mapping").on("click", function(event){
+    //UPDATE STATUS
+    $.post('/set-active', {
+      _token: "{{ csrf_token() }}",
+      user_id:'{{ $user->id }}'
+    });
+
+    event.preventDefault();
+
+    var result = true;
+    var guessStr = '';
+    var mappingList = '';
+    var mappingArr = [];
+
+    //PROCESS RESPONSE GUESS BY GUESS
+    $(".full-mapping").each(function(i, el){
+      mappingArr.push($(el).val());
+      mappingList += '<span>' + $(el).attr('name') + ' = ' + $(el).val() + '</span>';
+      guessStr += $(el).attr('name') + '=' + $(el).val() + ',';
+      if(crypto.testHypothesis($(el).attr('name'), $(el).val()) == false) result = false;
+    });
+
+    //SUBMIT RESPONSE TO SERVER
+    $.post("/cryptography", {
+        _token: "{{ csrf_token() }}",
+        prompt: "Guess Full Mapping",
+        mapping: JSON.stringify(mapping),
+        guess: guessStr
+      }, function(data) {
+        if(data=='WAIT'){
+          $('#submit-mapping').text('Waiting for Team');
+          $('#submit-mapping').attr('disabled',true);
+          isReady = false;
+        }
+      } 
+    );
+
+    //IF MAPPING IS CORRECT, END TASK
+    if(result) {
+      $.post('/task-complete', {_token: "{{ csrf_token() }}"});
+    }
+
+    //IF THAT WAS LAST TURN, END TASK
+    else if (trials == maxResponses) {
+      $.post('/task-complete', {_token: "{{ csrf_token() }}"});
+    }
+
+    event.preventDefault();
+
+  });
+
+  //CONTROLS FOR INSTRUCTION BOX
   $('#next-button').on('click',function(event){
     if (page == 1 ){
       $('#back-button').css('display','block');
@@ -533,6 +503,7 @@ $( document ).ready(function() {
     $('#page'+page.toString()).css('display','block');
     
   });
+  
   $('#back-button').on('click',function(event){
     if (page == 4 ){
       $('#next-button').css('display','block');
@@ -594,7 +565,7 @@ $( document ).ready(function() {
                   </div>
                 </div>
 
-                <p style='text-align:left'><b style='font-size:20px'>Current payment: $<span id='payment'>8.00</span></b><br>
+                <p style='text-align:left'><b style='font-size:20px'>LEADER BONUS: $<span id='payment'>5.00</span></b><br>
                 <span style='color:red;text-align:left'><i>Each 'trial' costs $0.50</i></span>
                 </p><br/>
                 <div class='row'>

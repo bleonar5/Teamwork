@@ -1,4 +1,9 @@
 <?php
+
+#LEGACY CODE -- GABE MANSUR
+#UPDATED BY JANANI SEKAR AND BRIAN LEONARD
+#STIMULI FOR PSI/IRI TASK
+
 namespace Teamwork\Tasks;
 
 class PsiIri {

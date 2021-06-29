@@ -1,4 +1,8 @@
 <?php
+
+#LEGACY CODE -- GABE MANSUR
+#UPDATED BY JANANI SEKAR AND BRIAN LEONARD
+#CONTAINS TEXT CONTENT AND SOME FORMATTING/FUNCTIONALITY FOR TASK INTROS
 namespace Teamwork\Tasks;
 
 class Intro {
@@ -30,6 +34,46 @@ class Intro {
                   'content' => 'There are 7 tasks to complete. Some tasks take
                   slightly longer than others, but not more than 15 minutes.
                   Feel free to take a break between tasks.'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => '<div class="text-center">
+                          <a href="/end-individual-task" role="button" class="btn btn-lg btn-primary">Next</a>
+                        <div>'
+                ]
+      ],
+
+    'chat_notification' => [[
+                  'type' => 'header',
+                  'content' => 'Having any trouble?'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'Talk to the research team by clicking the <b style="color:green">GREEN BUTTON</b>'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => '<div class="text-center">
+                          <a href="/end-individual-task" role="button" class="btn btn-lg btn-primary">Next</a>
+                        <div>'
+                ]
+      ],
+
+    "part1_instructions" => [[
+                  'type' => 'header',
+                  'content' => 'Codebreakers Part 1'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'This session is divided into two parts.'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'First, you will solve a cryptography puzzle by yourself. This will take around <b>20 minutes.</b>'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'Second, you will be send to a <b>waiting room.</b> From there, you will be matched into a small group, and you will solve similar problems <b>with other participants.</b> You will work in <b>TWO</b> separate groups before the end of today\'s session.'
                 ],
                 [
                   'type' => 'paragraph',
@@ -159,15 +203,11 @@ class Intro {
 
     'crypto_pilot_guide' => [[
                   'type' => 'header',
-                  'content' => 'What to expect in this session (1/2)'
+                  'content' => 'Welcome to the Group Session!'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'Welcome! You are about to join a video study with <strong>2 other team members.</strong>'
-                ],
-                [
-                  'type' => 'paragraph',
-                  'content' => 'Once your group session begins, you should be able to <strong>see</strong> and <strong>hear</strong> 2 other people.'
+                  'content' => 'Shortly, you will be matched with <b>2 other participants.</b> It is important that you can <b>see and hear</b> your teammates.'
                 ],
                 [
                   'type' => 'paragraph',
@@ -185,40 +225,64 @@ class Intro {
                 ]
                 
       ],
-      'selection_page' => [
-                [
-                  'type' => 'paragraph',
-                  'content' => 'Thank you for participating in this pilot study!'
+      'selection_page' => [[
+                  'type' => 'header',
+                  'content' => 'What Role would you choose?'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'We intend to run a follow-up experiment.<br />This would pay a total of around <b>100USD</b>, working in groups of 3 people.'
+                  'content' => 'You have now completed the <b>individual tasks.</b>'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'You would have a choice about your role.<br />You can be a <b>leader</b> or a <b>team member</b>.'
+                  'content' => 'Next, you will be working in a group with two other people. There are two roles: <span style="color:blue">"Leader"</span> or <span style="color:green">"Team member"</span>.'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'Highly successful Leaders earn the most of anyone.<br />Unsuccessful Leaders earn the least.<br />Team members get the higher guaranteed payment.'
+                  'content' => '<u>Your role will affect your bonus</u><br /> Team members get consistent bonuses.<br /> Leaders earn the most, or the least (depending on team performance)<br /> On average, both roles, receive the same bonus.'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'On average, both roles receive the same payment.'
+                  'content' => 'There is not a single right answer. Pick the role that you think suits you best.'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'There is not a single right answer for everyone, so <b>pick the role that you think suits you best</b>'
+                  'content' => 'If it were up to you, WHICH ROLE WOULD YOU PREFER?'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'IF you participated, what role would you choose?'
+                  'content' => '<b style="color:red">Please note: we CANNOT guarantee that you will be allocated to your preferred option.</b>'
                 ],
                 [
                   'type' => 'paragraph',
                   'content' => '<div class="text-center">
                           <a href="/pick-leader" role="button" class="btn btn-lg btn-primary">Leader</a>
                           <a href="/pick-member" role="button" class="btn btn-lg btn-success">Team Member</a>
+                        <div>'
+                ]
+                
+      ],
+      'individual_crypto_end' => [
+                [
+                  'type' => 'paragraph',
+                  'content' => 'Thank you.'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'When you click <b>Next</b>, you will move onto the <b>Group Session</b> (where you will solve puzzles in a group). This will involve video and audio.'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'Please note that before we match you with a group, you will enter a "WAITING ROOM". You may be there for a few minutes.'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => '<b>It is important that you don\'t leave the waiting room, as you will miss the second half of the session.</b>'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => '<div class="text-center">
+                          <a role="button" href="/end-individual-task" class="btn btn-lg btn-primary">Next</a>
                         <div>'
                 ]
                 
@@ -243,33 +307,78 @@ class Intro {
 
     'crypto_pilot_guide2' => [[
                   'type' => 'header',
-                  'content' => 'What to expect in this session (2/2)'
+                  'content' => 'What to expect next'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'You may briefly go to a "waiting room". <strong>Please wait up to 5 minutes</strong> for your team members to join.'
+                  'content' => 'When you click "Next" you will go to a Waiting Room. It is important you don\'t leave the waiting room, as you might miss the start of the session.'
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => '<strong>Technical Difficulties?</strong>'
+                  'content' => 'If you are having any difficulties, click the <b style="color:green">GREEN BUTTON</b> to speak with us.'
                 ],
-                [
-                  'type' => 'paragraph',
-                  'content' => 'Click the green chat bubble at the top right of your screen to speak with us.'
-                ],
-                [
-                  'type' => 'paragraph',
-                  'content' => 'This session will last approximately 25 minutes total (including any time spent in the waiting room).'
-                ],
-                [
-                  'type' => 'paragraph',
-                  'content' => 'Please click “I agree” to continue.'
-                ],
-                
                 [
                   'type' => 'paragraph',
                   'content' => '<div class="text-center">
-                          <a href="/end-group-task" role="button" class="btn btn-lg btn-primary">I agree</a>
+                          <a href="/end-individual-task" role="button" class="btn btn-lg btn-primary">Next</a>
+                        <div>'
+                ]
+      ],
+
+    'group_survey_members_1' => [[
+                  'type' => 'header',
+                  'content' => 'Survey'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => 'How warm did the leader seem throughout the group interaction? That is, how friendly, helpful and sincere did they seem?<br />
+                              <div style="display:grid;grid-auto-flow: column;width:100%;margin:auto">
+                                  <label>1</label>
+                                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="group_survey_member_1_1" value="1">
+                                  <label>2</label>
+                                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="group_survey_member_1_1" value="2">
+                                  <label>3</label>
+                                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="group_survey_member_1_1" value="3">
+                                  <label>4</label>
+                                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="group_survey_member_1_1" value="4">
+                                  <label>5</label>
+                                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="group_survey_member_1_1" value="5">
+                                  <label>6</label>
+                                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="group_survey_member_1_1" value="6">
+                                  <label>7</label>
+                                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="group_survey_member_1_1" value="7">
+                              </div>
+                              <div style="display:inline-block;width:100%;margin:auto">
+                                  <p style="float:left;margin:auto">Not at all warm</p>
+                                  <p style="float:right;margin:auto">Extremely Warm</p>
+                              </div>
+                              <hr />
+                              How competent did the leader seem throughout the group interaction? That is, how knowledgeable, skillful, and efficacious did they seem?<br />
+                              <div style="display:grid;grid-auto-flow: column;width:100%;margin:auto">
+                                  <label>1</label>
+                                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="group_survey_member_1_2" value="1">
+                                  <label>2</label>
+                                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="group_survey_member_1_2" value="2">
+                                  <label>3</label>
+                                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="group_survey_member_1_2" value="3">
+                                  <label>4</label>
+                                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="group_survey_member_1_2" value="4">
+                                  <label>5</label>
+                                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="group_survey_member_1_2" value="5">
+                                  <label>6</label>
+                                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="group_survey_member_1_2" value="6">
+                                  <label>7</label>
+                                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="group_survey_member_1_2" value="7">
+                              </div>
+                              <div style="display:inline-block;width:100%;margin:auto">
+                                  <p style="float:left;margin:auto">Not at all competent</p>
+                                  <p style="float:right;margin:auto">Extremely competent</p>
+                              </div>'
+                ],
+                [
+                  'type' => 'paragraph',
+                  'content' => '<div class="text-center">
+                          <a href="/end-group-task" role="button" class="btn btn-lg btn-primary">Next</a>
                         <div>'
                 ]
       ],

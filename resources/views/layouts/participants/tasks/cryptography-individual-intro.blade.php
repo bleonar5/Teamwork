@@ -87,19 +87,29 @@ $( document ).ready(function() {
 <div class="container">
   <div class="row vertical-center">
     <div class="col-md-12 text-center">
-      <div id="inst_1" class="inst">
-        <h2 class="text-primary">Cryptography Task</h2>
-        <h3 class="text-success">
-          Task {{ \Session::get('completedTasks') + 1 }} of {{ \Session::get('totalTasks') }}
-        </h3>
-        <h4>
-          In the Cryptography Task, every letter from A to J has a
-          numerical value. Your goal is to find out the value of each letter.
-        </h4>
-        <h4>
-          This task will take around 20 minutes.
-        </h4>
-      </div> <!-- End inst_1 -->
+      @if($introType != 'combined_pilot')
+        <div id="inst_1" class="inst">
+          <h2 class="text-primary">Cryptography Task</h2>
+          <h3 class="text-success">
+            Task {{ \Session::get('completedTasks') + 1 }} of {{ \Session::get('totalTasks') }}
+          </h3>
+          <h4>
+            In the Cryptography Task, every letter from A to J has a
+            numerical value. Your goal is to find out the value of each letter.
+          </h4>
+          <h4>
+            This task will take around 20 minutes.
+          </h4>
+        </div> <!-- End inst_1 -->
+      @else
+        <div id="inst_1" class="inst">
+          <h2 class="text-primary">Individual Cryptography Task</h2>
+          <h4>
+            In the Cryptography Task, every letter from A to J has a
+            numerical value. Your goal is to find out the value of each letter.
+          </h4>
+        </div> <!-- End inst_1 -->  
+      @endif
       <div id="inst_2" class="inst">
         <h2 class="text-primary">Cryptography Task</h2>
         <h3>Instructions and Practice</h3>

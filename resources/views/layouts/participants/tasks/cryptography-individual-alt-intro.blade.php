@@ -36,7 +36,7 @@ $( document ).ready(function() {
           Remember that the goal is to <strong>solve the puzzle in the SMALLEST number of trials</strong>
         </h4>
         <h4>
-          One participant who on this second puzzle is in the top third of all participants will be randomly selected to win a prize of <strong>$100</strong>.
+          One participant who on this second puzzle is in the top third of all participants will be randomly selected to win a prize of <strong>$50</strong>.
         </h4>
         <h4>
           On the next page, we will give a quick refresher of the instructions.<br>
