@@ -1112,7 +1112,7 @@ class IndividualTaskController extends Controller
            ->with('maxResponses', $maxResponses)
            ->with('mapping', json_encode($mapping))
            ->with('aSorted', $aSorted)
-           ->with('introType',$parameters->type)
+           ->with('introType',$parameters->intro)
            ->with('sorted', $aSorted);
   }
 
