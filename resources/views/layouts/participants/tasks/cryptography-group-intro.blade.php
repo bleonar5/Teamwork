@@ -200,21 +200,21 @@ $( document ).ready(function() {
   <div id="inst_4" class="inst">
     <h4 class="text-primary">Instructions</h4>
     @if ($user->group_role == "leader")
-      <h5>
-        You are the group's <strong>leader</strong>
-      </h5>
-      <h5>
-        You are responsible for <span style='color:purple'>guessing the final letter values</span> for each letter (e.g. A=4, B=2)
-      </h5>
-      <h5>
-        This is the <strong>last step</strong> in each 'trial'.
-      </h5>
-      <h5>
-        You are also responsible for making sure that the group follows the <strong>"equation rules"</strong>.
-      </h5>
-      <h5>
-        Each time your group breaks a rule, you pay a penalty of $2.
-      </h5>
+        <h5>
+          You are the group's <strong>leader</strong>
+        </h5>
+        <h5>
+          You are responsible for <span style='color:purple'>guessing the final letter values</span> for each letter (e.g. A=4, B=2)
+        </h5>
+        <h5>
+          This is the <strong>last step</strong> in each 'trial'.
+        </h5>
+        <h5>
+          You are also responsible for making sure that the group follows the <strong>"equation rules"</strong>.<br /> Each time your group breaks these rules, you pay a penalty of $2.
+        </h5>
+        <h5>
+          Each time your group breaks a rule, you pay a penalty of $2.
+        </h5>
     @endif
     @if ($user->group_role == "follower1")
      <h5>
@@ -245,6 +245,27 @@ $( document ).ready(function() {
       </h5>
     @endif
   </div> <!-- End inst_4 -->
+  <div id="inst_5" class="inst">
+    <h4 class="text-primary">Instructions</h4>
+    @if ($user->group_role == "leader")
+        <h5>
+          As the <strong>Leader</strong>, you are responsible for the team.
+        </h5>
+        <h5>
+          Your teammates are only compensated for their time.<br /> You are compensated based on group performance.
+        </h5>
+        <h5>
+          If your group solves the puzzle, you will receive a bonus of <b>$5.00.</b> Each 'trial' costs you <b>$0.50.</b> Breaking a rule costs <b>$2.00.</b> You will get partial payment for partially solving the puzzle.
+        </h5>
+        <h5>
+          Whether you share this information with your teammates is up to you.
+        </h5>
+    @else
+        <h5>
+        Press 'next' to continue on to the <b>Group Task</b>
+      </h5>
+    @endif
+  </div> <!-- End inst_5 -->
   <div id="instr_nav" class="text-center" style='display:flex'>
     <input style='text-align:center;margin:auto' class="btn btn-primary instr_nav btn-lg" type="button" name="next" id="next" value="Next"><br />
     

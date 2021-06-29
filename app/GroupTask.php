@@ -91,6 +91,43 @@ class GroupTask extends Model
     return Self::initializeTasks($group_id, $taskArray, $randomize);
   }
 
+  #TASK LIST FOR PHASE 1+2 PILOT
+  public static function initializeCombinedPilotTasks($group_id, $randomize) {
+    $taskArray = '[
+      {"taskName":"Consent","taskParams":{"url_endpoint":"end-individual-task","hasIndividuals":"true","hasGroup":"false","subjectPool":"july_pilot"}},
+      {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"chat_notification"}},
+      {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"adblock"}},
+      {"taskName":"DeviceCheck","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"eligibility"}},
+      {"taskName":"Cryptography","taskParams":{"intro":"intro","hasIndividuals":"true","hasGroup":"false","mapping":"random","maxResponses":"10"}},
+      {"taskName":"Cryptography","taskParams":{"intro":"individual_alt","hasIndividuals":"true","hasGroup":"false","mapping":"random","maxResponses":"10"}},
+      {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"selection_page"}},
+      {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"individual_crypto_end"}},
+      {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"crypto_pilot_guide"}},
+      {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"crypto_pilot_guide2"}},
+      {"taskName":"WaitingRoom","taskParams":{"hasIndividuals":"true","hasGroup":"false","task":"1"}}
+      ]';
+    
+    
+    return Self::initializeTasks($group_id, $taskArray, $randomize);
+  }
+
+  #FOR DEV PURPOSES
+  public static function initializeTestTasks($group_id, $randomize) {
+    $taskArray = '[
+      {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"selection_page"}}
+
+      ]';
+
+    /*{"taskName":"GroupSurvey","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"group_survey_members_1","statementOrder":"ordered"}},
+      {"taskName":"GroupSurvey","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"group_survey_members_2","statementOrder":"ordered"}},
+      {"taskName":"GroupSurvey","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"group_survey_leader_hypothesis","statementOrder":"ordered"}},
+      {"taskName":"GroupSurvey","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"group_survey_leader_equations","statementOrder":"ordered"}}*/
+    
+    
+    return Self::initializeTasks($group_id, $taskArray, $randomize);
+  }
+
+
   #TASK LIST FOR PARTICIPANT-LOGIN/WAITING-ROOM SHORTCUT
   public static function initializeCryptoWaitingRoomTasks($group_id, $randomize) {
     $taskArray = '[

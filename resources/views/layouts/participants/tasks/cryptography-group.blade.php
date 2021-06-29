@@ -565,7 +565,7 @@ $( document ).ready(function() {
                   </div>
                 </div>
 
-                <p style='text-align:left'><b style='font-size:20px'>Current payment: $<span id='payment'>8.00</span></b><br>
+                <p style='text-align:left'><b style='font-size:20px'>LEADER BONUS: $<span id='payment'>5.00</span></b><br>
                 <span style='color:red;text-align:left'><i>Each 'trial' costs $0.50</i></span>
                 </p><br/>
                 <div class='row'>

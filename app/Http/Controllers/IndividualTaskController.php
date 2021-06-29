@@ -131,6 +131,14 @@ class IndividualTaskController extends Controller
       case "Leadership":
         request()->session()->put('currentIndividualTaskName', 'Leadership');
         return redirect('/leadership-intro');
+
+      case "GroupSurvey":
+        request()->session()->put('currentIndividualTaskName', 'GroupSurvey');
+        return redirect('/group-survey');
+
+      case "WaitingRoom":
+        request()->session()->put('currentIndividualTaskName', 'WaitingRoom');
+        return redirect('/get-group-task');
     }
   }
 
@@ -171,14 +179,62 @@ class IndividualTaskController extends Controller
     return '200';
   }
 
+  //DISPLAYS GROUP SURVEY
+  public function groupSurvey(Request $request){
+
+    $this_user = User::where('id',\Auth::user()->id)->first();
+    
+    $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));  
+
+    $this->recordStartTime($request, 'task');
+      
+      
+    $parameters = unserialize($currentTask->parameters);
+    $statements = (new \Teamwork\Tasks\GroupSurvey)->getStatements($parameters->statementOrder);
+
+    return view('layouts.participants.tasks.group-survey')
+      ->with('type',$parameters->type)
+      ->with('questions',$statements[$parameters->type])
+      ->with('user',$this_user);
+  }
+
+  //SAVES GROUP SURVEY RESPONSES
+  public function saveGroupSurvey(Request $request) {
+    $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
+    $individualTaskId = $request->session()->get('currentIndividualTask');
+    $parameters = unserialize($currentTask->parameters);
+    $statements = (new \Teamwork\Tasks\GroupSurvey)->getStatements('ordered')[$parameters->type];
+
+    // Record the end time for this task
+    $this->recordEndTime($request, 'task');
+
+    foreach ($statements as $key => $statement) {
+      $r = new Response;
+      $r->group_tasks_id = $currentTask->id;
+      $r->individual_tasks_id = $individualTaskId;
+      $r->user_id = \Auth::user()->id;
+      $r->prompt = $statement['question'];
+      $r->response = $request[$parameters->type.'_'.$key];
+      $r->save();
+    }
+
+    return redirect('/end-individual-task');
+  }
+
   //ENDS TASK AND PROCEEDS
   public function endTask(Request $request) {
 
     $task = \Teamwork\GroupTask::with('response')
       ->find($request->session()->get('currentGroupTask'));
 
+    Log::debug('#$####');
+    Log::debug($task);
+
     $task->completed = 1;
     $task->save();
+
+    Log::debug('7upmj');
+    Log::debug($task);
 
     return redirect('/get-individual-task');
   }
@@ -439,11 +495,39 @@ class IndividualTaskController extends Controller
   //SUBMITS CHOICE FOR LEADER ROLE
   public function pickLeader(Request $request) {
 
+    $this_user = User::find(\Auth::user()->id);
+
+    $waveLeaders = User::where('wave',$this_user->wave)->where('group_role','leader')->get();
+    $waveMembers = User::where('wave',$this_user->wave)->whereIn('group_role',array('follower1','follower2'))->get();
+
+    if(count($waveLeaders) < intdiv(45,3) && count($waveMembers) < (2 * intdiv(45,3))){
+      $randroll = mt_rand(1,45);
+      if($randroll > 15){
+        $this_user->group_role = 'leader';
+      }
+      else{
+        $this_user->group_role = 'follower1';
+      }
+    }
+    elseif(count($waveLeaders) == int_div(45,3)){
+      $this_user->group_role = 'follower1';
+    }
+    elseif(count($waveMembers) == 2 * int_div(45,3)){
+      $this_user->group_role = 'leader';
+    }
+
+    $this_user->save();
+
     $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
 
     $r = Response::where('group_tasks_id',$currentTask->id)->
                    where('user_id',\Auth::user()->id)->
                    where('prompt','role_select')
+                   ->first();
+
+    $r_final = Response::where('group_tasks_id',$currentTask->id)->
+                   where('user_id',\Auth::user()->id)->
+                   where('prompt','role_final')
                    ->first();
 
     if(!$r){
@@ -452,7 +536,18 @@ class IndividualTaskController extends Controller
       $r->user_id = \Auth::user()->id;
       $r->prompt = 'role_select';
       $r->response = 'leader';
+
       $r->save();
+    }
+
+    if(!$r_final){
+      $r_final = new Response;
+      $r_final->group_tasks_id = $currentTask->id;
+      $r_final->user_id = \Auth::user()->id;
+      $r_final->prompt = 'role_final';
+      $r_final->response = ($this_user->group_role == 'leader') ? 'leader' : 'member';
+
+      $r_final->save();
     }
 
     return redirect('/end-individual-task');
@@ -461,11 +556,39 @@ class IndividualTaskController extends Controller
   //SUBMITS CHOICE FOR MEMBER ROLE
   public function pickMember(Request $request) {
 
+    $this_user = User::find(\Auth::user()->id);
+
+    $waveLeaders = User::where('wave',$this_user->wave)->where('group_role','leader')->get();
+    $waveMembers = User::where('wave',$this_user->wave)->whereIn('group_role',array('follower1','follower2'))->get();
+
+    if(count($waveLeaders) < intdiv(45,3) && count($waveMembers) < (2 * intdiv(45,3))){
+      $randroll = mt_rand(1,45);
+      if($randroll > 15){
+        $this_user->group_role = 'follower1';
+      }
+      else{
+        $this_user->group_role = 'leader';
+      }
+    }
+    elseif(count($waveLeaders) == int_div(45,3)){
+      $this_user->group_role = 'follower1';
+    }
+    elseif(count($waveMembers) == 2 * int_div(45,3)){
+      $this_user->group_role = 'leader';
+    }
+
+    $this_user->save();
+
     $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
 
     $r = Response::where('group_tasks_id',$currentTask->id)->
                    where('user_id',\Auth::user()->id)->
                    where('prompt','role_select')
+                   ->first();
+
+    $r_final = Response::where('group_tasks_id',$currentTask->id)->
+                   where('user_id',\Auth::user()->id)->
+                   where('prompt','role_final')
                    ->first();
 
     if(!$r){
@@ -475,6 +598,16 @@ class IndividualTaskController extends Controller
       $r->prompt = 'role_select';
       $r->response = 'member';
       $r->save();
+    }
+
+    if(!$r_final){
+      $r_final = new Response;
+      $r_final->group_tasks_id = $currentTask->id;
+      $r_final->user_id = \Auth::user()->id;
+      $r_final->prompt = 'role_final';
+      $r_final->response = ($this_user->group_role == 'leader') ? 'leader' : 'member';
+
+      $r_final->save();
     }
 
     return redirect('/end-individual-task');
@@ -979,6 +1112,7 @@ class IndividualTaskController extends Controller
            ->with('maxResponses', $maxResponses)
            ->with('mapping', json_encode($mapping))
            ->with('aSorted', $aSorted)
+           ->with('introType',$parameters->type)
            ->with('sorted', $aSorted);
   }
 

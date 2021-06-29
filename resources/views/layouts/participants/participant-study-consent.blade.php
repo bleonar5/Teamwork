@@ -138,6 +138,51 @@ $( document ).ready(function() {
               </div>
           </div>
 
+        @elseif($subjectPool == 'july_pilot')
+          <p>
+            <span class="consent-em">PURPOSE OF RESEARCH STUDY</span>: To pilot an experiment examining teamwork skills.
+          </p>
+          <p>
+            <span class="consent-em">WHAT YOU’LL DO</span>You will be asked to solve cryptography puzzles individually and in a group. You will also be asked to provide feedback about the experiment.
+          </p>
+          <p>
+            <span class="consent-em">RISKS</span>: There are no risks
+            for participating in this study beyond those associated with normal
+            computer use, including fatigue and mild stress.
+          </p>
+          <p>
+            <span class="consent-em">COMPENSATION</span>:This is a 2 part study. <b> Payment for part 1 is $15</b> (total payment, for both parts, averages $50).
+          </p>
+          <p>
+            <span class="consent-em">VOLUNTARY PARTICIPATION AND RIGHT TO
+              WITHDRAW</span>: Participation in this study is voluntary, and
+              you can stop at any time without any penalty.  To stop, simply
+              close your browser window. Partial data will not be analyzed.
+          </p>
+          <p>
+            <span class="consent-em">CONFIDENTIALITY</span>:  All data collected as part of this study will be destroyed at the end of the pilot and only used for academic purposes.
+          </p>
+          <p>
+            <span class="consent-em">CONTACT INFORMATION</span>: If you have any
+            questions about this research, you may contact: <a href='mailto:skillslab@hks.harvard.edu'>skillslab@hks.harvard.edu</a>
+          </p>
+          <p>
+            <span class="consent-em">CLICKING ACCEPT</span>: By signing and clicking on the
+            "I Consent" button, you indicate that you are 18 years of age or older,
+            that you voluntarily agree to participate in this study and that you
+            understand the information in this consent form.
+          </p>
+          <p>
+            <span class="consent-em">SIGNATURE</span>: 
+          </p>
+          <div class="form-group row">
+              <div class="col-12">
+                <canvas style='border:1px solid black' class="img-responsive" width="100%" height="auto"></canvas>
+              </div>
+          </div>
+
+
+
 
           @elseif($subjectPool == 'hdsl_individual_pilot')
             <p>

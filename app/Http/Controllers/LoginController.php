@@ -122,6 +122,9 @@ class LoginController extends Controller
           $user->save();
           return redirect('/task-room');
         }
+        elseif($request->task_package == 'test'){
+          \Teamwork\GroupTask::initializeTestTasks(\Auth::user()->group_id, $randomize = false);
+        }
         elseif($request->task_package == 'group-1'){
           \Teamwork\GroupTask::initializeGroupOneTasks(\Auth::user()->group_id, $randomize = false);
         }
@@ -143,6 +146,11 @@ class LoginController extends Controller
             \Teamwork\GroupTask::initializeCryptoPilotNoConsentTasks(\Auth::user()->group_id, $randomize = false);
           else
             \Teamwork\GroupTask::initializeCryptoPilotTasks(\Auth::user()->group_id, $randomize = false);
+        }
+        //ASSIGN COMBINED PILOT TASKS
+        elseif($request->task_package == 'combined-pilot'){
+          \Teamwork\GroupTask::initializeCombinedPilotTasks(\Auth::user()->group_id, $randomize = false);
+          return redirect('/get-individual-task');
         }
         //ASSIGNS PHASE 1 PILOT TASKS
         elseif($request->task_package == 'individual-pilot'){

@@ -87,6 +87,9 @@ $( document ).ready(function() {
       <div class=".col-sm-4 text-center">
         <h3>You will be matched with your teammates and sent to the group task shortly</h3>
       </div>
+      <div class=".col-sm-4 text-center">
+        <h3 style="color:green">Reminder: if you're having difficulties, click the green button to talk to a researcher.</h3>
+      </div>
     </div>
   </div>
 </div>
