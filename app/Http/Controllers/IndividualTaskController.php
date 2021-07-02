@@ -183,6 +183,7 @@ class IndividualTaskController extends Controller
   public function groupSurvey(Request $request){
 
     $this_user = User::where('id',\Auth::user()->id)->first();
+    $admin = User::find(1);
     
     $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));  
 
@@ -192,33 +193,57 @@ class IndividualTaskController extends Controller
     $parameters = unserialize($currentTask->parameters);
     $statements = (new \Teamwork\Tasks\GroupSurvey)->getStatements($parameters->statementOrder);
 
+    $time_remaining = null;
+
+      #GET TIME TIL WAITING ROOM
+      if($admin->current_session){
+
+        $session_start = \Teamwork\Time::where('type','session')->orderBy('created_at','desc')->first();
+
+        $time_elapsed = $session_start->created_at->diffInSeconds(\Carbon\Carbon::now());
+       
+        $session_length = 165;
+
+        $time_remaining = $session_length * $admin->current_session - $time_elapsed - 30;
+
+      }
+      else
+        $time_remaining = null;
+
     return view('layouts.participants.tasks.group-survey')
-      ->with('type',$parameters->type)
-      ->with('questions',$statements[$parameters->type])
+      ->with('surveyType',$parameters->type)
+      ->with('time_remaining',$time_remaining)
+      ->with('questions',$statements[$this_user->group_role == 'leader' ? 'leader' : 'member'])
       ->with('user',$this_user);
   }
 
   //SAVES GROUP SURVEY RESPONSES
   public function saveGroupSurvey(Request $request) {
+    $user = User::find(\Auth::user()->id);
     $currentTask = \Teamwork\GroupTask::find($request->session()->get('currentGroupTask'));
     $individualTaskId = $request->session()->get('currentIndividualTask');
     $parameters = unserialize($currentTask->parameters);
-    $statements = (new \Teamwork\Tasks\GroupSurvey)->getStatements('ordered')[$parameters->type];
+    $statements = (new \Teamwork\Tasks\GroupSurvey)->getStatements('ordered');
 
     // Record the end time for this task
     $this->recordEndTime($request, 'task');
 
-    foreach ($statements as $key => $statement) {
-      $r = new Response;
-      $r->group_tasks_id = $currentTask->id;
-      $r->individual_tasks_id = $individualTaskId;
-      $r->user_id = \Auth::user()->id;
-      $r->prompt = $statement['question'];
-      $r->response = $request[$parameters->type.'_'.$key];
-      $r->save();
+    foreach ($statements[$user->group_role == 'leader' ? 'leader' : 'member'] as $count => $statements_page) {
+      foreach($statements_page as $key => $statement){
+        $r = new Response;
+        $r->group_tasks_id = $currentTask->id;
+        $r->individual_tasks_id = $individualTaskId;
+        $r->user_id = \Auth::user()->id;
+        $r->prompt = $statement['question'];
+        $r->response = $request[$count.'_'.$key];
+        $r->save();
+      }
     }
 
-    return redirect('/end-individual-task');
+    $currentTask->completed = 1;
+    $currentTask->save();
+
+    return redirect('/get-group-task');
   }
 
   //ENDS TASK AND PROCEEDS
@@ -227,14 +252,8 @@ class IndividualTaskController extends Controller
     $task = \Teamwork\GroupTask::with('response')
       ->find($request->session()->get('currentGroupTask'));
 
-    Log::debug('#$####');
-    Log::debug($task);
-
     $task->completed = 1;
     $task->save();
-
-    Log::debug('7upmj');
-    Log::debug($task);
 
     return redirect('/get-individual-task');
   }

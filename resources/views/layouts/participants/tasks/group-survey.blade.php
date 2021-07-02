@@ -11,9 +11,16 @@
 @section('content')
 
 <script>
-  var time_remaining = '{{ $time_remaining }}';
 
     $( document ).ready(function() {
+
+      var time_remaining = parseInt('{{ $time_remaining }}');
+
+      itv = setInterval(function(){
+        time_remaining -= 1;
+        //TIMER CAN'T BE LESS THAN 0        
+        $('#timer').text(time_remaining > 0 ? new Date(time_remaining * 1000).toISOString().substr(14, 5) : '00:00');
+      },1000);
 
       $(".alert-danger").hide();
 
@@ -21,15 +28,39 @@
       // Comes before instructionPaginator so the on click handler is bound first
       $("#next").on('click', function(event) {
         $(".alert-danger").hide();
-        if($('input[type="radio"]:checked').length == parseInt('{{ count($questions) }}'))
-          $('#group-survey-form').submit()
-        else{
-          $(".alert-danger").show();
+        $('input[class="checkbox"]:visible').each(function(){
+          var name = $(this).attr("name");
+          if ($("input:radio[name=" + name + "]:checked").length == 0) {
+            $(".alert-danger").show();
             event.stopImmediatePropagation();
             return;
           }
+        })
       });
 
+
+      instructionPaginator(function(){
+        $(".container").hide();
+        $("#group-survey-form").submit();
+      });
+
+      //ESTABLISHES PUSHER CONNECTION
+      //TO COMMUNICATE WITH SERVER    
+      Pusher.logToConsole = true;
+
+      var pusher = new Pusher('{{ config("app.PUSHER_APP_KEY") }}', {
+        cluster: 'us2'
+      });
+
+      //CHANNEL FOR ADMIN AND WAITING ROOM
+      var channel = pusher.subscribe('task-channel');
+
+      //IF ANOTHER ADMIN MAKES A CHANGE, DYNAMICALLY UPDATE TABLE
+      channel.bind('end-subsession', function(data){
+        if(data['user']['id'] == '{{ $user->id }}'){
+          $('#group-survey-form').submit();
+        }
+      });
 
 
     });
@@ -44,60 +75,97 @@
   </div>
   <div class="row">
     <div class="col-md-12 text-center">
-      <h5 class='text-center' >
-        @if($type == 'group_survey_members_1' || $type == 'group_survey_leader_hypothesis')
-          Page 1/2 -- Time Remaining: 
-        @else
-          Page 2/2 -- Time Remaining: 
-        @endif
-        <span id='timer'></span>
+      <h5 class='text-right' >
+        Total Time Remaining: 
+        <span id='timer'>{{ gmdate('i:s',$time_remaining) }}</span>
       </h5>
     </div>
     <div class="col-md-12 text-center">
-      <h4 class='text-center'> 
-        @if($type == 'group_survey_members_1')
-          We would like to ask some questions about the person who entered the final guesses (i.e. the 'group leader')
-        @elseif($type == 'group_survey_leader_hypothesis')
-          We would like to ask some questions about the person who <b>Made Hypotheses</b>
-        @elseif($type == 'group_survey_leader_equations')
-          We would like to ask some questions about the person who <b>Entered the Equations</b>
-        @elseif($type == 'group_survey_members_2')
-          <b>Thinking about the group I just participated in, I would say that:</b>
-        @endif
-      </h4>
       <form id="group-survey-form" action="/group-survey" method="post">
         {{ csrf_field() }}
-
-            @for($i = 0; $i < count($questions); $i++)
-              <p>{{ $questions[$i]['question'] }}</p>
-              <br />
-                <div style="display:grid;grid-auto-flow: column;width:100%;margin:auto">
-                    <label>1</label>
-                    <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $type }}_{{ $i }}" value="1">
-                    <label>2</label>
-                    <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $type }}_{{ $i }}" value="2">
-                    <label>3</label>
-                    <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $type }}_{{ $i }}" value="3">
-                    <label>4</label>
-                    <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $type }}_{{ $i }}" value="4">
-                    <label>5</label>
-                    <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $type }}_{{ $i }}" value="5">
-                    <label>6</label>
-                    <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $type }}_{{ $i }}" value="6">
-                    <label>7</label>
-                    <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $type }}_{{ $i }}" value="7">
-                </div>
-                <div style="display:inline-block;width:100%;margin:auto">
-                    <p style="float:left;margin:auto">{{ $questions[$i]['left_text'] }}</p>
-                    <p style="float:right;margin:auto">{{ $questions[$i]['right_text'] }}</p>
-                </div>
-                <hr />
-            @endfor
-        <div id="instr_nav" class="text-center">
-          <input class="btn btn-primary instr_nav btn-lg" type="button" name="next" id="next"   value="Next &#8680;">
+        <div class = 'inst' id='inst_1'>
+          <h4 class='text-center'> 
+            <span id='pagetoptext'></span>
+            @if($user->group_role != 'leader')
+              We would like to ask some questions about the person who entered the final guesses (i.e. the 'group leader')
+            @else
+              We would like to ask some questions about the person who <b>Made Hypotheses</b>
+            @endif
+          </h4>
+          @for($i = 0; $i < count($questions['1']); $i++)
+            <p>{{ $questions['1'][$i]['question'] }}</p>
+            <br />
+              <div style="display:grid;grid-auto-flow: column;width:100%;margin:auto">
+                  <label>1</label>
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="1">
+                  <label>2</label>
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="2">
+                  <label>3</label>
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="3">
+                  <label>4</label>
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="4">
+                  <label>5</label>
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="5">
+                  <label>6</label>
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="6">
+                  <label>7</label>
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="7">
+              </div>
+              <div style="display:inline-block;width:100%;margin:auto">
+                  <p style="float:left;margin:auto">{{ $questions['1'][$i]['left_text'] }}</p>
+                  <p style="float:right;margin:auto">{{ $questions['1'][$i]['right_text'] }}</p>
+              </div>
+              <hr />
+          @endfor
         </div>
+
+        <div class = 'inst' id='inst_2'>
+          <h4 class='text-center'> 
+            <span id='pagetoptext'></span>
+            @if($user->group_role == 'leader')
+              We would like to ask some questions about the person who <b>Entered the Equations</b>
+            @else
+              <b>Thinking about the group I just participated in, I would say that:</b>
+            @endif
+          </h4>
+          @for($i = 0; $i < count($questions['2']); $i++)
+            <p>{{ $questions['2'][$i]['question'] }}</p>
+            <br />
+              <div style="display:grid;grid-auto-flow: column;width:100%;margin:auto">
+                  <label>1</label>
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="1">
+                  <label>2</label>
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="2">
+                  <label>3</label>
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="3">
+                  <label>4</label>
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="4">
+                  <label>5</label>
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="5">
+                  <label>6</label>
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="6">
+                  <label>7</label>
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="7">
+              </div>
+              <div style="display:inline-block;width:100%;margin:auto">
+                  <p style="float:left;margin:auto">{{ $questions['2'][$i]['left_text'] }}</p>
+                  <p style="float:right;margin:auto">{{ $questions['2'][$i]['right_text'] }}</p>
+              </div>
+              <hr />
+          @endfor
+        </div>
+        
+
+            
+              
       </form>
-      
+      <div id="instr_nav" class="text-center">
+        <input class="btn btn-primary instr_nav btn-lg" type="button" name="back" id="back" value="&#8678; Back">
+        <input class="btn btn-primary instr_nav btn-lg" type="button" name="next" id="next" value="Next &#8680;">
+        <span class="text-primary ml-md-4 text-lg" id="pagination-display">
+          <span id="curr-page">1</span> / 2
+        </span>
+      </div>
     </div>
   </div>
 </div>

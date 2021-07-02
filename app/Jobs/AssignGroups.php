@@ -57,13 +57,53 @@ class AssignGroups implements ShouldQueue
             $in_room = User::where('in_room',1)->where('id','!=',1)->where('status','Active')->get()->shuffle();
 
             if(count($in_room) >= 3){
+
+                $leaders = User::where('in_room',1)->where('id','!=',1)->where('status','Active')->where('group_role','leader')->orderBy('waitnum','desc')->get();
+                $members = User::where('in_room',1)->where('id','!=',1)->where('status','Active')->where('group_role','!=','leader')->orderBy('waitnum','desc')->get();
+
+                $num_groups = min(count($leaders),intdiv(count($members),2));
+                $leaderWaiterNum = count($leaders) - $num_groups;
+                $memberWaiterNum = count($members) - (2 * $num_groups);
+
+                $leaderWaiters = [];
+                $memberWaiters = [];
+
+                for($i = 0; $i < $leaderWaiterNum; $i++){
+                    $waiter = $leaders->pop();
+                    $leaderWaiters[] = $waiter->id;
+                    $waiter->waitnum += 1;
+                    $waiter->save();
+                    event(new AlertWaiter($waiter));
+                }
+
+                for($i = 0; $i < $memberWaiterNum; $i++){
+                    $waiter = $members->pop();
+                    $memberWaiters[] = $waiter->id;
+                    $waiter->waitnum += 1;
+                    $waiter->save();
+                    event(new AlertWaiter($waiter));
+                }
+
+
+
+                $leaders = User::where('in_room',1)->where('id','!=',1)->where('status','Active')->where('group_role','leader')->whereNotIn('id',$leaderWaiters)->get()->shuffle();
+                $members = User::where('in_room',1)->where('id','!=',1)->where('status','Active')->where('group_role','!=','leader')->whereNotIn('id',$memberWaiters)->get()->shuffle();
+
+            
                 //RANDOMLY ASSIGN ROLES FOR NOW
-                $leader = $in_room[0];
-                $leader->group_role = 'leader';
-                $follower1 = $in_room[1];
+                $leader = $leaders->pop();
+                $follower1 = $members->pop();
+                $follower2 = $members->pop();
+
                 $follower1->group_role = 'follower1';
-                $follower2 = $in_room[2];
                 $follower2->group_role = 'follower2';
+
+                //$leader = $in_room[0];
+                //$leader->group_role = 'leader';
+                //$follower1 = $in_room[1];
+                //$follower1->group_role = 'follower1';
+                //$follower2 = $in_room[2];
+                //$follower2->group_role = 'follower2';
 
                 #CREATE NEW GROUP ENTRY
                 $group = new Group;
@@ -270,7 +310,7 @@ class AssignGroups implements ShouldQueue
 
                 $time_elapsed = $session_start->created_at->diffInSeconds(\Carbon\Carbon::now());
            
-                $session_length = 120;
+                $session_length = 165;
 
                 //IMMEDIATELY FIRES EVENTS TO SEND USERS FROM WAITING ROOM TO THEIR NEWLY ASSIGNED TASK
                 event(new SendToTask($leader));
@@ -279,6 +319,10 @@ class AssignGroups implements ShouldQueue
 
                 //DISPATCHES DELAYED JOBS WHICH WILL FIRE EVENTS THAT SEND USERS FROM THE TASK TO THE WAITING ROOM/CONCLUSION 
                 //AT THE END OF A SUBSESSION
+                (new SendTaskComplete($leader->id))->dispatch($leader->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-75));
+                (new SendTaskComplete($follower1->id))->dispatch($follower1->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-75));
+                (new SendTaskComplete($follower2->id))->dispatch($follower2->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-75));
+
                 (new SendTaskComplete($leader->id))->dispatch($leader->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-30));
                 (new SendTaskComplete($follower1->id))->dispatch($follower1->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-30));
                 (new SendTaskComplete($follower2->id))->dispatch($follower2->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-30));

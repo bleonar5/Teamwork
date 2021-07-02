@@ -207,6 +207,7 @@ $( document ).ready(function() {
     }
     if(data['session']['notes']){
       $(`#notes_${data['session']['id']}`).text(data['session']['notes']);
+      $(`#link_${data['session']['id']}`).text(data['session']['notes']);
     }
   });
 });

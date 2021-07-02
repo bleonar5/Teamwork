@@ -36,6 +36,25 @@
         $("#group-survey-form").submit();
       });
 
+      //ESTABLISHES PUSHER CONNECTION
+      //TO COMMUNICATE WITH SERVER    
+      Pusher.logToConsole = true;
+
+      var pusher = new Pusher('{{ config("app.PUSHER_APP_KEY") }}', {
+        cluster: 'us2'
+      });
+
+      //CHANNEL FOR ADMIN AND WAITING ROOM
+      var channel = pusher.subscribe('my-channel');
+
+      //IF ANOTHER ADMIN MAKES A CHANGE, DYNAMICALLY UPDATE TABLE
+      channel.bind('end-subsession', function(data){
+        if(data['user']['id'] == '{{ $user->id }}'){
+          window.location.href = '/get-group-task';
+        }
+      });
+
+
     });
 
 </script>
@@ -48,14 +67,24 @@
   </div>
   <div class="row">
     <div class="col-md-12 text-center">
+      <h5 class='text-center' >
+        @if($type == '1')
+          Page 1/2 -- Time Remaining: 
+        @else
+          Page 2/2 -- Time Remaining: 
+        @endif
+        <span id='timer'></span>
+      </h5>
+    </div>
+    <div class="col-md-12 text-center">
       <h4 class='text-center'> 
-        @if($type == 'group_survey_members_1')
+        @if($type == '1' && $user->group_role != 'leader')
           We would like to ask some questions about the person who entered the final guesses (i.e. the 'group leader')
-        @elseif($type == 'group_survey_leader_hypothesis')
+        @elseif($type == '1' && $user->group_role == 'leader')
           We would like to ask some questions about the person who <b>Made Hypotheses</b>
-        @elseif($type == 'group_survey_leader_equations')
+        @elseif($type == '2' && $user->group_role == 'leader')
           We would like to ask some questions about the person who <b>Entered the Equations</b>
-        @elseif($type == 'group_survey_members_2')
+        @elseif($type == '2' && $user->group_role != 'leader')
           <b>Thinking about the group I just participated in, I would say that:</b>
         @endif
       </h4>
