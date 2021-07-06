@@ -112,8 +112,8 @@
                   <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 30px;width:30px;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="7">
               </div>
               <div style="display:inline-block;width:100%;margin:auto">
-                  <p style="float:left;margin:auto">{{ $questions['1'][$i]['left_text'] }}</p>
-                  <p style="float:right;margin:auto">{{ $questions['1'][$i]['right_text'] }}</p>
+                  <p style="float:left;margin:auto"><i>{{ $questions['1'][$i]['left_text'] }}</i></p>
+                  <p style="float:right;margin:auto"><i>{{ $questions['1'][$i]['right_text'] }}</i></p>
               </div>
               <hr />
           @endfor
