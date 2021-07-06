@@ -145,7 +145,7 @@ $( document ).ready(function() {
           //SWITCH TO ACTIVE SESSION DISPLAY
           $('#num_sessions').attr('disabled',true);
           $(`<h4 id='session1'>Current session: <span id='session_count'>1</span>/${$('#num_sessions').val()}</h4>`).insertAfter('#num_sessions');
-          $(`<h4 id='session2'>Time until next session: <span id='session_timer'>0:45</span></h4>`).insertAfter('#num_sessions');
+          $(`<h4 id='session2'>Time until next session: <span id='session_timer'></span></h4>`).insertAfter('#num_sessions');
           $('#begin').attr('disabled',true);
 
           time_remaining = subsession_length;
@@ -257,7 +257,7 @@ $( document ).ready(function() {
       $('#num_sessions').val(data['user']['max_sessions']);
       $('#num_sessions').attr('disabled',true);
       $(`<h4 id='session1'>Current session: <span id='session_count'>1</span>/${$('#num_sessions').val()}</h4>`).insertAfter('#num_sessions');
-      $(`<h4 id='session2'>Time until next session: <span id='session_timer'>0:45</span></h4>`).insertAfter('#num_sessions');
+      $(`<h4 id='session2'>Time until next session: <span id='session_timer'></span></h4>`).insertAfter('#num_sessions');
       $('#begin').attr('disabled',true);
 
       time_remaining = subsession_length;
@@ -422,7 +422,6 @@ $( document ).ready(function() {
         </div>
       <hr />
       <div class="text-center">
-        <button style='background-color:red' class="btn btn-lg btn-primary" value="1" id="force">Refresh All</button><p></p>
         <button style='background-color:red' class="btn btn-lg btn-primary" onclick='window.location.href="/clear-room"' value="1" id="clear">Clear Room / End Session</button><p></p>
       </div>   
     </div>

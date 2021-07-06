@@ -11,6 +11,7 @@ use Teamwork\User;
 use Teamwork\Group;
 use Teamwork\Events\SendToTask;
 use Teamwork\Events\EndSubsession;
+use Teamwork\Events\AlertWaiter
 use Teamwork\Jobs\SendTaskComplete;
 use Teamwork\Session;
 use Illuminate\Support\Facades\Log;

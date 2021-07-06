@@ -69,6 +69,7 @@ $( document ).ready(function() {
 
     if(userId === data['user']['id']){
       alert('You were not selected for a group this round, but PLEASE STAY around for the next session in ~10 minutes in order to continue and complete the study. You will definitely be matched to a group in the next round. Please use the green chat button if you have any questions/concerns.');
+      window.location.reload();
     }
     
   });

@@ -15,33 +15,33 @@ class GroupSurvey {
   private $statements = [
     'leader' =>[
       '1' => [
-        ['question' => 'How warm did the leader seem throughout the group interaction? That is, how friendly, helpful and sincere did they seem?
+        ['question' => '1. 111How warm (friendly/helpful) did this person seem?
   ', 'left_text' => 'Not at all warm', 'right_text' => 'Extremely warm'],
-        ['question' => 'How competent did the leader seem throughout the group interaction? That is, how knowledgeable, skillful, and efficacious did they seem?
+        ['question' => '2. How competent (skillful) did this person seem?
   ', 'left_text' => 'Not at all competent', 'right_text' => 'Extremely competent'],
-        ['question' => 'How much did you like working with this leader?
+        ['question' => '3. Did you like working with this person?
   ', 'left_text' => 'Not at all', 'right_text' => 'Extremely'],
-        ['question' => 'Would you want to work with this person again?', 'left_text' => 'I would rather not', 'right_text' => 'Yes!']
+        ['question' => '4. Would you <b<choose to work with this person again?', 'left_text' => 'I would rather not', 'right_text' => 'Yes!']
       ],
       '2' => [
-        ['question' => 'How warm did the leader seem throughout the group interaction? That is, how friendly, helpful and sincere did they seem?
+        ['question' => '1. How warm (friendly/helpful) did this person seem?
   ', 'left_text' => 'Not at all warm', 'right_text' => 'Extremely warm'],
-        ['question' => 'How competent did the leader seem throughout the group interaction? That is, how knowledgeable, skillful, and efficacious did they seem?
+        ['question' => '2. How competent (skillful) did this person seem?
   ', 'left_text' => 'Not at all competent', 'right_text' => 'Extremely competent'],
-        ['question' => 'How much did you like working with this leader?
+        ['question' => '3. Did you like working with this person?
   ', 'left_text' => 'Not at all', 'right_text' => 'Extremely'],
-        ['question' => 'Would you want to work with this person again?', 'left_text' => 'I would rather not', 'right_text' => 'Yes!']
+        ['question' => '4. Would you <b<choose to work with this person again?', 'left_text' => 'I would rather not', 'right_text' => 'Yes!']
       ]
     ],
     'member' => [
       '1' => [
-        ['question' => 'How warm did the leader seem throughout the group interaction? That is, how friendly, helpful and sincere did they seem?
+        ['question' => '1. How warm (friendly/helpful) did this person seem?
   ', 'left_text' => 'Not at all warm', 'right_text' => 'Extremely warm'],
-        ['question' => 'How competent did the leader seem throughout the group interaction? That is, how knowledgeable, skillful, and efficacious did they seem?
+        ['question' => '2. How competent (skillful) did this person seem?
   ', 'left_text' => 'Not at all competent', 'right_text' => 'Extremely competent'],
-        ['question' => 'How much did you like working with this leader?
+        ['question' => '3. Did you like working with this person?
   ', 'left_text' => 'Not at all', 'right_text' => 'Extremely'],
-        ['question' => 'Would you want to work with this person again?', 'left_text' => 'I would rather not', 'right_text' => 'Yes!']
+        ['question' => '4. Would you choose to work with this person again?', 'left_text' => 'I would rather not', 'right_text' => 'Yes!']
       ],
       '2' => [
         ['question' => 'When someone made a mistake on this team, it was held against them', 'left_text' => 'Very untrue', 'right_text' => 'Very true'],

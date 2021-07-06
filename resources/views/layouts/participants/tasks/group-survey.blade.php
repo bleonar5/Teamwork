@@ -75,41 +75,41 @@
   </div>
   <div class="row">
     <div class="col-md-12 text-center">
-      <h5 class='text-right' >
-        Total Time Remaining: 
-        <span id='timer'>{{ gmdate('i:s',$time_remaining) }}</span>
-      </h5>
+      <h4 class='text-center' >
+        Time to Complete Survey: 
+        <span id='timer' style='color:red'>{{ gmdate('i:s',$time_remaining) }}</span>
+      </h4>
     </div>
-    <div class="col-md-12 text-center">
+    <div class="col-md-8 text-center" style='margin:auto'>
       <form id="group-survey-form" action="/group-survey" method="post">
         {{ csrf_field() }}
         <div class = 'inst' id='inst_1'>
           <h4 class='text-center'> 
             <span id='pagetoptext'></span>
             @if($user->group_role != 'leader')
-              We would like to ask some questions about the person who entered the final guesses (i.e. the 'group leader')
+              We would like to ask some questions about your group's <b>LEADER</b> (who entered the groups guesses for all the letter values)
             @else
-              We would like to ask some questions about the person who <b>Made Hypotheses</b>
+              We would like to ask some questions about the person who <b>Made Hypotheses</b> (e.g. guessed things like A=7)
             @endif
           </h4>
+          <hr />
           @for($i = 0; $i < count($questions['1']); $i++)
-            <p>{{ $questions['1'][$i]['question'] }}</p>
-            <br />
+            <p style='display:flex'><b>{{ $questions['1'][$i]['question'] }}</b></p>
               <div style="display:grid;grid-auto-flow: column;width:100%;margin:auto">
                   <label>1</label>
-                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="1">
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 30px;width:30px;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="1">
                   <label>2</label>
-                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="2">
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 30px;width:30px;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="2">
                   <label>3</label>
-                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="3">
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 30px;width:30px;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="3">
                   <label>4</label>
-                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="4">
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 30px;width:30px;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="4">
                   <label>5</label>
-                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="5">
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 30px;width:30px;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="5">
                   <label>6</label>
-                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="6">
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 30px;width:30px;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="6">
                   <label>7</label>
-                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="7">
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 30px;width:30px;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="7">
               </div>
               <div style="display:inline-block;width:100%;margin:auto">
                   <p style="float:left;margin:auto">{{ $questions['1'][$i]['left_text'] }}</p>
@@ -123,29 +123,29 @@
           <h4 class='text-center'> 
             <span id='pagetoptext'></span>
             @if($user->group_role == 'leader')
-              We would like to ask some questions about the person who <b>Entered the Equations</b>
+              We would like to ask some questions about the person who <b>Entered the Equations</b> (e.g. C+D+F=?)
             @else
               <b>Thinking about the group I just participated in, I would say that:</b>
             @endif
           </h4>
+          <hr />
           @for($i = 0; $i < count($questions['2']); $i++)
-            <p>{{ $questions['2'][$i]['question'] }}</p>
-            <br />
+            <p style='display:flex'><b>{{ $questions['2'][$i]['question'] }}</b></p>
               <div style="display:grid;grid-auto-flow: column;width:100%;margin:auto">
                   <label>1</label>
-                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="1">
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 30px;width:30px;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="1">
                   <label>2</label>
-                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="2">
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 30px;width:30px;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="2">
                   <label>3</label>
-                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="3">
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 30px;width:30px;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="3">
                   <label>4</label>
-                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="4">
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 30px;width:30px;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="4">
                   <label>5</label>
-                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="5">
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 30px;width:30px;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="5">
                   <label>6</label>
-                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="6">
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 30px;width:30px;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="6">
                   <label>7</label>
-                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 100%;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="7">
+                  <input type="radio" style="vertical-align: middle;margin-top: -1px;height: 30px;width:30px;" name="{{ $surveyType }}_{{ $i }}" class="checkbox" value="7">
               </div>
               <div style="display:inline-block;width:100%;margin:auto">
                   <p style="float:left;margin:auto">{{ $questions['2'][$i]['left_text'] }}</p>
