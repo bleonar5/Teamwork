@@ -15,13 +15,13 @@ class GroupSurvey {
   private $statements = [
     'leader' =>[
       '1' => [
-        ['question' => '1. 111How warm (friendly/helpful) did this person seem?
+        ['question' => '1. How warm (friendly/helpful) did this person seem?
   ', 'left_text' => 'Not at all warm', 'right_text' => 'Extremely warm'],
         ['question' => '2. How competent (skillful) did this person seem?
   ', 'left_text' => 'Not at all competent', 'right_text' => 'Extremely competent'],
         ['question' => '3. Did you like working with this person?
   ', 'left_text' => 'Not at all', 'right_text' => 'Extremely'],
-        ['question' => '4. Would you <b<choose to work with this person again?', 'left_text' => 'I would rather not', 'right_text' => 'Yes!']
+        ['question' => '4. Would you choose to work with this person again?', 'left_text' => 'I would rather not', 'right_text' => 'Yes!']
       ],
       '2' => [
         ['question' => '1. How warm (friendly/helpful) did this person seem?
@@ -30,7 +30,7 @@ class GroupSurvey {
   ', 'left_text' => 'Not at all competent', 'right_text' => 'Extremely competent'],
         ['question' => '3. Did you like working with this person?
   ', 'left_text' => 'Not at all', 'right_text' => 'Extremely'],
-        ['question' => '4. Would you <b<choose to work with this person again?', 'left_text' => 'I would rather not', 'right_text' => 'Yes!']
+        ['question' => '4. Would you choose to work with this person again?', 'left_text' => 'I would rather not', 'right_text' => 'Yes!']
       ]
     ],
     'member' => [

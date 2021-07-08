@@ -75,6 +75,10 @@ class WaitingRoomController extends Controller
         $user_id = \Auth::user()->id;
         $this_user = User::where('id',$user_id)->first();
 
+        if(is_null($this_user->group_role)){
+            return view('layouts.participants.no-role-assigned')
+        }
+
         //WE USE SIGNATURE_DATE AS A WAY OF INDICATING WHO ENTERED THE WAITING ROOM AT ALL, FOR CREDIT GRANTING PURPOSES IN THE PILOT STAGE
         $this_user->signature_date = \Carbon\Carbon::now();
         //EITHER 0 FOR NOT-IN-WAITING-ROOM, 1 FOR CRYPTO, OR 2 FOR MEMORY

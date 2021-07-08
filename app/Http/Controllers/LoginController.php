@@ -115,7 +115,8 @@ class LoginController extends Controller
       // If this is a newly created group, create some tasks if requested
       // IF THERE IS A TASK_PACKAGE SPECIFIED
       if(isset($request->task_package)) {
-        //ASSIGN MEMORY TASKS
+        //ASSIGN MEMORY TASKS:q
+        
         if($request->task_package == 'group-memory'){
           \Teamwork\GroupTask::initializeMemoryTasks(\Auth::user()->group_id, $randomize = false);
           $user->group_role = 'leader';

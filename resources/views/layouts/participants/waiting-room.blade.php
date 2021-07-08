@@ -88,7 +88,7 @@ $( document ).ready(function() {
 <div class="container" >
   @if($time_remaining)
     <div>
-      <h5 style='text-align:center;margin: auto;padding-top:10px;'>Next group starts in: <span id='time_remaining'>{{ gmdate('i:s',$time_remaining) }}</span></h3>
+      <h3 style='text-align:center;margin: auto;padding-top:10px;'>Next group starts in: <span id='time_remaining' style='color:red'>{{ gmdate('i:s',$time_remaining) }}</span></h3>
     </div>
   @endif
   <div class="row vertical-center">

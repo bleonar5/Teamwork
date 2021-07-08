@@ -16,8 +16,12 @@ class Conclusion {
                 ],
                 [
                   'type' => 'sub-header',
-                  'content' => 'Thank you for participating!'
+                  'content' => 'The final step involves providing feedback and scheuling your next session. <strong>Once this is done, you\'ll enter your Prolifi ID to get paid.</strong>'
                 ],
+                [
+                  'type' => 'sub-header',
+                  'content' => 'Thank you for participating!'
+                ]
       ],
     'hdsl_individual' => [[
                   'type' => 'header',
