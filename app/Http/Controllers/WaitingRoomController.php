@@ -75,7 +75,7 @@ class WaitingRoomController extends Controller
         $user_id = \Auth::user()->id;
         $this_user = User::where('id',$user_id)->first();
 
-        if(is_null($this_user->group_role)){
+        if($this_user->group_role == ''){
             return view('layouts.participants.no-role-assigned');
         }
 
