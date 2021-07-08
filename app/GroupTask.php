@@ -127,6 +127,14 @@ class GroupTask extends Model
     return Self::initializeTasks($group_id, $taskArray, $randomize);
   }
 
+  public static function initializeConclusionTasks($group_id, $randomize) {
+    $taskArray = '[
+      {"taskName":"Conclusion","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"mturk","hasCode":"false","displayScoreGroup":"false", "digitalReceipt":"false", "sonaId": "547", "payment": "30", "feedback":"true", "feedbackLinkType":"qualtrics"}}
+      ]';
+    
+    return Self::initializeTasks($group_id, $taskArray, $randomize);
+  }
+
   //CALLED DURING THE ASSIGNGROUPS JOB TO CREATE SUBSESSION
   public static function initializeCryptoTasks($group_id, $randomize,$final) {
     if($final){
