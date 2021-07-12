@@ -95,6 +95,7 @@ $( document ).ready(function() {
   initializeTimer(time_remaining, function() {
     $("#crypto-header").hide();
     $("#crypto-ui").hide();
+    $('#task_time_text').text('Your time is up! Thank you. You will be given credit for any letter values you identified.');
     $("#task-end").show();
     $('#time-up').modal();
   });
@@ -107,6 +108,7 @@ $( document ).ready(function() {
     $("#task-result").val(0);
     $("#crypto-header").hide();
     $("#crypto-ui").hide();
+    $('#task_time_text').text('Your time is up! Thank you. You will be given credit for any letter values you identified.');
     $("#task-end").show();
     $('#time-up').modal('toggle');
     event.preventDefault();
@@ -342,7 +344,7 @@ $( document ).ready(function() {
           {{ csrf_field() }}
           <input type="hidden" name="task_result" id="task-result" value="0">
           <h3 class="text-center">
-            You have completed the Cryptography Task.<br>
+            <span id="task_end_text">Congratulations! Your solution was correct!</span><br>
             Press the button below to continue
           </h3>
           <div class="text-center">

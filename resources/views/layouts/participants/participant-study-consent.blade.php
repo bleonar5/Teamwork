@@ -143,7 +143,7 @@ $( document ).ready(function() {
             <span class="consent-em">PURPOSE OF RESEARCH STUDY</span>: To pilot an experiment examining teamwork skills.
           </p>
           <p>
-            <span class="consent-em">WHAT YOU’LL DO</span>You will be asked to solve cryptography puzzles individually and in a group. You will also be asked to provide feedback about the experiment.
+            <span class="consent-em">WHAT YOU’LL DO</span>: You will be asked to solve cryptography puzzles individually and in a group. You will also be asked to provide feedback about the experiment.
           </p>
           <p>
             <span class="consent-em">RISKS</span>: There are no risks

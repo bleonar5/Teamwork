@@ -11,7 +11,8 @@ use Teamwork\User;
 use Teamwork\Group;
 use Teamwork\Events\SendToTask;
 use Teamwork\Events\EndSubsession;
-use Teamwork\Events\AlertWaiter
+use Teamwork\Events\AlertWaiter;
+use Teamwork\Jobs\HandleStragglers;
 use Teamwork\Jobs\SendTaskComplete;
 use Teamwork\Session;
 use Illuminate\Support\Facades\Log;
@@ -84,8 +85,6 @@ class AssignGroups implements ShouldQueue
                     $waiter->save();
                     event(new AlertWaiter($waiter));
                 }
-
-
 
                 $leaders = User::where('in_room',1)->where('id','!=',1)->where('status','Active')->where('group_role','leader')->whereNotIn('id',$leaderWaiters)->get()->shuffle();
                 $members = User::where('in_room',1)->where('id','!=',1)->where('status','Active')->where('group_role','!=','leader')->whereNotIn('id',$memberWaiters)->get()->shuffle();
@@ -313,6 +312,60 @@ class AssignGroups implements ShouldQueue
            
                 $session_length = 165;
 
+                $group_session = Session::whereIn('participant_id',array($leader->participant_id,$follower1->participant_id,$follower2->participant_id))->orderBy('created_at','desc')->first();
+
+                //UPDATE SESSION ENTRIES FOR STRAGGLERS
+                foreach($leaderWaiters as $key => $id){
+
+                    $leader = User::find($id);
+                    $leader_session = Session::where('participant_id',$leader->participant_id)->orderBy('created_at','desc')->where('session_id',$group_session->session_id)->first();
+
+                    if(!$leader_session){
+                        $leader_session = new Session;
+                        $leader_session->participant_id = $leader->participant_id;
+                        $leader_session->type = $task_name;
+                        $leader_session->num_subsessions = 0;
+                        $leader_session->stragglers = 1;
+                        $leader_session->total_sessions = Session::where('participant_id',$leader->participant_id)->count() + 1;
+                        $leader_session->group_ids = '';
+                        $leader_session->group_role = $leader->group_role;
+                        $leader_session->created_at = $created_at;
+                        $leader_session->session_id = $group_session->session_id;
+                        $leader_session->save(['timestamps' => 'false']);
+                    }
+                    else{
+                        $leader_session->stragglers += 1;
+                        $leader_session->save();
+                    }
+                }
+
+                //UPDATE SESSION ENTRIES FOR STRAGGLERS
+                foreach($memberWaiters as $key => $id){
+
+                    $member = User::find($id);
+
+                    $member_session = Session::where('participant_id',$member->participant_id)->orderBy('created_at','desc')->where('session_id',$group_session->session_id)->first();
+
+                    if(!$member_session){
+                        $member_session = new Session;
+                        $member_session->participant_id = $member->participant_id;
+                        $member_session->type = $task_name;
+                        $member_session->num_subsessions = 0;
+                        $member_session->stragglers = 1;
+                        $member_session->total_sessions = Session::where('participant_id',$member->participant_id)->count() + 1;
+                        $member_session->group_ids = '';
+                        $member_session->group_role = $member->group_role;
+                        $member_session->created_at = $created_at;
+                        $member_session->session_id = $group_session->session_id;
+                        $member_session->save(['timestamps' => 'false']);
+                    }
+                    else{
+                        $member_session->stragglers += 1;
+                        $member_session->save();
+                    }
+                }
+
+
                 //IMMEDIATELY FIRES EVENTS TO SEND USERS FROM WAITING ROOM TO THEIR NEWLY ASSIGNED TASK
                 event(new SendToTask($leader));
                 event(new SendToTask($follower1));
@@ -329,8 +382,12 @@ class AssignGroups implements ShouldQueue
                 (new SendTaskComplete($follower2->id))->dispatch($follower2->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-30));
 
                 //IF THIS IS THE LAST SUBSESSION, DISPATCH A DELAYED JOB TO FIRE "END OF SESSION" EVENTS
-                if($admin->current_session == $admin->max_sessions)
+                if($admin->current_session == $admin->max_sessions){
                 	(new SendSessionComplete($follower2->id))->dispatch($follower2->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length));
+                    (new HandleStragglers($admin->id))->dispatch($admin->id);
+                }
+
+                
 
             }
             //IF THERE'S NOT ENOUGH USERS IN THE WAITING ROOM LEFT 

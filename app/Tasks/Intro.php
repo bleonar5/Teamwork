@@ -49,7 +49,13 @@ class Intro {
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => 'Talk to the research team by clicking the <b style="color:green">GREEN BUTTON</b>'
+                  'content' => '<script type="text/javascript">
+                                  setInterval(function(){
+                                      Tawk_API.toggleVisibility();
+
+                                    },500);
+                                </script>
+                                Talk to the research team by clicking the <b id="green_button_text" style="color:green">GREEN BUTTON</b>'
                 ],
                 [
                   'type' => 'paragraph',
@@ -239,7 +245,7 @@ class Intro {
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => '<u>Your role will affect your bonus</u><br /> Team members get consistent bonuses.<br /> Leaders earn the most, or the least (depending on team performance)<br /> On average, both roles, receive the same bonus.'
+                  'content' => '<u>Your role will affect your bonus</u><br /> Team members get consistent bonuses.<br /> Leaders earn the most, or the least (depending on team performance)<br /> On average, both roles receive the same bonus.'
                 ],
                 [
                   'type' => 'paragraph',

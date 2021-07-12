@@ -54,7 +54,7 @@ var happened = false;
 $( document ).ready(function() {
   //SETS CELL NAMES FOR LIST.JS TABLE
   options = {
-    valueNames: ['participant_id','session_id','session_time','type','num_subsessions','total_sessions','group_ids','role','eligible','paid','notes']
+    valueNames: ['participant_id','session_id','session_time','type','num_subsessions','num_stragglers','total_sessions','group_ids','role','eligible','paid','notes']
   };
 
   //INITIALIZES TABLE (SORT,SEARCH,FILTER)
@@ -287,6 +287,9 @@ $( document ).ready(function() {
                   <a class='sort' data-sort='num_subsessions' href='#'># subs</a>
                 </th>
                 <th>
+                  <a class='sort' data-sort='num_stragglers' href='#'># strags</a>
+                </th>
+                <th>
                   <a class='sort' data-sort='total_sessions' href='#'># seshes</a>
                 </th>
                 <th>
@@ -316,6 +319,7 @@ $( document ).ready(function() {
                   <td class='session_time'>{{ $session->created_at->setTimezone('EST') }}</td>
                   <td class='type'>{{ $session->type }}</td>
                   <td class='num_subsessions'>{{ $session->num_subsessions }}</td>
+                  <td class='num_stragglers'>{{ $session->stragglers }}</td>
                   <td class='total_sessions'>{{ $session->total_sessions }}</td>
                   <td class='group_ids'>{{ $session->group_ids }}</td>
                   <td class='role'>{{ $session->group_role }}</td>

@@ -16,7 +16,7 @@ class Conclusion {
                 ],
                 [
                   'type' => 'sub-header',
-                  'content' => 'The final step involves providing feedback and scheuling your next session. <strong>Once this is done, you\'ll enter your Prolifi ID to get paid.</strong>'
+                  'content' => 'The final step involves providing feedback and scheduling your next session. <strong>Once this is done, you\'ll enter your Prolific ID to get paid.</strong>'
                 ],
                 [
                   'type' => 'sub-header',

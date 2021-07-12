@@ -114,7 +114,7 @@ class GroupTask extends Model
   #FOR DEV PURPOSES
   public static function initializeTestTasks($group_id, $randomize) {
     $taskArray = '[
-      {"taskName":"GroupSurvey","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"1","statementOrder":"ordered"}}
+      {"taskName":"Intro","taskParams":{"hasIndividuals":"true","hasGroup":"false","type":"chat_notification","statementOrder":"ordered"}}
 
       ]';
 

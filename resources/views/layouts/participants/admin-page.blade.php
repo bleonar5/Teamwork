@@ -314,6 +314,9 @@ $( document ).ready(function() {
     group_num = $(`tr:contains('${data['user']['group_id']}'):contains('Active')`).length;
     $(`.group_size_${data['user']['group_id']}`).text(group_num);
 
+    group_num = $("tr:contains('WaitingRoom'):contains('Active')").length;
+    $('.group_size_WaitingRoom').text(group_num);
+
 
   });
 
