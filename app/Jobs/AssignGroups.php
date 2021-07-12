@@ -310,7 +310,7 @@ class AssignGroups implements ShouldQueue
 
                 $time_elapsed = $session_start->created_at->diffInSeconds(\Carbon\Carbon::now());
            
-                $session_length = 165;
+                $session_length = (60 * 5) + 90 + 30;
 
                 $group_session = Session::whereIn('participant_id',array($leader->participant_id,$follower1->participant_id,$follower2->participant_id))->orderBy('created_at','desc')->first();
 
@@ -373,9 +373,9 @@ class AssignGroups implements ShouldQueue
 
                 //DISPATCHES DELAYED JOBS WHICH WILL FIRE EVENTS THAT SEND USERS FROM THE TASK TO THE WAITING ROOM/CONCLUSION 
                 //AT THE END OF A SUBSESSION
-                (new SendTaskComplete($leader->id))->dispatch($leader->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-75));
-                (new SendTaskComplete($follower1->id))->dispatch($follower1->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-75));
-                (new SendTaskComplete($follower2->id))->dispatch($follower2->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-75));
+                (new SendTaskComplete($leader->id))->dispatch($leader->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-120));
+                (new SendTaskComplete($follower1->id))->dispatch($follower1->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-120));
+                (new SendTaskComplete($follower2->id))->dispatch($follower2->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-120));
 
                 (new SendTaskComplete($leader->id))->dispatch($leader->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-30));
                 (new SendTaskComplete($follower1->id))->dispatch($follower1->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-30));
