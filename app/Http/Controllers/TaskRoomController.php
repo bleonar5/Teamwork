@@ -26,10 +26,16 @@ class TaskRoomController extends Controller
         $session_start = \Teamwork\Time::where('type','session')->orderBy('created_at','desc')->first();
 
         $time_elapsed = $session_start->created_at->diffInSeconds(\Carbon\Carbon::now());
-       
-        $session_length = (60 * 5) + 30 + 90;
 
-        $time_remaining = $session_length * $admin->current_session - $time_elapsed - 120;
+        $task_length = env('TASK_LENGTH',300);
+
+        $survey_length = env('SURVEY_LENGTH',120);
+
+        $buffer_length = env('BUFFER_LENGTH',30);
+       
+        $session_length = $task_length + $survey_length + $buffer_length;
+
+        $time_remaining = $session_length * $admin->current_session - $time_elapsed - ($survey_length + $buffer_length);
 
       }
       else

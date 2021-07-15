@@ -69,7 +69,7 @@ $( document ).ready(function() {
 
     if(userId === data['user']['id']){
       alert('You were not selected for a group this round, but PLEASE STAY around for the next session in ~10 minutes in order to continue and complete the study. You will definitely be matched to a group in the next round. Please use the green chat button if you have any questions/concerns.');
-      $('#time_remaining').text(165 > 0 ? new Date(time_remaining * 1000).toISOString().substr(14, 5) : '00:00');
+      $('#time_remaining').text(parseInt('{{ env("SESSION_LENGTH",300) }}') + parseInt('{{ env("SURVEY_LENGTH",120) }}') + parseInt('{{ env("BUFFER_LENGTH",30) }}') > 0 ? new Date(parseInt('{{ env("SESSION_LENGTH",300) }}') + parseInt('{{ env("SURVEY_LENGTH",120) }}') + parseInt('{{ env("BUFFER_LENGTH",30) }}') * 1000).toISOString().substr(14, 5) : '00:00');
       //window.location.reload();
     }
     
@@ -90,6 +90,10 @@ $( document ).ready(function() {
   @if($time_remaining)
     <div>
       <h3 style='text-align:center;margin: auto;padding-top:10px;'>Next group starts in: <span id='time_remaining' style='color:red'>{{ gmdate('i:s',$time_remaining) }}</span></h3>
+    </div>
+  @else
+    <div>
+      <h3 style='text-align:center;margin: auto;padding-top:10px;'>Next group starts in: <span id='time_remaining' style='color:red'>N/A</span></h3>
     </div>
   @endif
   <div class="row vertical-center">

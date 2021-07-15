@@ -99,7 +99,13 @@ class WaitingRoomController extends Controller
 
             $time_elapsed = $session_start->created_at->diffInSeconds(\Carbon\Carbon::now());
        
-            $session_length = (60 * 5) + 30 + 90;
+            $task_length = env('TASK_LENGTH',300);
+
+            $survey_length = env('SURVEY_LENGTH',120);
+
+            $buffer_length = env('BUFFER_LENGTH',30);
+
+            $session_length = $task_length + $survey_length + $buffer_length;
 
             $time_remaining = $session_length * $admin->current_session - $time_elapsed;
         }
@@ -180,7 +186,13 @@ class WaitingRoomController extends Controller
 
             $time_elapsed = $session_start->created_at->diffInSeconds(\Carbon\Carbon::now());
        
-            $session_length = (60 * 5) + 30 + 90;
+            $task_length = env('TASK_LENGTH',300);
+
+            $survey_length = env('SURVEY_LENGTH',120);
+
+            $buffer_length = env('BUFFER_LENGTH',30);
+
+            $session_length = $task_length + $survey_length + $buffer_length;
 
             $time_remaining = $session_length * $admin->current_session - $time_elapsed;
 
@@ -277,7 +289,14 @@ class WaitingRoomController extends Controller
 
         $time = \Teamwork\Time::create(['user_id' => \Auth::user()->id, 'type' => 'session']);
         $time->recordStartTime();
-        $session_length = (60 * 5) + 90 + 30;
+
+        $task_length = env('TASK_LENGTH',300);
+
+        $survey_length = env('SURVEY_LENGTH',120);
+
+        $buffer_length = env('BUFFER_LENGTH',30);
+
+        $session_length = $task_length + $survey_length + $buffer_length;
 
         for($i=0; $i<$request->num_sessions; $i++){
             (new AssignGroups(''))->dispatch('')->delay(\Carbon\Carbon::now()->addSeconds($session_length * $i));
