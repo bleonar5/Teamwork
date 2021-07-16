@@ -117,6 +117,10 @@ class WaitingRoomController extends Controller
 
         event(new PlayerJoinedWaitingRoom($this_user));
 
+        $admin = User::find(1);
+        if(is_null($time_remaining) && \Carbon\Carbon::now() < \Carbon\Carbon::parse($admin->signature))
+            $time_remaining = \Carbon\Carbon::parse($admin->signature)->diffInSeconds(\Carbon\Carbon::now());
+
         return view('layouts.participants.waiting-room')
             ->with('users',$room_users)
             ->with('task',$task)

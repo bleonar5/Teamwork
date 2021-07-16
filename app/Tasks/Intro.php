@@ -245,7 +245,7 @@ class Intro {
                 ],
                 [
                   'type' => 'paragraph',
-                  'content' => '<u>Your role will affect your bonus</u><br /> Team members get consistent bonuses.<br /> Leaders earn the most, or the least (depending on team performance)<br /> On average, both roles receive the same bonus.'
+                  'content' => '<u>Your role will affect your bonus, <b>WHICH IS PAID AFTER PART 2 OF THE EXPERIMENT</b></u><br /> Team members get consistent bonuses.<br /> Leaders earn the most, or the least (depending on team performance)<br /> On average, both roles receive the same bonus.'
                 ],
                 [
                   'type' => 'paragraph',

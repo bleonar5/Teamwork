@@ -19,7 +19,7 @@ var time_remaining = null;
 var session_count = null;
 var happened = false;
 var session_begun = false;
-var subsession_length = parseInt('{{ env("SESSION_LENGTH",300) }}') + parseInt('{{ env("SURVEY_LENGTH",120) }}') + parseInt('{{ env("BUFFER_LENGTH",30) }}');
+var subsession_length = parseInt('{{ env("TASK_LENGTH",300) }}') + parseInt('{{ env("SURVEY_LENGTH",120) }}') + parseInt('{{ env("BUFFER_LENGTH",30) }}');
 var current_session = parseInt('{{ $user->current_session }}');
 var max_sessions = parseInt('{{ $user->max_sessions }}');
 var itv;
