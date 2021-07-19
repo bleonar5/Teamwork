@@ -68,7 +68,8 @@ $( document ).ready(function() {
   channel.bind('alert-waiter', function(data) {
 
     if(userId === data['user']['id']){
-      alert('You were not selected for a group this round, but PLEASE STAY around for the next session in ~10 minutes in order to continue and complete the study. You will definitely be matched to a group in the next round. Please use the green chat button if you have any questions/concerns.');
+      //alert('You were not selected for a group this round, but PLEASE STAY around for the next session in ~10 minutes in order to continue and complete the study. You will definitely be matched to a group in the next round. Please use the green chat button if you have any questions/concerns.');
+      $('#opt_text').text('You were not selected for a group this round, but PLEASE STAY around for the next session in ~10 minutes in order to continue and complete the study. You will definitely be matched to a group in the next round. Please use the green chat button if you have any questions/concerns.');
       $('#time_remaining').text(parseInt('{{ env("TASK_LENGTH",300) }}') + parseInt('{{ env("SURVEY_LENGTH",120) }}') + parseInt('{{ env("BUFFER_LENGTH",30) }}') > 0 ? new Date(parseInt('{{ env("TASK_LENGTH",300) }}') + parseInt('{{ env("SURVEY_LENGTH",120) }}') + parseInt('{{ env("BUFFER_LENGTH",30) }}') * 1000).toISOString().substr(14, 5) : 'N/A');
       //window.location.reload();
     }
@@ -98,7 +99,7 @@ $( document ).ready(function() {
   @endif
   <div class="row vertical-center">
     <div class="col-md-12 text-center">
-      <h4> You have entered the Skills Lab waiting room</h4>
+      <h4 id='opt_text'> You have entered the Skills Lab waiting room</h4>
       <div class=".col-sm-4 text-center">
         <h3>You will be matched with your teammates and sent to the group task shortly</h3>
       </div>

@@ -7,6 +7,9 @@
     $( document ).ready(function() {
 
       $('#code').text('{{ $code }}');
+      $('#feedback_link').on('click',function(){
+        $.post('/conclusion-complete', {_token: "{{ csrf_token() }}"});
+      })
 
     });
 
@@ -91,7 +94,7 @@
         <h4>
           To finish the study, please complete this feedback survey
         </h4>
-        <a class="btn btn-lg btn-success" target='_blank' href="{{ $feedbackLink }}">Feedback</a>
+        <a class="btn btn-lg btn-success" target='_blank' id= 'feedback_link' href="{{ $feedbackLink }}">Feedback</a>
       @endif
 
 

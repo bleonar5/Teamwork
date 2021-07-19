@@ -174,7 +174,7 @@ class WaitingRoomController extends Controller
 
         foreach($activeGroupTasks as $key => $ac_task){
             #GRABS THE CRYPTO TASK RATHER THAN THE CRYPTO INTRO TASK
-            $real_task = GroupTask::where('group_id',$ac_task->group_id)->where('name','Cryptography')->where('order',2)->first();
+            $real_task = GroupTask::where('group_id',$ac_task->group_id)->whereIn('name',array('Cryptography',"GroupSurvey"))->whereIn('order',array(2,3))->first();
 
             if(!$real_task->completed)
                 $groups[] = $real_task->group_id;

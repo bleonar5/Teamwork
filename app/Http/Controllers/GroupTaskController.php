@@ -14,6 +14,7 @@ use Teamwork\Events\TaskComplete;
 use Teamwork\Events\ActionSubmitted;
 use Teamwork\Events\ClearStorage;
 use Teamwork\Events\RuleBroken;
+use Teamwork\Events\EndSubsession;
 use \Teamwork\Time;
 use \Teamwork\Progress;
 use Teamwork\User;
@@ -632,7 +633,21 @@ class GroupTaskController extends Controller
 
   public function taskComplete(Request $request) {
     $user = User::find(\Auth::user()->id);
-    event(new TaskComplete($user));
+    $group_members = User::where('group_id',$user->group_id)->get();
+    foreach($group_members as $key => $mem){
+      event(new EndSubsession($mem));
+    }
+    
+    $this_task = GroupTask::with('Response')->find($request->session()->get('currentGroupTask'));
+    $this_task->completed = 1;
+    $this_task->save();
+    return '200';
+  }
+
+
+  public function conclusionComplete(Request $request) {
+    $user = User::find(\Auth::user()->id);
+    
     $this_task = GroupTask::with('Response')->find($request->session()->get('currentGroupTask'));
     $this_task->completed = 1;
     $this_task->save();

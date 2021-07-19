@@ -477,6 +477,7 @@ $( document ).ready(function() {
 
     //IF MAPPING IS CORRECT, END TASK
     if(result) {
+      $("#task-result").val(1);
       $.post('/task-complete', {_token: "{{ csrf_token() }}"});
     }
 
@@ -835,7 +836,10 @@ $( document ).ready(function() {
       <div class="modal-content">
         <div class="modal-header">
           <h4 class="modal-title text-center">
-          Your team has submitted an equation which violates one of your equation rules. Your payment has decreased by $2. Check with the "leader" of your team to see what these rules are. 
+          Your team has submitted an equation which violates one of your equation rules. 
+          @if($user->group_role == 'leader')
+            Your bonus payment has decreased by $2. 
+          @endif
           </h4>
         </div>
         <div class="modal-body text-center">

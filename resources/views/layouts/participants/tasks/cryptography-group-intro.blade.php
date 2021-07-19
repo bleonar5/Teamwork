@@ -161,7 +161,7 @@ $( document ).ready(function() {
 </script>
 
 @if($introType == 'group_1' || $introType == 'group_2')
-  <div id="inst_1" class="inst">
+  <div id="inst_1" class="inst text-left">
     <h4 class="text-primary">Welcome to your new group</h4>
     <h5>
       You will be working together for 10-12 minutes, trying to solve the GROUP CRYPTOGRAPHY puzzle.
@@ -170,7 +170,7 @@ $( document ).ready(function() {
       Please take a moment to introduce yourselves.
     </h5>
   </div> <!-- End inst_1 -->
-  <div id="inst_2" class="inst">
+  <div id="inst_2" class="inst text-left">
     <h4 class="text-primary">Overview</h4>
     <h5>
       This task is very similar to the cryptography task you did as an invidividual.
@@ -182,7 +182,7 @@ $( document ).ready(function() {
       You each have a specific role.
     </h5>
   </div> <!-- End inst_2 -->
-  <div id="inst_3" class="inst">
+  <div id="inst_3" class="inst text-left">
     <h4 class="text-primary">Review of cryptography</h4>
     <h5>
       Recall that in the Cryptography Task, every letter from A to J has a numerical value. The goal is to find out the value of each letter.
@@ -197,7 +197,7 @@ $( document ).ready(function() {
       Your goal is to solve the puzzle using <strong>the SMALLEST number of trials.</strong> This is how you get a good score.
     </h5>
   </div> <!-- End inst_3 -->
-  <div id="inst_4" class="inst">
+  <div id="inst_4" class="inst text-left">
     <h4 class="text-primary">Instructions</h4>
     @if ($user->group_role == "leader")
         <h5>
@@ -245,7 +245,7 @@ $( document ).ready(function() {
       </h5>
     @endif
   </div> <!-- End inst_4 -->
-  <div id="inst_5" class="inst">
+  <div id="inst_5" class="inst text-left">
     <h4 class="text-primary">Instructions</h4>
     @if ($user->group_role == "leader")
         <h5>

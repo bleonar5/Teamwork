@@ -525,19 +525,21 @@ class IndividualTaskController extends Controller
     $waveLeaders = User::where('wave',$this_user->wave)->where('group_role','leader')->get();
     $waveMembers = User::where('wave',$this_user->wave)->whereIn('group_role',array('follower1','follower2'))->get();
 
-    if(count($waveLeaders) < intdiv(45,3) && count($waveMembers) < (2 * intdiv(45,3))){
-      $randroll = mt_rand(1,45);
-      if($randroll > 15){
+    $wave_size = env('WAVE_SIZE',45);
+
+    if(count($waveLeaders) < intdiv($wave_size,3) && count($waveMembers) < (2 * intdiv($wave_size,3))){
+      $randroll = mt_rand(1,$wave_size);
+      if($randroll > intdiv($wave_size,3)){
         $this_user->group_role = 'leader';
       }
       else{
         $this_user->group_role = 'follower1';
       }
     }
-    elseif(count($waveLeaders) == int_div(45,3)){
+    elseif(count($waveLeaders) >= intdiv($wave_size,3)){
       $this_user->group_role = 'follower1';
     }
-    elseif(count($waveMembers) == 2 * int_div(45,3)){
+    elseif(count($waveMembers) >= 2 * intdiv($wave_size,3)){
       $this_user->group_role = 'leader';
     }
 
@@ -586,19 +588,21 @@ class IndividualTaskController extends Controller
     $waveLeaders = User::where('wave',$this_user->wave)->where('group_role','leader')->get();
     $waveMembers = User::where('wave',$this_user->wave)->whereIn('group_role',array('follower1','follower2'))->get();
 
-    if(count($waveLeaders) < intdiv(45,3) && count($waveMembers) < (2 * intdiv(45,3))){
-      $randroll = mt_rand(1,45);
-      if($randroll > 15){
+    $wave_size = env('WAVE_SIZE',45);
+
+    if(count($waveLeaders) < intdiv($wave_size,3) && count($waveMembers) < (2 * intdiv($wave_size,3))){
+      $randroll = mt_rand(1,$wave_size);
+      if($randroll > intdiv($wave_size,3)){
         $this_user->group_role = 'follower1';
       }
       else{
         $this_user->group_role = 'leader';
       }
     }
-    elseif(count($waveLeaders) == int_div(45,3)){
+    elseif(count($waveLeaders) == intdiv($wave_size,3)){
       $this_user->group_role = 'follower1';
     }
-    elseif(count($waveMembers) == 2 * int_div(45,3)){
+    elseif(count($waveMembers) == 2 * intdiv($wave_size,3)){
       $this_user->group_role = 'leader';
     }
 

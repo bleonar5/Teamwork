@@ -72,6 +72,9 @@ $( document ).ready(function() {
             @if(isset($package))
               <input type="hidden" name="task_package" value="{{ $package }}">
             @endif
+            @if(isset($wave))
+              <input type="hidden" name="wave" value="{{ $wave }}">
+            @endif
             <div class="text-center">
               <button class="btn btn-lg btn-primary" type="submit" id="sign-in">Sign In</button>
             </div>

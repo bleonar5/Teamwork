@@ -334,9 +334,9 @@ class AssignGroups implements ShouldQueue
                     (new SendTaskComplete($follower1->id))->dispatch($follower1->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length - 1));
                     (new SendTaskComplete($follower2->id))->dispatch($follower2->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length - 2));
 
-                    (new SendTaskEvent($leader->id))->dispatch($leader->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length));
-                    (new SendTaskEvent($follower1->id))->dispatch($follower1->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length -1));
-                    (new SendTaskEvent($follower2->id))->dispatch($follower2->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length - 2));
+                    //(new SendTaskEvent($leader->id))->dispatch($leader->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length));
+                    //(new SendTaskEvent($follower1->id))->dispatch($follower1->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length -1));
+                    //(new SendTaskEvent($follower2->id))->dispatch($follower2->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length - 2));
 
                     //IF THIS IS THE LAST SUBSESSION, DISPATCH A DELAYED JOB TO FIRE "END OF SESSION" EVENTS
                     if($admin->current_session == $admin->max_sessions){

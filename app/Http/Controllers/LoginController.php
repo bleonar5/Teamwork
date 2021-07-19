@@ -39,7 +39,7 @@ class LoginController extends Controller
   //DISPLAYS LOGIN SCREEN WITH PARAMETER INDICATING WHICH TASK LIST TO ASSIGN
   //DIFFERENT 'TASK-PACKAGE' LABELS CAN BE FOUND IN GROUPTASK.PHP
   //EXAMPLE LABEL: CRYPTO-PILOT
-  public function participantPackageLogin($package) {
+  public function participantPackageLogin($package,$wave) {
 
     $in_session = User::where('id',1)->first()->in_room;
 
@@ -48,6 +48,7 @@ class LoginController extends Controller
     return view('layouts.participants.participant-login')
       ->with('in_session',$in_session)
       ->with('package', $package)
+      ->with('wave',$wave)
       ->with('date',$date);
   }
 
@@ -60,7 +61,10 @@ class LoginController extends Controller
                                    'participant_id' => $request->participant_id,
                                    'password' => bcrypt('participant'),
                                    'role_id' => 3,
-                                   'group_id'=>1]);
+                                   'group_id'=>1,
+                                   'wave' => $request->wave]);
+
+      Log::debug('YEEES'.$request->wave);
       $user->save();
       \Auth::login($user);
 

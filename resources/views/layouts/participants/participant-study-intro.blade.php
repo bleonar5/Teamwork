@@ -9,7 +9,7 @@
         @if($content['type'] == 'header')
           <h2 class="text-primary">{!! $content['content'] !!}</h2>
         @elseif($content['type'] == 'paragraph')
-          <h4 class='text-left'>{!! $content['content'] !!}</h4>
+          <h4 class='text-center'>{!! $content['content'] !!}</h4>
         @endif
       @endforeach
     </div>

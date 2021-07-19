@@ -745,6 +745,12 @@ Route::post('/task-complete', [
 	'roles' => ['Participant','Group'] // Only a logged in user can view this page
 ]);
 
+Route::post('/conclusion-complete', [
+	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
+	'uses' => 'GroupTaskController@conclusionComplete',
+	'roles' => ['Participant','Group'] // Only a logged in user can view this page
+]);
+
 Route::post('/rule-broken', [
 	'middleware' => ['auth', 'roles'], // A 'roles' middleware must be specified
 	'uses' => 'GroupTaskController@ruleBroken',
@@ -871,7 +877,7 @@ Route::get('/prolific-login', [
 	'uses' => 'LoginController@postParticipantLogin',
 ]);
 
-Route::get('/participant-login/{package}', [
+Route::get('/participant-login/{package}/{wave}', [
 	'uses' => 'LoginController@participantPackageLogin',
 ]);
 
