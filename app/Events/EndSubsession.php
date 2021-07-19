@@ -18,7 +18,7 @@ class EndSubsession implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $user;
+    public $user, $order;
 
     /**
      * Create a new event instance.
