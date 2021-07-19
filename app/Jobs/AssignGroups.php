@@ -330,9 +330,9 @@ class AssignGroups implements ShouldQueue
                     (new SendTaskComplete($follower1->id,2))->dispatch($follower1->id,2)->delay(\Carbon\Carbon::now()->addSeconds($session_length-($survey_length + $buffer_length - 1)));
                     (new SendTaskComplete($follower2->id,2))->dispatch($follower2->id,2)->delay(\Carbon\Carbon::now()->addSeconds($session_length-($survey_length + $buffer_length - 2)));
 
-                    (new SendTaskComplete($leader->id,2))->dispatch($leader->id,2)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length));
-                    (new SendTaskComplete($follower1->id,2))->dispatch($follower1->id,2)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length - 1));
-                    (new SendTaskComplete($follower2->id,2))->dispatch($follower2->id,2)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length - 2));
+                    (new SendTaskComplete($leader->id,3))->dispatch($leader->id,3)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length));
+                    (new SendTaskComplete($follower1->id,3))->dispatch($follower1->id,3)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length - 1));
+                    (new SendTaskComplete($follower2->id,3))->dispatch($follower2->id,3)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length - 2));
 
                     //(new SendTaskEvent($leader->id))->dispatch($leader->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length));
                     //(new SendTaskEvent($follower1->id))->dispatch($follower1->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length -1));

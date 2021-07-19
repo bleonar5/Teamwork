@@ -317,6 +317,13 @@ $( document ).ready(function() {
     }
   });
 
+  channel.bind('task-complete', function(data){
+    $("#task-result").val(1);
+    $("#crypto-header").hide();
+    $("#crypto-ui").hide();
+    $("#task-end").show();
+  });
+
   //IF ADMIN USES FORCE REFRESH
   channel.bind('force-refresh-user', function(data) {
     if(data['user']['id'].toString() === '{{ $user->id }}'){

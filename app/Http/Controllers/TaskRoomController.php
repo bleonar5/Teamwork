@@ -35,7 +35,7 @@ class TaskRoomController extends Controller
        
         $session_length = $task_length + $survey_length + $buffer_length;
 
-        $time_remaining = $session_length * $admin->current_session - $time_elapsed - ($survey_length + $buffer_length);
+        $time_remaining = $session_length - $time_elapsed - ($survey_length + $buffer_length);
 
       }
       else

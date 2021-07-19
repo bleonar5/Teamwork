@@ -107,7 +107,7 @@ class WaitingRoomController extends Controller
 
             $session_length = $task_length + $survey_length + $buffer_length;
 
-            $time_remaining = $session_length * $admin->current_session - $time_elapsed;
+            $time_remaining = $session_length - $time_elapsed;
         }
         else
           $time_remaining = NULL;
@@ -198,7 +198,7 @@ class WaitingRoomController extends Controller
 
             $session_length = $task_length + $survey_length + $buffer_length;
 
-            $time_remaining = $session_length * $admin->current_session - $time_elapsed;
+            $time_remaining = $session_length - $time_elapsed;
 
             $total_time = $session_length * $admin->max_sessions;
         }

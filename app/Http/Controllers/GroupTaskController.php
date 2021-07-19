@@ -8,9 +8,9 @@ use Teamwork\Response;
 use Teamwork\Events\AllReadyInGroup;
 use Teamwork\Events\LeaderAnswered;
 use Teamwork\Events\StatusChanged;
+use Teamwork\Events\TaskComplete;
 use Teamwork\Events\PlayerLeftWaitingRoom;
 use \Teamwork\Tasks as Task;
-use Teamwork\Events\TaskComplete;
 use Teamwork\Events\ActionSubmitted;
 use Teamwork\Events\ClearStorage;
 use Teamwork\Events\RuleBroken;
@@ -635,7 +635,7 @@ class GroupTaskController extends Controller
     $user = User::find(\Auth::user()->id);
     $group_members = User::where('group_id',$user->group_id)->get();
     foreach($group_members as $key => $mem){
-      event(new EndSubsession($mem,2));
+      event(new TaskComplete($mem));
     }
     
     $this_task = GroupTask::with('Response')->find($request->session()->get('currentGroupTask'));

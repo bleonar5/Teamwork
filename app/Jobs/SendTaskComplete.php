@@ -27,7 +27,7 @@ class SendTaskComplete implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(String $id,Integer $order){
+    public function __construct(String $id,int $order){
         $this->id = $id;
         $this->order = $order;
     }
@@ -40,6 +40,6 @@ class SendTaskComplete implements ShouldQueue
     public function handle()
     {
         $this_user = User::find($this->id);
-        event(new EndSubsession($this_user,$order);
+        event(new EndSubsession($this_user,$this->order));
     }
 }
