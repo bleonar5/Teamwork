@@ -635,7 +635,7 @@ class GroupTaskController extends Controller
     $user = User::find(\Auth::user()->id);
     $group_members = User::where('group_id',$user->group_id)->get();
     foreach($group_members as $key => $mem){
-      event(new EndSubsession($mem));
+      event(new EndSubsession($mem,2));
     }
     
     $this_task = GroupTask::with('Response')->find($request->session()->get('currentGroupTask'));
