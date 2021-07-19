@@ -877,8 +877,12 @@ Route::get('/prolific-login', [
 	'uses' => 'LoginController@postParticipantLogin',
 ]);
 
-Route::get('/participant-login/{package}/{wave}', [
+Route::get('/participant-login/{package}', [
 	'uses' => 'LoginController@participantPackageLogin',
+]);
+
+Route::get('/participant-login/{package}/{wave}', [
+	'uses' => 'LoginController@participantPackageWaveLogin',
 ]);
 
 Route::post('/participant-login', [

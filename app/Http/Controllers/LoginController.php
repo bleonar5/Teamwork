@@ -39,7 +39,20 @@ class LoginController extends Controller
   //DISPLAYS LOGIN SCREEN WITH PARAMETER INDICATING WHICH TASK LIST TO ASSIGN
   //DIFFERENT 'TASK-PACKAGE' LABELS CAN BE FOUND IN GROUPTASK.PHP
   //EXAMPLE LABEL: CRYPTO-PILOT
-  public function participantPackageLogin($package,$wave) {
+  public function participantPackageWaveLogin($package,$wave) {
+
+    $in_session = User::where('id',1)->first()->in_room;
+
+    $date = User::where('id',1)->first()->signature;
+
+    return view('layouts.participants.participant-login')
+      ->with('in_session',$in_session)
+      ->with('package', $package)
+      ->with('wave',1)
+      ->with('date',$date);
+  }
+
+  public function participantPackageLogin($package) {
 
     $in_session = User::where('id',1)->first()->in_room;
 
