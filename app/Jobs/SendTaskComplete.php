@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Teamwork\User;
+use Teamwork\GroupTask;
 use Teamwork\Events\TaskComplete;
 use Teamwork\Events\EndSubsession;
 use Illuminate\Support\Facades\Log;
@@ -26,8 +27,9 @@ class SendTaskComplete implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(String $id){
+    public function __construct(String $id,Integer $order){
         $this->id = $id;
+        $this->order = $order;
     }
 
     /**
@@ -38,6 +40,6 @@ class SendTaskComplete implements ShouldQueue
     public function handle()
     {
         $this_user = User::find($this->id);
-        event(new EndSubsession($this_user));
+        event(new EndSubsession($this_user,$order);
     }
 }

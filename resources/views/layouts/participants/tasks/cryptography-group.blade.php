@@ -312,7 +312,7 @@ $( document ).ready(function() {
 
   //IF SUBSESSION IS ENDING, END TASK
   channel.bind('end-subsession', function(data){
-    if(data['user']['id'] == user_id){
+    if(data['user']['id'] == user_id && data['order'] == 2){
       $('#cryptography-end-form').submit();
     }
   });

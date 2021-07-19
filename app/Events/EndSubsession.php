@@ -25,9 +25,10 @@ class EndSubsession implements ShouldBroadcastNow
      *
      * @return void
      */
-    public function __construct(User $user)
+    public function __construct(User $user, Integer $order)
     {
         $this->user = $user;
+        $this->order = $order;
     }
 
     /**

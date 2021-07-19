@@ -326,13 +326,13 @@ class AssignGroups implements ShouldQueue
 
                     //DISPATCHES DELAYED JOBS WHICH WILL FIRE EVENTS THAT SEND USERS FROM THE TASK TO THE WAITING ROOM/CONCLUSION 
                     //AT THE END OF A SUBSESSION
-                    (new SendTaskComplete($leader->id))->dispatch($leader->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-($survey_length + $buffer_length)));
-                    (new SendTaskComplete($follower1->id))->dispatch($follower1->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-($survey_length + $buffer_length - 1)));
-                    (new SendTaskComplete($follower2->id))->dispatch($follower2->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-($survey_length + $buffer_length - 2)));
+                    (new SendTaskComplete($leader->id,2))->dispatch($leader->id,2)->delay(\Carbon\Carbon::now()->addSeconds($session_length-($survey_length + $buffer_length)));
+                    (new SendTaskComplete($follower1->id,2))->dispatch($follower1->id,2)->delay(\Carbon\Carbon::now()->addSeconds($session_length-($survey_length + $buffer_length - 1)));
+                    (new SendTaskComplete($follower2->id,2))->dispatch($follower2->id,2)->delay(\Carbon\Carbon::now()->addSeconds($session_length-($survey_length + $buffer_length - 2)));
 
-                    (new SendTaskComplete($leader->id))->dispatch($leader->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length));
-                    (new SendTaskComplete($follower1->id))->dispatch($follower1->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length - 1));
-                    (new SendTaskComplete($follower2->id))->dispatch($follower2->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length - 2));
+                    (new SendTaskComplete($leader->id,2))->dispatch($leader->id,2)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length));
+                    (new SendTaskComplete($follower1->id,2))->dispatch($follower1->id,2)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length - 1));
+                    (new SendTaskComplete($follower2->id,2))->dispatch($follower2->id,2)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length - 2));
 
                     //(new SendTaskEvent($leader->id))->dispatch($leader->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length));
                     //(new SendTaskEvent($follower1->id))->dispatch($follower1->id)->delay(\Carbon\Carbon::now()->addSeconds($session_length-$buffer_length -1));

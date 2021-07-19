@@ -57,7 +57,7 @@
 
       //IF ANOTHER ADMIN MAKES A CHANGE, DYNAMICALLY UPDATE TABLE
       channel.bind('end-subsession', function(data){
-        if(data['user']['id'] == '{{ $user->id }}'){
+        if(data['user']['id'] == '{{ $user->id }}' && data['order'] == 3){
           $('#group-survey-form').submit();
         }
       });

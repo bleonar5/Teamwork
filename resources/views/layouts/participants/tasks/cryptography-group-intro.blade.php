@@ -66,7 +66,9 @@ $( document ).ready(function() {
 
   //IF SUBSESSION ENDS, END TASK
   channel.bind('end-subsession', function(data){
-    window.location.href='/end-intro';
+    if(data['user']['id'] == user_id && data['order'] == 2){
+        window.location.href='/end-intro';
+      }
   });
 
   //IF ADMIN FORCES REFRESH
